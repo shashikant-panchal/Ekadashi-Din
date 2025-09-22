@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { appLogo } from "../src/constants/Images";
 
 const { width } = Dimensions.get("window");
 
@@ -30,7 +31,7 @@ export default function App() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Email</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="mail" size={18} color="#777" style={styles.icon} />
+          <Feather name="mail" size={18} color="#052861" style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your email"
@@ -44,7 +45,7 @@ export default function App() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Password</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="lock" size={18} color="#777" style={styles.icon} />
+          <Feather name="lock" size={18} color="#3F70C0" style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your password"
@@ -59,7 +60,7 @@ export default function App() {
             <Feather
               name={isPasswordVisible ? "eye" : "eye-off"}
               size={18}
-              color="#777"
+              color="#3F70C0"
             />
           </TouchableOpacity>
         </View>
@@ -101,7 +102,7 @@ export default function App() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Display Name</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="user" size={18} color="#777" style={styles.icon} />
+          <Feather name="user" size={18} color="#3F70C0" style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your display name"
@@ -114,7 +115,7 @@ export default function App() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Email</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="mail" size={18} color="#777" style={styles.icon} />
+          <Feather name="mail" size={18} color="#3F70C0" style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your email"
@@ -128,7 +129,7 @@ export default function App() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Password</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="lock" size={18} color="#777" style={styles.icon} />
+          <Feather name="lock" size={18} color="#3F70C0" style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your password"
@@ -143,7 +144,7 @@ export default function App() {
             <Feather
               name={isPasswordVisible ? "eye" : "eye-off"}
               size={18}
-              color="#777"
+              color="#3F70C0"
             />
           </TouchableOpacity>
         </View>
@@ -171,9 +172,7 @@ export default function App() {
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.logoContainer}>
             <Image
-              source={{
-                uri: "https://placehold.co/100x100/544974/ffffff?text=Icon",
-              }}
+              source={appLogo}
               style={styles.logo}
             />
           </View>
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: "#544974",
+    backgroundColor: "#EEEFF2",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -252,7 +251,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: "#777",
+    color: "#3F70C0",
     textAlign: "center",
     marginBottom: 30,
     paddingHorizontal: 20,
@@ -278,12 +277,12 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 16,
-    color: "#777",
+    color: "#3F70C0",
   },
   activeTabText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#544974",
+    color: "#052861",
   },
   formTitle: {
     fontSize: 20,
@@ -294,7 +293,7 @@ const styles = StyleSheet.create({
   },
   formSubtitle: {
     fontSize: 14,
-    color: "#777",
+    color: "#3F70C0",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -346,15 +345,15 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: 14,
-    color: "#777",
+    color: "#3F70C0",
   },
   forgotPassword: {
     fontSize: 14,
-    color: "#544974",
+    color: "#052861",
     textDecorationLine: "underline",
   },
   signInButton: {
-    backgroundColor: "#544974",
+    backgroundColor: "#052861",
     borderRadius: 10,
     paddingVertical: 15,
     alignItems: "center",
@@ -367,7 +366,7 @@ const styles = StyleSheet.create({
   },
   orText: {
     textAlign: "center",
-    color: "#777",
+    color: "#3F70C0",
     marginBottom: 20,
   },
   googleButton: {
@@ -393,11 +392,11 @@ const styles = StyleSheet.create({
   },
   privacyText: {
     fontSize: 12,
-    color: "#777",
+    color: "#3F70C0",
     textAlign: "center",
   },
   privacyLink: {
-    color: "#544974",
+    color: "#052861",
     textDecorationLine: "underline",
   },
 });
