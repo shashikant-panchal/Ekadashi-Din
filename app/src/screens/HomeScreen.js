@@ -19,16 +19,17 @@ const HomeScreen = () => {
         <View>
           <Image resizeMode="contain" source={logo} style={styles.logo} />
           <Text style={styles.title}>Ekadashi Din</Text>
+          <Text></Text>
           <Text style={styles.description}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे </Text>
           <Text style={styles.description}>हरे राम हरे राम राम राम हरे हरे </Text>
         </View>
         <StatusBar style="auto" backgroundColor="grey" />
         <NextEkadashiCard />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <SplitCard width={dw / 2.25} icon={'book-outline'} iconColor={DarkBlue} iconBackground={BackgroundGrey} title={'Daily Wisdom'} subTitle={'Spiritual Guidance'} />
+          <SplitCard width={dw / 2.25} icon={'book-outline'} iconColor={DarkBlue} iconBackground={BackgroundGrey} title={'All Ekadashi'} subTitle={'Spiritual Guidance'} />
           <SplitCard icon={'calendar-outline'} iconColor={'#FAE013'} iconBackground={'#FEFCEB'} title={'Calendar'} subTitle={'Monthly View'} />
         </View>
-        <SplitCard width={dw} list={'format-list-bulleted'} iconBackground={BackgroundGrey} iconColor={DarkBlue} title={'Daily Wisdom'} subTitle={'Complete List'} />
+        <SplitCard width={dw} list={'format-list-bulleted'} iconBackground={BackgroundGrey} iconColor={DarkBlue} title={'All Ekadashi'} subTitle={'Complete List'} />
         <PanchangCard />
       </ScrollView>
     </SafeAreaView>

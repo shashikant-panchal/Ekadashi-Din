@@ -1,6 +1,8 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppYellow, DarkBlue, GRADIENT_END, GRADIENT_START, LightBlue } from '../constants/Colors';
 
 // --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -49,17 +51,21 @@ const MonthCard = ({ month, ekadashis, isUpcoming, onPress }) => {
 
 // --- Component for the Next Ekadashi Card ---
 const NextEkadashiCard = ({ title, date, details }) => (
-  <View style={styles.nextEkadashiCard}>
+  <LinearGradient
+    colors={[GRADIENT_START, GRADIENT_END]}
+    start={{ x: 0, y: 0 }} // Top-left
+    end={{ x: 1, y: 1 }}   // Bottom-right
+    style={styles.nextEkadashiCard}
+  >
     <View style={styles.moonPlaceholder}>
-      {/* Placeholder for the moon image/icon */}
-      <Ionicons name="moon" size={relativeWidth(10)} color="#212529" />
+      <Ionicons name="moon" size={relativeWidth(10)} color="#FFC107" />
     </View>
     <View style={styles.nextEkadashiTextContainer}>
       <Text style={styles.nextEkadashiTitle}>{title}</Text>
       <Text style={styles.nextEkadashiDate}>{date}</Text>
       <Text style={styles.nextEkadashiDetails}>{details}</Text>
     </View>
-  </View>
+  </LinearGradient>
 );
 
 
@@ -90,9 +96,11 @@ const EkadashiScreen = ({ navigation }) => {
             <Text style={styles.summaryLabel}>TOTAL EKADASHIS</Text>
           </View>
           <View style={styles.summaryCardRemaining}>
-            <Feather name="star" size={relativeWidth(5)} color="#F1C40F" />
-            <Text style={styles.summaryCountRemaining}>5</Text>
-            <Text style={styles.summaryLabel}>REMAINING</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Feather name="star" size={relativeWidth(5)} color={AppYellow} />
+              <Text style={styles.summaryCountRemaining}>5</Text>
+            </View>
+            <Text style={[styles.summaryLabel, { color: AppYellow }]}>REMAINING</Text>
           </View>
         </View>
 
@@ -145,11 +153,11 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: relativeWidth(6),
     fontWeight: '700',
-    color: '#2C3E50', // Dark blue text
+    color: DarkBlue, // Dark blue text
   },
   subtitle: {
     fontSize: relativeWidth(3.5),
-    color: '#6c757d',
+    color: LightBlue,
     marginTop: relativeHeight(0.5),
   },
   subtitleUnderline: {
@@ -186,18 +194,18 @@ const styles = StyleSheet.create({
   summaryCount: {
     fontSize: relativeWidth(8),
     fontWeight: '700',
-    color: '#2C3E50',
+    color: DarkBlue,
   },
   summaryCountRemaining: {
     fontSize: relativeWidth(5),
     fontWeight: '700',
-    color: '#F1C40F',
+    color: AppYellow,
     marginTop: relativeHeight(0.5),
   },
   summaryLabel: {
     fontSize: relativeWidth(3),
     fontWeight: '500',
-    color: '#6c757d',
+    color: DarkBlue,
     marginTop: relativeHeight(0.5),
   },
 
@@ -295,16 +303,16 @@ const styles = StyleSheet.create({
   nextEkadashiTitle: {
     fontSize: relativeWidth(4.5),
     fontWeight: '600',
-    color: '#212529',
+    color: DarkBlue,
   },
   nextEkadashiDate: {
     fontSize: relativeWidth(3.5),
-    color: '#6c757d',
+    color: LightBlue,
     marginVertical: relativeHeight(0.3),
   },
   nextEkadashiDetails: {
     fontSize: relativeWidth(3.5),
-    color: '#495057',
+    color: 'black',
   },
 });
 

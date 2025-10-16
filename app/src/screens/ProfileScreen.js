@@ -1,6 +1,8 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppYellow, DarkBlue, LightBlue } from '../constants/Colors';
 
 // --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -18,7 +20,7 @@ const ProfileScreen = () => {
         <View style={styles.profileHeader}>
           {/* Avatar Placeholder */}
           <View style={styles.avatarContainer}>
-            <Ionicons name="person-outline" size={relativeWidth(12)} color="#fff" />
+            <Ionicons name="person-outline" size={relativeWidth(12)} color='black' />
           </View>
           <Text style={styles.username}>Devotee</Text>
           <Text style={styles.profileSubtitle}>Spiritual Journey Profile</Text>
@@ -28,34 +30,55 @@ const ProfileScreen = () => {
         <View style={styles.statsContainer}>
           {/* Ekadashis Card */}
           <View style={styles.statCard}>
-            <Feather name="calendar" size={relativeWidth(8)} color="#2C3E50" />
+            <Feather name="calendar" size={relativeWidth(8)} color={DarkBlue} />
             <Text style={styles.statCount}>0</Text>
             <Text style={styles.statLabel}>Ekadashis</Text>
           </View>
           {/* Day Streak Card */}
           <View style={styles.statCard}>
-            <Feather name="clock" size={relativeWidth(8)} color="#2C3E50" />
+            <Feather name="clock" size={relativeWidth(8)} color={AppYellow} />
             <Text style={styles.statCount}>0</Text>
             <Text style={styles.statLabel}>Day Streak</Text>
           </View>
         </View>
 
-        {/* --- Spiritual Wisdom Challenge Card --- */}
-        <View style={styles.challengeCard}>
+        <LinearGradient
+          colors={['#FAF5FF', '#F6F5FF', '#F0F6FF',]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.challengeCard}
+        >
           <View style={styles.challengeHeader}>
-            {/* Om Icon Placeholder */}
-            <View style={styles.challengeIconBackground}>
-              <Text style={styles.challengeIcon}>ॐ</Text>
-            </View>
-            <Text style={styles.challengeTitle}>Spiritual Wisdom Challenge</Text>
+            <LinearGradient
+              colors={['#A556F6', '#437FF6']}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.challengeIconBackground}
+            ><View >
+                <Text style={styles.challengeIcon}>ॐ</Text>
+              </View></LinearGradient>
+
+            <Text style={styles.challengeTitle}>Spiritual Wisdom Challenge
+
+            </Text>
+
           </View>
           <Text style={styles.challengeDescription}>
-            Test your knowledge of Krishna's teachings. Explore the profound wisdom of the Bhagavad Gita and Mahabharata through engaging questions that inspire spiritual growth.
+            Explore the profound wisdom of the Bhagavad Gita and Mahabharata through engaging questions that inspire spiritual growth.
           </Text>
-          <TouchableOpacity style={styles.challengeButton}>
-            <Text style={styles.challengeButtonText}>Begin Challenge</Text>
+          <TouchableOpacity  >
+            <LinearGradient
+              // 1. Define vibrant, spiritual colors (e.g., deep orange to gold)
+              colors={['#A556F6', '#437FF6']}
+              // 2. Define the gradient direction (Horizontal for a smooth sweep)
+              start={{ x: 0, y: 0.5 }} // Left edge
+              end={{ x: 1, y: 0.5 }}   // Right edge
+              style={styles.challengeButtonGradient} // 3. Apply the visual styles here
+            >
+              <Text style={styles.challengeButtonText}>Begin Challenge</Text>
+            </LinearGradient>
           </TouchableOpacity>
-        </View>
+        </LinearGradient>
 
         {/* --- Recent Activity Card --- */}
         <View style={styles.recentActivityCard}>
@@ -99,11 +122,11 @@ const styles = StyleSheet.create({
   username: {
     fontSize: relativeWidth(6),
     fontWeight: '700',
-    color: '#212529',
+    color: DarkBlue,
   },
   profileSubtitle: {
     fontSize: relativeWidth(3.8),
-    color: '#6c757d',
+    color: LightBlue,
   },
 
   // --- Stats Cards Styles ---
@@ -135,7 +158,7 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: relativeWidth(4),
     fontWeight: '500',
-    color: '#6c757d',
+    color: LightBlue,
     marginTop: relativeHeight(0.5),
   },
 
@@ -173,21 +196,33 @@ const styles = StyleSheet.create({
   },
   challengeDescription: {
     fontSize: relativeWidth(3.7),
-    color: '#495057',
+    color: LightBlue,
     marginBottom: relativeHeight(2.5),
     lineHeight: relativeHeight(2.5),
   },
-  challengeButton: {
-    // This is a complex gradient in the image; using a solid color/linear gradient package for simplicity
-    backgroundColor: '#7A40F5', // Middle color for the purple-blue gradient
-    paddingVertical: relativeHeight(1.5),
-    borderRadius: relativeWidth(2),
-    alignItems: 'center',
+  challengeButtonContainer: {
+    // Inherit the margin if needed, or define the width
+    marginVertical: 10,
+    borderRadius: 10, // Must match the gradient border radius
+    overflow: 'hidden', // Ensures the gradient respects the border radius
   },
+
+  // This style is applied to the LinearGradient component
+  challengeButtonGradient: {
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10, // Matches the container
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%', // Ensure it fills the Touchable container
+  },
+
   challengeButtonText: {
-    fontSize: relativeWidth(4.5),
-    fontWeight: '600',
-    color: '#fff',
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    backgroundColor: 'transparent', // Crucial to ensure text color shows over gradient
   },
 
   // --- Recent Activity Card Styles ---
@@ -216,7 +251,7 @@ const styles = StyleSheet.create({
   },
   noActivityText: {
     fontSize: relativeWidth(4),
-    color: '#6c757d',
+    color: LightBlue,
     textAlign: 'center',
     paddingVertical: relativeHeight(2),
   },
