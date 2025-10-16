@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons"; // ✅ Import Ionicons
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { DarkBlue } from "../constants/Colors";
+import { DarkBlue, LightBlue } from "../constants/Colors";
 
 // --- Configuration ---
 
@@ -36,7 +36,7 @@ const NextEkadashiCard = () => {
 
           <View style={styles.textGroup}>
             <Text style={styles.nextEkadashiText}>Next Ekadashi</Text>
-            <Text style={styles.ekadashiNameText}>Rama Ekadashi</Text>
+            <Text style={[styles.ekadashiNameText, { color: LightBlue }]}>Rama Ekadashi</Text>
           </View>
 
           <View style={styles.upcomingBadge}>
@@ -116,18 +116,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   nextEkadashiText: {
-    fontSize: 14,
-    color: "#6c757d",
+    fontSize: 16,
+    color: DarkBlue,
+    fontWeight: "600",
+
     marginBottom: 2,
   },
   ekadashiNameText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#343a40",
+    fontSize: 14,
+
   },
   upcomingBadge: {
     backgroundColor: "#e9ecef",
     borderRadius: 15,
+    borderWidth: 0.5,
+    borderColor: "#ced4da",
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginLeft: 10,
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
   },
   daysRemainingText: {
     fontSize: 12,
-    color: "#6c757d",
+    color: LightBlue,
   },
   detailsButton: {
     backgroundColor: "#fff",
@@ -171,7 +174,7 @@ const styles = StyleSheet.create({
   detailsButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#495057",
+    color: DarkBlue,
   },
 });
 

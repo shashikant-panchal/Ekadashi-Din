@@ -1,9 +1,11 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar'; // For device calendar access (functionality only)
+import { LinearGradient } from 'expo-linear-gradient';
 import moment from 'moment'; // Crucial for dynamic month manipulation
 import { useMemo, useState } from 'react';
 import { Alert, Dimensions, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { DarkBlue, LightBlue } from '../constants/Colors';
 
 // --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -75,6 +77,10 @@ const DateCell = ({ date, isEkadashi, isToday }) => {
   if (isToday) {
     containerStyle.push(styles.todayBackground);
     cellStyle.push(styles.todayText);
+  }
+
+  if (isEkadashi) {
+    containerStyle.push(styles.ekadashiColor);
   }
 
   const ekadashiIcon = isEkadashi
@@ -154,36 +160,34 @@ const CalendarScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-
-        {/* --- Ekadashi Summary Card --- */}
-        <View style={styles.ekadashiSummaryCard}>
+        <LinearGradient
+          colors={['rgb(233, 237, 241)', 'rgb(244, 245, 240)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ekadashiSummaryCard}
+        >
           <View>
             <Text style={styles.summaryTitle}>2 Ekadashis this month</Text>
             <Text style={styles.summarySubtitle}>Tap on dates to view details</Text>
           </View>
-          {/* Linked to expo-calendar functionality */}
           <TouchableOpacity style={styles.calendarIconContainer} onPress={fetchEkadashiEvents}>
             <Feather name="calendar" size={relativeWidth(6)} color="#444" />
           </TouchableOpacity>
-        </View>
+        </LinearGradient>
 
-        {/* --- Calendar Grid (Dynamic Rendering) --- */}
         <View style={styles.calendarGrid}>
-          {/* Day Names Row */}
           <View style={styles.daysRow}>
             {DAYS.map((day, index) => (
               <Text key={index} style={styles.dayNameText}>{day}</Text>
             ))}
           </View>
 
-          {/* Date Cells */}
           {calendarData.map((week, weekIndex) => (
             <View key={weekIndex} style={styles.datesRow}>
               {week.map((date, dateIndex) => (
                 <DateCell
                   key={dateIndex}
                   date={date}
-                  // Check if the date is the current day number AND if the month is today's month
                   isToday={date === todayDate && currentDate.isSame(moment(), 'month')}
                   isEkadashi={ekadashiDates.includes(date)}
                 />
@@ -192,14 +196,11 @@ const CalendarScreen = () => {
           ))}
         </View>
 
-        {/* --- Observances Section --- */}
         <View style={styles.observancesSection}>
           <View style={styles.observancesHeader}>
             <Feather name="star" size={relativeWidth(5)} color="#FFC107" style={styles.starIcon} />
             <Text style={styles.observancesTitle}>Ekadashi Observances</Text>
           </View>
-
-          {/* Static Mockup, in a real app this would be filtered based on currentDate */}
           {renderObservanceItem('Papanuksha Ekadashi', 'Fri, Oct 3', 'Shukla', 'waxing')}
           {renderObservanceItem('Rama Ekadashi', 'Fri, Oct 17', 'Krishna', 'waning')}
         </View>
@@ -207,15 +208,17 @@ const CalendarScreen = () => {
         {/* --- Legend --- */}
         <View style={styles.legendContainer}>
           <View>
-            <Text style={styles.legendText}>Legend</Text>
+            <Text style={{ fontSize: relativeWidth(4), fontWeight: '500', color: DarkBlue }}>Legend</Text>
           </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendColorBox, styles.todayColor]} />
-            <Text style={styles.legendText}>Today</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendColorBox, styles.ekadashiColor]} />
-            <Text style={styles.legendText}>Ekadashi</Text>
+          <View style={{ flexDirection: 'row', marginTop: 10 }}>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendColorBox, styles.todayColor]} />
+              <Text style={styles.legendText}>Today</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendColorBox, styles.ekadashiColor]} />
+              <Text style={styles.legendText}>Ekadashi</Text>
+            </View>
           </View>
         </View>
 
@@ -292,7 +295,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: relativeWidth(3.8),
     fontWeight: '500',
-    color: '#495057',
+    color: LightBlue,
   },
   datesRow: {
     flexDirection: 'row',
@@ -305,11 +308,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+
   },
   dateCellText: {
     fontSize: relativeWidth(4),
     fontWeight: '400',
     color: '#212529',
+
   },
 
   // Styles for Date Highlighting
@@ -322,7 +327,8 @@ const styles = StyleSheet.create({
   },
   todayBackground: {
     backgroundColor: '#2C3E50',
-    borderRadius: 999,
+    borderRadius: 15,
+    // marginHorizontal: 5
   },
   todayText: {
     color: '#fff',
@@ -348,17 +354,24 @@ const styles = StyleSheet.create({
   observancesTitle: {
     fontSize: relativeWidth(4.5),
     fontWeight: '600',
-    color: '#000',
+    color: DarkBlue,
   },
 
   // Observance Item Styles
   observanceItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: relativeHeight(1.5),
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f3f5',
+    // paddingVertical: relativeHeight(1.5),
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#f1f3f5',
+    backgroundColor: '#F9FBFD',
     justifyContent: 'space-between',
+    borderWidth: 0.5,
+    borderColor: '#eee',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
+    // marginVertical: 10
   },
   observanceImagePlaceholder: {
     width: relativeWidth(10),
@@ -382,8 +395,10 @@ const styles = StyleSheet.create({
     color: '#6c757d',
   },
   phaseBadge: {
-    backgroundColor: '#F1F3F5',
-    borderRadius: relativeWidth(1.5),
+    // backgroundColor: '#F1F3F5',
+    borderWidth: 0.5,
+    borderColor: '#ced4da',
+    borderRadius: 10,
     paddingHorizontal: relativeWidth(3),
     paddingVertical: relativeWidth(1),
   },
@@ -395,17 +410,19 @@ const styles = StyleSheet.create({
 
   // Legend Styles
   legendContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+
     justifyContent: 'flex-start',
-    paddingHorizontal: relativeWidth(4),
-    paddingVertical: relativeHeight(1),
+    padding: relativeWidth(4),
+    // paddingHorizontal: relativeWidth(5),
+    // paddingVertical: relativeHeight(3),
     backgroundColor: '#fff',
     borderRadius: relativeWidth(3),
   },
   legendText: {
     fontSize: relativeWidth(3.5),
-    color: '#6c757d',
+    color: LightBlue,
+    fontWeight: '500',
+
     marginRight: relativeWidth(4),
   },
   legendItem: {
@@ -423,9 +440,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3E50',
   },
   ekadashiColor: {
-    backgroundColor: '#FFF3CD',
-    borderWidth: 1,
-    borderColor: '#FFC107',
+    backgroundColor: '#FEF9D9',
+    // borderColor: '#FFC107',
+    borderRadius: 15
   },
 });
 
