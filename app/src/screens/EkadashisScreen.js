@@ -1,8 +1,21 @@
-import { Feather, Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppYellow, DarkBlue, GRADIENT_END, GRADIENT_START, LightBlue } from '../constants/Colors';
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  AppYellow,
+  DarkBlue,
+  GRADIENT_END,
+  GRADIENT_START,
+  LightBlue,
+} from "../constants/Colors";
 
 // --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -13,19 +26,19 @@ const relativeHeight = (percentage) => WINDOW_HEIGHT * (percentage / 100);
 
 // --- Static Data for the Month Grid ---
 const YEAR_DATA = [
-  { month: 'January', ekadashis: 2, isUpcoming: false },
-  { month: 'February', ekadashis: 2, isUpcoming: false },
-  { month: 'March', ekadashis: 2, isUpcoming: false },
-  { month: 'April', ekadashis: 2, isUpcoming: false },
-  { month: 'May', ekadashis: 2, isUpcoming: false },
-  { month: 'June', ekadashis: 2, isUpcoming: false },
-  { month: 'July', ekadashis: 2, isUpcoming: false },
-  { month: 'August', ekadashis: 2, isUpcoming: false },
-  { month: 'September', ekadashis: 2, isUpcoming: false },
+  { month: "January", ekadashis: 2, isUpcoming: false },
+  { month: "February", ekadashis: 2, isUpcoming: false },
+  { month: "March", ekadashis: 2, isUpcoming: false },
+  { month: "April", ekadashis: 2, isUpcoming: false },
+  { month: "May", ekadashis: 2, isUpcoming: false },
+  { month: "June", ekadashis: 2, isUpcoming: false },
+  { month: "July", ekadashis: 2, isUpcoming: false },
+  { month: "August", ekadashis: 2, isUpcoming: false },
+  { month: "September", ekadashis: 2, isUpcoming: false },
   // Assuming current month is October based on the previous screen
-  { month: 'October', ekadashis: 2, isUpcoming: true, isCurrent: true },
-  { month: 'November', ekadashis: 2, isUpcoming: true },
-  { month: 'December', ekadashis: 2, isUpcoming: true },
+  { month: "October", ekadashis: 2, isUpcoming: true, isCurrent: true },
+  { month: "November", ekadashis: 2, isUpcoming: true },
+  { month: "December", ekadashis: 2, isUpcoming: true },
 ];
 
 // --- Component for a single Month Card ---
@@ -54,7 +67,7 @@ const NextEkadashiCard = ({ title, date, details }) => (
   <LinearGradient
     colors={[GRADIENT_START, GRADIENT_END]}
     start={{ x: 0, y: 0 }} // Top-left
-    end={{ x: 1, y: 1 }}   // Bottom-right
+    end={{ x: 1, y: 1 }} // Bottom-right
     style={styles.nextEkadashiCard}
   >
     <View style={styles.moonPlaceholder}>
@@ -68,9 +81,7 @@ const NextEkadashiCard = ({ title, date, details }) => (
   </LinearGradient>
 );
 
-
 const EkadashiScreen = ({ navigation }) => {
-
   const handleMonthPress = (month) => {
     // Example navigation logic: navigate back to the calendar screen
     // and set the view to the selected month.
@@ -80,12 +91,16 @@ const EkadashiScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         {/* --- Title Header --- */}
         <View style={styles.screenHeader}>
           <Text style={styles.mainTitle}>Ekadashi Calendar 2025</Text>
-          <Text style={styles.subtitle}>Complete spiritual calendar for the year</Text>
+          <Text style={styles.subtitle}>
+            Complete spiritual calendar for the year
+          </Text>
           <View style={styles.subtitleUnderline} />
         </View>
 
@@ -96,11 +111,13 @@ const EkadashiScreen = ({ navigation }) => {
             <Text style={styles.summaryLabel}>TOTAL EKADASHIS</Text>
           </View>
           <View style={styles.summaryCardRemaining}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Feather name="star" size={relativeWidth(5)} color={AppYellow} />
               <Text style={styles.summaryCountRemaining}>5</Text>
             </View>
-            <Text style={[styles.summaryLabel, { color: AppYellow }]}>REMAINING</Text>
+            <Text style={[styles.summaryLabel, { color: AppYellow }]}>
+              REMAINING
+            </Text>
           </View>
         </View>
 
@@ -119,7 +136,6 @@ const EkadashiScreen = ({ navigation }) => {
           ))}
         </View>
 
-
         {/* --- Next Ekadashi Section --- */}
         <Text style={styles.sectionTitle}>Next Ekadashi</Text>
 
@@ -128,7 +144,6 @@ const EkadashiScreen = ({ navigation }) => {
           date="17 Oct 2025 • Ashwin"
           details="Sacred to Lord Rama, grants victory and righteousness."
         />
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -138,7 +153,7 @@ const EkadashiScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   scrollViewContent: {
     paddingHorizontal: relativeWidth(4),
@@ -147,12 +162,12 @@ const styles = StyleSheet.create({
 
   // --- Header/Title Styles ---
   screenHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: relativeHeight(3),
   },
   mainTitle: {
     fontSize: relativeWidth(6),
-    fontWeight: '700',
+    fontWeight: "700",
     color: DarkBlue, // Dark blue text
   },
   subtitle: {
@@ -163,48 +178,48 @@ const styles = StyleSheet.create({
   subtitleUnderline: {
     width: relativeWidth(15),
     height: relativeHeight(0.3),
-    backgroundColor: '#2C3E50',
+    backgroundColor: "#2C3E50",
     marginTop: relativeHeight(1),
   },
 
   // --- Summary Cards ---
   summaryContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: relativeHeight(3),
   },
   summaryCardTotal: {
-    width: '48%',
-    backgroundColor: '#E9ECF0', // Light gray/blue
+    width: "48%",
+    backgroundColor: "#E9ECF0", // Light gray/blue
     borderRadius: relativeWidth(3),
     padding: relativeWidth(4),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   summaryCardRemaining: {
-    width: '48%',
-    backgroundColor: '#FFFBEA', // Light yellow
+    width: "48%",
+    backgroundColor: "#FFFBEA", // Light yellow
     borderRadius: relativeWidth(3),
     padding: relativeWidth(4),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
-    borderColor: '#FEE085',
+    borderColor: "#FEE085",
   },
   summaryCount: {
     fontSize: relativeWidth(8),
-    fontWeight: '700',
+    fontWeight: "700",
     color: DarkBlue,
   },
   summaryCountRemaining: {
     fontSize: relativeWidth(5),
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppYellow,
     marginTop: relativeHeight(0.5),
   },
   summaryLabel: {
     fontSize: relativeWidth(3),
-    fontWeight: '500',
+    fontWeight: "500",
     color: DarkBlue,
     marginTop: relativeHeight(0.5),
   },
@@ -212,97 +227,97 @@ const styles = StyleSheet.create({
   // --- Browse by Month Grid ---
   sectionTitle: {
     fontSize: relativeWidth(5),
-    fontWeight: '600',
-    color: '#212529',
+    fontWeight: "600",
+    color: "#212529",
     marginBottom: relativeHeight(1.5),
   },
   monthGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     marginBottom: relativeHeight(3),
   },
   monthCard: {
-    width: '48%', // Allows two columns with a small gap
-    backgroundColor: '#fff',
+    width: "48%", // Allows two columns with a small gap
+    backgroundColor: "#fff",
     borderRadius: relativeWidth(2),
     padding: relativeWidth(3),
     marginBottom: relativeHeight(1.5),
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: "#eee",
   },
   monthCardUpcoming: {
-    width: '48%',
-    backgroundColor: '#E6F0FF', // Light blue for upcoming
+    width: "48%",
+    backgroundColor: "#E6F0FF", // Light blue for upcoming
     borderRadius: relativeWidth(2),
     padding: relativeWidth(3),
     marginBottom: relativeHeight(1.5),
     borderWidth: 1,
-    borderColor: '#B3CFFC',
-    position: 'relative',
+    borderColor: "#B3CFFC",
+    position: "relative",
   },
   monthText: {
     fontSize: relativeWidth(4.2),
-    fontWeight: '600',
-    color: '#212529',
+    fontWeight: "600",
+    color: "#212529",
   },
   monthTextUpcoming: {
     fontSize: relativeWidth(4.2),
-    fontWeight: '600',
-    color: '#2C3E50',
+    fontWeight: "600",
+    color: "#2C3E50",
   },
   ekadashiCountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: relativeHeight(0.5),
   },
   ekadashiCountText: {
     fontSize: relativeWidth(3.5),
-    color: '#6c757d',
+    color: "#6c757d",
     marginLeft: relativeWidth(1.5),
   },
   upcomingBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: relativeWidth(3),
     right: relativeWidth(3),
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: relativeWidth(1),
     paddingHorizontal: relativeWidth(2),
     paddingVertical: relativeHeight(0.3),
     borderWidth: 1,
-    borderColor: '#B3CFFC',
+    borderColor: "#B3CFFC",
   },
   upcomingBadgeText: {
     fontSize: relativeWidth(2.8),
-    fontWeight: '600',
-    color: '#2C3E50',
+    fontWeight: "600",
+    color: "#2C3E50",
   },
 
   // --- Next Ekadashi Card ---
   nextEkadashiCard: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    backgroundColor: "#fff",
     borderRadius: relativeWidth(3),
     padding: relativeWidth(4),
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: "#eee",
   },
   moonPlaceholder: {
     width: relativeWidth(15),
     height: relativeWidth(15),
     borderRadius: relativeWidth(7.5),
-    backgroundColor: '#E9ECF0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#E9ECF0",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: relativeWidth(4),
   },
   nextEkadashiTextContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   nextEkadashiTitle: {
     fontSize: relativeWidth(4.5),
-    fontWeight: '600',
+    fontWeight: "600",
     color: DarkBlue,
   },
   nextEkadashiDate: {
@@ -312,7 +327,7 @@ const styles = StyleSheet.create({
   },
   nextEkadashiDetails: {
     fontSize: relativeWidth(3.5),
-    color: 'black',
+    color: "black",
   },
 });
 

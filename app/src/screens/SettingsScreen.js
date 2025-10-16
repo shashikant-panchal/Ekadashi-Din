@@ -2,10 +2,10 @@ import {
   Feather,
   FontAwesome5,
   Ionicons,
-  MaterialIcons
+  MaterialIcons,
 } from "@expo/vector-icons";
-import Entypo from '@expo/vector-icons/Entypo';
-import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import Entypo from "@expo/vector-icons/Entypo";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useState } from "react";
 import {
   Dimensions, // <-- Import Modal
@@ -19,9 +19,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AppYellow, BackgroundGrey, DarkBlue, LightBlue } from "../constants/Colors";
+import {
+  AppYellow,
+  BackgroundGrey,
+  DarkBlue,
+  LightBlue,
+} from "../constants/Colors";
 // Assume DarkBlue and LightBlue are defined in constants/Colors
-
 
 const { width, height } = Dimensions.get("window");
 const dw = width / 100; // dw is a constant (1% of width)
@@ -29,15 +33,20 @@ const dh = height / 100; // dh is a constant (1% of height)
 
 // --- 1. Language Data ---
 const LANGUAGES = [
-  { key: 'en', name: 'English', native: 'English' },
-  { key: 'hi', name: 'Hindi', native: 'हिंदी' },
-  { key: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ' },
-  { key: 'bn', name: 'Bengali', native: 'বাংলা' },
-  { key: 'fr', name: 'French', native: 'Français' },
-  { key: 'de', name: 'German', native: 'Deutsch' },
+  { key: "en", name: "English", native: "English" },
+  { key: "hi", name: "Hindi", native: "हिंदी" },
+  { key: "kn", name: "Kannada", native: "ಕನ್ನಡ" },
+  { key: "bn", name: "Bengali", native: "বাংলা" },
+  { key: "fr", name: "French", native: "Français" },
+  { key: "de", name: "German", native: "Deutsch" },
 ];
 
-const LanguageModal = ({ modalVisible, setModalVisible, selectedLanguage, setSelectedLanguage }) => {
+const LanguageModal = ({
+  modalVisible,
+  setModalVisible,
+  selectedLanguage,
+  setSelectedLanguage,
+}) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={modalStyles.listItem}
@@ -47,7 +56,12 @@ const LanguageModal = ({ modalVisible, setModalVisible, selectedLanguage, setSel
       }}
     >
       {selectedLanguage === item.name ? (
-        <Feather name="check" size={5 * dw} color={DarkBlue} style={modalStyles.checkIcon} />
+        <Feather
+          name="check"
+          size={5 * dw}
+          color={DarkBlue}
+          style={modalStyles.checkIcon}
+        />
       ) : (
         <View style={modalStyles.checkIconPlaceholder} />
       )}
@@ -55,7 +69,7 @@ const LanguageModal = ({ modalVisible, setModalVisible, selectedLanguage, setSel
     </TouchableOpacity>
   );
 
-  // Calculate the approximate position of the dropdown modal 
+  // Calculate the approximate position of the dropdown modal
   // to appear right over the Language card.
   // Using dh and dw as multipliers
   const topPosition = 35 * dh;
@@ -74,11 +88,16 @@ const LanguageModal = ({ modalVisible, setModalVisible, selectedLanguage, setSel
         onPress={() => setModalVisible(false)} // Close modal when background is pressed
       >
         {/* Dropdown Box positioned relative to the screen */}
-        <View style={[modalStyles.modalView, { top: topPosition, right: rightPosition }]}>
+        <View
+          style={[
+            modalStyles.modalView,
+            { top: topPosition, right: rightPosition },
+          ]}
+        >
           <FlatList
             data={LANGUAGES}
             renderItem={renderItem}
-            keyExtractor={item => item.key}
+            keyExtractor={(item) => item.key}
             style={modalStyles.list}
           />
         </View>
@@ -86,7 +105,6 @@ const LanguageModal = ({ modalVisible, setModalVisible, selectedLanguage, setSel
     </Modal>
   );
 };
-
 
 const SettingsScreen = () => {
   const [autoDetect, setAutoDetect] = useState(false);
@@ -97,13 +115,12 @@ const SettingsScreen = () => {
   const [largeText, setLargeText] = useState(false);
 
   // New State for Language Dropdown
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
-
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
-      <ScrollView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         {/* Header */}
         <Text style={styles.header}>Settings</Text>
         <Text style={styles.subHeader}>Customize your experience</Text>
@@ -147,8 +164,17 @@ const SettingsScreen = () => {
             <Text style={styles.sectionTitle}>Language</Text>
           </View>
 
-          <View style={[styles.rowBetween, { justifyContent: 'space-between', borderBottomWidth: 0, marginVertical: 0 }]}>
-            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+          <View
+            style={[
+              styles.rowBetween,
+              {
+                justifyContent: "space-between",
+                borderBottomWidth: 0,
+                marginVertical: 0,
+              },
+            ]}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Feather name="globe" size={20} color="black" />
               <View style={{ marginHorizontal: 10 }}>
                 <Text style={styles.label}>App Language</Text>
@@ -162,7 +188,11 @@ const SettingsScreen = () => {
               onPress={() => setLanguageModalVisible(true)}
             >
               <Text style={styles.dropdownText}>{selectedLanguage}</Text>
-              <MaterialIcons name="keyboard-arrow-down" size={22} color={DarkBlue} />
+              <MaterialIcons
+                name="keyboard-arrow-down"
+                size={22}
+                color={DarkBlue}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -268,12 +298,10 @@ const SettingsScreen = () => {
         </View>
 
         {/* CALENDAR INTEGRATION */}
-        <View style={[styles.card,]}>
+        <View style={[styles.card]}>
           <View style={styles.sectionHeader}>
             <Ionicons name="calendar-outline" size={18} color={AppYellow} />
-            <Text style={[styles.sectionTitle]}>
-              Calendar Integration
-            </Text>
+            <Text style={[styles.sectionTitle]}>Calendar Integration</Text>
           </View>
 
           <View style={styles.rowBetween}>
@@ -324,19 +352,17 @@ const SettingsScreen = () => {
         {/* SUPPORT */}
         <View style={[styles.card]}>
           <View style={styles.sectionHeader}>
-
             <Entypo name="heart-outlined" size={20} color={AppYellow} />
             <Text style={[styles.sectionTitle]}>Support</Text>
           </View>
 
           <TouchableOpacity style={styles.coffeeBtn}>
-            <View style={{ flexDirection: 'row', alignItems: "center" }}>
-
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <SimpleLineIcons name="cup" size={17} color="black" />
               <Text style={styles.coffeeText}>Coffee for Designer</Text>
             </View>
             <View style={styles.thankTag}>
-              <Text style={styles.thankText}>☕  Thank you!</Text>
+              <Text style={styles.thankText}>☕ Thank you!</Text>
             </View>
           </TouchableOpacity>
 
@@ -357,19 +383,19 @@ const modalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
     // Use an almost transparent background to allow visual context of the screen
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
   },
   modalView: {
     // Positioned absolutely to appear near the dropdown trigger
-    position: 'absolute',
+    position: "absolute",
     // CORRECTED: Using dw as a multiplier
     width: 50 * dw,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     // CORRECTED: Using dw as a multiplier
     borderRadius: 2 * dw,
     // CORRECTED: Using dh as a multiplier
     paddingVertical: 0.8 * dh,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       // CORRECTED: Using dh as a multiplier
@@ -379,15 +405,15 @@ const modalStyles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: "#E5E7EB",
   },
   list: {
     // CORRECTED: Using dh as a multiplier
     maxHeight: 40 * dh,
   },
   listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     // CORRECTED: Using dh and dw as multipliers
     paddingVertical: 1.5 * dh,
     paddingHorizontal: 4 * dw,
@@ -396,7 +422,7 @@ const modalStyles = StyleSheet.create({
     // CORRECTED: Using dw as a multiplier
     fontSize: 4.5 * dw,
     color: DarkBlue,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   checkIcon: {
     // CORRECTED: Using dw as a multiplier
@@ -459,9 +485,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 1.5 * dh,
     // Add bottom border to rows, except the last one if applicable, but for this structured list it's fine.
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: "#F3F4F6",
     borderBottomWidth: 1,
-    paddingBottom: 1.5 * dh
+    paddingBottom: 1.5 * dh,
   },
   // Remove bottom border from the last row in a section
   // Note: This requires manually setting borderBottomWidth: 0 on the last row of each section.
@@ -545,7 +571,7 @@ const styles = StyleSheet.create({
     color: DarkBlue,
     fontWeight: "600",
     fontSize: 3.5 * dw,
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   thankTag: {
     backgroundColor: "#FDE68A",
