@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment"; // Crucial for dynamic month manipulation
 import { useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Platform,
@@ -15,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DarkBlue, LightBlue } from "../constants/Colors";
+import { useEkadashiList } from "../hooks/useEkadashi";
 
 // --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -71,15 +73,11 @@ const generateCalendarGrid = (monthMoment) => {
   return calendarGrid;
 };
 
-// --- Custom Data Logic (Replace with real API) ---
-// In a real app, this would fetch from your Ekadashi database based on the month
-const getEkadashiDates = (monthMoment) => {
-  // For demonstration, we use fixed days (3rd and 17th) of the displayed month
-  const ekadashi1 = monthMoment.clone().date(3).format("D");
-  const ekadashi2 = monthMoment.clone().date(17).format("D");
-  return [ekadashi1, ekadashi2];
+// Helper to get paksha display name
+const getPakshaDisplay = (paksha) => {
+  if (!paksha) return "";
+  return paksha === "Shukla" ? "Shukla" : paksha === "Krishna" ? "Krishna" : paksha;
 };
-// ----------------------------------------------------
 
 // Helper function to render a single date cell
 const DateCell = ({ date, isEkadashi, isToday }) => {
@@ -114,16 +112,62 @@ const DateCell = ({ date, isEkadashi, isToday }) => {
 const CalendarScreen = () => {
   // State to track the currently viewed month
   const [currentDate, setCurrentDate] = useState(moment());
+  
+  // Fetch ekadashi list for the current year
+  const currentYear = currentDate.year();
+  const { ekadashiList, loading, error } = useEkadashiList(currentYear);
+
+  // Get ekadashi dates for the current month
+  const getEkadashiDates = (monthMoment) => {
+    if (!ekadashiList || ekadashiList.length === 0) return [];
+    
+    return ekadashiList
+      .filter(ekadashi => {
+        const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
+        return ekadashiDate.isSame(monthMoment, 'month') && 
+               ekadashiDate.isSame(monthMoment, 'year');
+      })
+      .map(ekadashi => {
+        const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
+        return ekadashiDate.format("D");
+      });
+  };
+
+  // Get ekadashi details for the current month (for observances section)
+  const getMonthEkadashis = () => {
+    if (!ekadashiList || ekadashiList.length === 0) return [];
+    
+    return ekadashiList
+      .filter(ekadashi => {
+        const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
+        return ekadashiDate.isSame(currentDate, 'month') && 
+               ekadashiDate.isSame(currentDate, 'year');
+      })
+      .map(ekadashi => ({
+        name: ekadashi.name || ekadashi.ekadashi_name || "Ekadashi",
+        date: moment(ekadashi.date || ekadashi.ekadashi_date),
+        paksha: ekadashi.paksha || getPakshaDisplay(ekadashi.paksha) || "",
+        moonPhase: ekadashi.paksha === "Shukla" ? "waxing" : "waning"
+      }))
+      .sort((a, b) => a.date.diff(b.date));
+  };
 
   // Recalculate the grid and special dates whenever the month changes
   const calendarData = useMemo(
     () => generateCalendarGrid(currentDate),
     [currentDate]
   );
+  
   const ekadashiDates = useMemo(
     () => getEkadashiDates(currentDate),
-    [currentDate]
+    [currentDate, ekadashiList]
   );
+  
+  const monthEkadashis = useMemo(
+    () => getMonthEkadashis(),
+    [currentDate, ekadashiList]
+  );
+  
   const todayDate = moment().date().toString(); // Day number of today
 
   // --- Month Navigation Handlers ---
@@ -156,23 +200,28 @@ const CalendarScreen = () => {
   };
   // ----------------------------------------------------------------
 
-  // Helper component for Observance Items (Static Mockup)
-  const renderObservanceItem = (title, date, phase, imageType) => (
-    <View style={styles.observanceItem}>
-      <View style={styles.observanceImagePlaceholder}>
-        <Text style={{ fontSize: relativeWidth(5) }}>
-          {imageType === "waxing" ? "🌕" : "🌑"}
-        </Text>
+  // Helper component for Observance Items
+  const renderObservanceItem = (ekadashi) => {
+    const formattedDate = ekadashi.date.format('ddd, MMM D');
+    const phase = ekadashi.paksha || "";
+    
+    return (
+      <View key={ekadashi.date.format('YYYY-MM-DD')} style={styles.observanceItem}>
+        <View style={styles.observanceImagePlaceholder}>
+          <Text style={{ fontSize: relativeWidth(5) }}>
+            {ekadashi.moonPhase === "waxing" ? "🌕" : "🌑"}
+          </Text>
+        </View>
+        <View style={styles.observanceTextContainer}>
+          <Text style={styles.observanceTitleText}>{ekadashi.name}</Text>
+          <Text style={styles.observanceDateText}>{formattedDate}</Text>
+        </View>
+        <View style={styles.phaseBadge}>
+          <Text style={styles.phaseBadgeText}>{phase}</Text>
+        </View>
       </View>
-      <View style={styles.observanceTextContainer}>
-        <Text style={styles.observanceTitleText}>{title}</Text>
-        <Text style={styles.observanceDateText}>{date}</Text>
-      </View>
-      <View style={styles.phaseBadge}>
-        <Text style={styles.phaseBadgeText}>{phase}</Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -204,7 +253,9 @@ const CalendarScreen = () => {
           style={styles.ekadashiSummaryCard}
         >
           <View>
-            <Text style={styles.summaryTitle}>2 Ekadashis this month</Text>
+            <Text style={styles.summaryTitle}>
+              {loading ? "Loading..." : `${monthEkadashis.length} Ekadashi${monthEkadashis.length !== 1 ? 's' : ''} this month`}
+            </Text>
             <Text style={styles.summarySubtitle}>
               Tap on dates to view details
             </Text>
@@ -252,17 +303,21 @@ const CalendarScreen = () => {
             />
             <Text style={styles.observancesTitle}>Ekadashi Observances</Text>
           </View>
-          {renderObservanceItem(
-            "Papanuksha Ekadashi",
-            "Fri, Oct 3",
-            "Shukla",
-            "waxing"
+          {loading ? (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <ActivityIndicator size="small" color={DarkBlue} />
+            </View>
+          ) : monthEkadashis.length > 0 ? (
+            monthEkadashis.map(ekadashi => renderObservanceItem(ekadashi))
+          ) : (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <Text style={{ color: LightBlue, fontSize: 14 }}>No Ekadashis this month</Text>
+            </View>
           )}
-          {renderObservanceItem(
-            "Rama Ekadashi",
-            "Fri, Oct 17",
-            "Krishna",
-            "waning"
+          {error && (
+            <View style={{ padding: 10, alignItems: 'center' }}>
+              <Text style={{ color: '#dc3545', fontSize: 12 }}>{error}</Text>
+            </View>
           )}
         </View>
 

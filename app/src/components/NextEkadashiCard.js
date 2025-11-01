@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons"; // ✅ Import Ionicons
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import moment from "moment";
 import { DarkBlue, LightBlue } from "../constants/Colors";
+import { useNextEkadashi } from "../hooks/useEkadashi";
 
 // --- Configuration ---
 
@@ -12,10 +14,64 @@ const GRADIENT_END = "#F4F5F0";
 // --- Next Ekadashi Card Component ---
 
 const NextEkadashiCard = () => {
+  const { nextEkadashi, loading, error } = useNextEkadashi();
+
   const handleViewDetails = () => {
     console.log("View Details Pressed!");
     // Navigation logic here
   };
+
+  // Calculate days remaining
+  const getDaysRemaining = (ekadashiDate) => {
+    if (!ekadashiDate) return null;
+    const date = moment(ekadashiDate);
+    const today = moment();
+    const days = date.diff(today, 'days');
+    return days > 0 ? `${days} days remaining` : days === 0 ? "Today" : "Passed";
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = moment(dateString);
+    return date.format('dddd, MMMM D, YYYY');
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.cardWrapper}>
+        <LinearGradient
+          colors={[GRADIENT_START, GRADIENT_END]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1.2 }}
+          style={styles.gradientBackground}
+        />
+        <View style={[styles.cardContentContainer, { alignItems: 'center', justifyContent: 'center', padding: 40 }]}>
+          <ActivityIndicator size="large" color={DarkBlue} />
+        </View>
+      </View>
+    );
+  }
+
+  if (error || !nextEkadashi) {
+    return (
+      <View style={styles.cardWrapper}>
+        <LinearGradient
+          colors={[GRADIENT_START, GRADIENT_END]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1.2 }}
+          style={styles.gradientBackground}
+        />
+        <View style={styles.cardContentContainer}>
+          <Text style={styles.errorText}>{error || "No upcoming Ekadashi found"}</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const ekadashiName = nextEkadashi.name || nextEkadashi.ekadashi_name || "Next Ekadashi";
+  const ekadashiDate = nextEkadashi.date || nextEkadashi.ekadashi_date;
+  const daysRemaining = getDaysRemaining(ekadashiDate);
 
   return (
     <View style={styles.cardWrapper}>
@@ -36,7 +92,7 @@ const NextEkadashiCard = () => {
 
           <View style={styles.textGroup}>
             <Text style={styles.nextEkadashiText}>Next Ekadashi</Text>
-            <Text style={[styles.ekadashiNameText, { color: LightBlue }]}>Rama Ekadashi</Text>
+            <Text style={[styles.ekadashiNameText, { color: LightBlue }]}>{ekadashiName}</Text>
           </View>
 
           <View style={styles.upcomingBadge}>
@@ -55,8 +111,8 @@ const NextEkadashiCard = () => {
               style={{ marginRight: 10 }}
             />
             <View>
-              <Text style={styles.dateText}>Friday, October 17, 2025</Text>
-              <Text style={styles.daysRemainingText}>7 days remaining</Text>
+              <Text style={styles.dateText}>{formatDate(ekadashiDate)}</Text>
+              {daysRemaining && <Text style={styles.daysRemainingText}>{daysRemaining}</Text>}
             </View>
           </View>
 
@@ -175,6 +231,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: DarkBlue,
+  },
+  errorText: {
+    fontSize: 14,
+    color: "#dc3545",
+    textAlign: "center",
+    padding: 20,
   },
 });
 

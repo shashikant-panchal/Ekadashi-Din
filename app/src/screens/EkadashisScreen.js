@@ -1,6 +1,7 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import {
+  ActivityIndicator,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import moment from "moment";
 import {
   AppYellow,
   DarkBlue,
@@ -16,6 +18,7 @@ import {
   GRADIENT_START,
   LightBlue,
 } from "../constants/Colors";
+import { useEkadashiList, useNextEkadashi } from "../hooks/useEkadashi";
 
 // --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -23,23 +26,6 @@ const WINDOW_HEIGHT = Dimensions.get("window").height;
 const relativeWidth = (percentage) => WINDOW_WIDTH * (percentage / 100);
 const relativeHeight = (percentage) => WINDOW_HEIGHT * (percentage / 100);
 // ----------------------------------------
-
-// --- Static Data for the Month Grid ---
-const YEAR_DATA = [
-  { month: "January", ekadashis: 2, isUpcoming: false },
-  { month: "February", ekadashis: 2, isUpcoming: false },
-  { month: "March", ekadashis: 2, isUpcoming: false },
-  { month: "April", ekadashis: 2, isUpcoming: false },
-  { month: "May", ekadashis: 2, isUpcoming: false },
-  { month: "June", ekadashis: 2, isUpcoming: false },
-  { month: "July", ekadashis: 2, isUpcoming: false },
-  { month: "August", ekadashis: 2, isUpcoming: false },
-  { month: "September", ekadashis: 2, isUpcoming: false },
-  // Assuming current month is October based on the previous screen
-  { month: "October", ekadashis: 2, isUpcoming: true, isCurrent: true },
-  { month: "November", ekadashis: 2, isUpcoming: true },
-  { month: "December", ekadashis: 2, isUpcoming: true },
-];
 
 // --- Component for a single Month Card ---
 const MonthCard = ({ month, ekadashis, isUpcoming, onPress }) => {
@@ -82,12 +68,96 @@ const NextEkadashiCard = ({ title, date, details }) => (
 );
 
 const EkadashiScreen = ({ navigation }) => {
+  const currentYear = moment().year();
+  const { ekadashiList, loading: listLoading, error: listError } = useEkadashiList(currentYear);
+  const { nextEkadashi, loading: nextLoading } = useNextEkadashi();
+
   const handleMonthPress = (month) => {
     // Example navigation logic: navigate back to the calendar screen
     // and set the view to the selected month.
     // navigation.navigate('Calendar', { month: month });
     console.log(`Navigating to ${month} calendar view`);
   };
+
+  // Group ekadashis by month
+  const getEkadashisByMonth = () => {
+    if (!ekadashiList || ekadashiList.length === 0) return {};
+    
+    const grouped = {};
+    ekadashiList.forEach((ekadashi) => {
+      const date = moment(ekadashi.date || ekadashi.ekadashi_date);
+      const monthName = date.format('MMMM');
+      
+      if (!grouped[monthName]) {
+        grouped[monthName] = [];
+      }
+      grouped[monthName].push(ekadashi);
+    });
+    
+    return grouped;
+  };
+
+  // Get month data with real counts
+  const getMonthData = () => {
+    const grouped = getEkadashisByMonth();
+    const months = moment.months();
+    const today = moment();
+    
+    return months.map((month, index) => {
+      const monthEkadashis = grouped[month] || [];
+      const monthDate = moment().month(index);
+      const isUpcoming = monthDate.isAfter(today, 'month') || (monthDate.month() === today.month() && monthDate.year() === today.year());
+      
+      return {
+        month,
+        ekadashis: monthEkadashis.length,
+        isUpcoming,
+        isCurrent: monthDate.month() === today.month() && monthDate.year() === today.year()
+      };
+    });
+  };
+
+  // Calculate totals
+  const totalEkadashis = ekadashiList ? ekadashiList.length : 0;
+  const today = moment();
+  const remainingEkadashis = ekadashiList 
+    ? ekadashiList.filter(e => {
+        const date = moment(e.date || e.ekadashi_date);
+        return date.isAfter(today, 'day') || date.isSame(today, 'day');
+      }).length
+    : 0;
+
+  // Format next ekadashi data
+  const getNextEkadashiData = () => {
+    if (!nextEkadashi) return null;
+    
+    const date = moment(nextEkadashi.date || nextEkadashi.ekadashi_date);
+    const month = date.format('MMM');
+    const day = date.format('D');
+    const year = date.format('YYYY');
+    
+    // Get Hindu month name if available, otherwise use English month
+    const hinduMonth = nextEkadashi.month || month;
+    
+    return {
+      title: nextEkadashi.name || nextEkadashi.ekadashi_name || "Next Ekadashi",
+      date: `${day} ${month} ${year} • ${hinduMonth}`,
+      details: nextEkadashi.significance || nextEkadashi.description || "A sacred day for fasting and devotion."
+    };
+  };
+
+  const monthData = getMonthData();
+  const nextEkadashiData = getNextEkadashiData();
+
+  if (listLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={DarkBlue} />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -97,7 +167,7 @@ const EkadashiScreen = ({ navigation }) => {
       >
         {/* --- Title Header --- */}
         <View style={styles.screenHeader}>
-          <Text style={styles.mainTitle}>Ekadashi Calendar 2025</Text>
+          <Text style={styles.mainTitle}>Ekadashi Calendar {currentYear}</Text>
           <Text style={styles.subtitle}>
             Complete spiritual calendar for the year
           </Text>
@@ -107,13 +177,13 @@ const EkadashiScreen = ({ navigation }) => {
         {/* --- Summary Cards --- */}
         <View style={styles.summaryContainer}>
           <View style={styles.summaryCardTotal}>
-            <Text style={styles.summaryCount}>24</Text>
+            <Text style={styles.summaryCount}>{totalEkadashis}</Text>
             <Text style={styles.summaryLabel}>TOTAL EKADASHIS</Text>
           </View>
           <View style={styles.summaryCardRemaining}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Feather name="star" size={relativeWidth(5)} color={AppYellow} />
-              <Text style={styles.summaryCountRemaining}>5</Text>
+              <Text style={styles.summaryCountRemaining}>{remainingEkadashis}</Text>
             </View>
             <Text style={[styles.summaryLabel, { color: AppYellow }]}>
               REMAINING
@@ -125,7 +195,7 @@ const EkadashiScreen = ({ navigation }) => {
         <Text style={styles.sectionTitle}>Browse by Month</Text>
 
         <View style={styles.monthGrid}>
-          {YEAR_DATA.map((item, index) => (
+          {monthData.map((item, index) => (
             <MonthCard
               key={item.month}
               month={item.month}
@@ -137,13 +207,22 @@ const EkadashiScreen = ({ navigation }) => {
         </View>
 
         {/* --- Next Ekadashi Section --- */}
-        <Text style={styles.sectionTitle}>Next Ekadashi</Text>
-
-        <NextEkadashiCard
-          title="Rama Ekadashi"
-          date="17 Oct 2025 • Ashwin"
-          details="Sacred to Lord Rama, grants victory and righteousness."
-        />
+        {nextEkadashiData && (
+          <>
+            <Text style={styles.sectionTitle}>Next Ekadashi</Text>
+            <NextEkadashiCard
+              title={nextEkadashiData.title}
+              date={nextEkadashiData.date}
+              details={nextEkadashiData.details}
+            />
+          </>
+        )}
+        
+        {listError && (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ color: '#dc3545', fontSize: 14 }}>{listError}</Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
