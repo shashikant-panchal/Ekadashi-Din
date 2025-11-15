@@ -120,10 +120,11 @@ const EkadashiScreen = ({ navigation }) => {
   // Calculate totals
   const totalEkadashis = ekadashiList ? ekadashiList.length : 0;
   const today = moment();
+  // Exclude today's Ekadashi from remaining count
   const remainingEkadashis = ekadashiList 
     ? ekadashiList.filter(e => {
         const date = moment(e.date || e.ekadashi_date);
-        return date.isAfter(today, 'day') || date.isSame(today, 'day');
+        return date.isAfter(today, 'day'); // Only count future Ekadashis, exclude today
       }).length
     : 0;
 

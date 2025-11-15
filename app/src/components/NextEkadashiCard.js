@@ -4,6 +4,8 @@ import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "rea
 import moment from "moment";
 import { DarkBlue, LightBlue } from "../constants/Colors";
 import { useNextEkadashi } from "../hooks/useEkadashi";
+import { getTodayEkadashi } from "../services/api";
+import { useState, useEffect } from "react";
 
 // --- Configuration ---
 
@@ -15,6 +17,15 @@ const GRADIENT_END = "#F4F5F0";
 
 const NextEkadashiCard = () => {
   const { nextEkadashi, loading, error } = useNextEkadashi();
+  const [todayEkadashi, setTodayEkadashi] = useState(null);
+
+  useEffect(() => {
+    const fetchTodayEkadashi = async () => {
+      const today = await getTodayEkadashi();
+      setTodayEkadashi(today);
+    };
+    fetchTodayEkadashi();
+  }, []);
 
   const handleViewDetails = () => {
     console.log("View Details Pressed!");
@@ -29,6 +40,10 @@ const NextEkadashiCard = () => {
     const days = date.diff(today, 'days');
     return days > 0 ? `${days} days remaining` : days === 0 ? "Today" : "Passed";
   };
+
+  // Determine which Ekadashi to display
+  const displayEkadashi = todayEkadashi || nextEkadashi;
+  const isToday = todayEkadashi !== null;
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -53,7 +68,7 @@ const NextEkadashiCard = () => {
     );
   }
 
-  if (error || !nextEkadashi) {
+  if (error || !displayEkadashi) {
     return (
       <View style={styles.cardWrapper}>
         <LinearGradient
@@ -69,9 +84,9 @@ const NextEkadashiCard = () => {
     );
   }
 
-  const ekadashiName = nextEkadashi.name || nextEkadashi.ekadashi_name || "Next Ekadashi";
-  const ekadashiDate = nextEkadashi.date || nextEkadashi.ekadashi_date;
-  const daysRemaining = getDaysRemaining(ekadashiDate);
+  const ekadashiName = displayEkadashi.name || displayEkadashi.ekadashi_name || (isToday ? "Today's Ekadashi" : "Next Ekadashi");
+  const ekadashiDate = displayEkadashi.date || displayEkadashi.ekadashi_date;
+  const daysRemaining = isToday ? "Today" : getDaysRemaining(ekadashiDate);
 
   return (
     <View style={styles.cardWrapper}>
@@ -91,12 +106,12 @@ const NextEkadashiCard = () => {
           </View>
 
           <View style={styles.textGroup}>
-            <Text style={styles.nextEkadashiText}>Next Ekadashi</Text>
+            <Text style={styles.nextEkadashiText}>{isToday ? "Today's Ekadashi" : "Next Ekadashi"}</Text>
             <Text style={[styles.ekadashiNameText, { color: LightBlue }]}>{ekadashiName}</Text>
           </View>
 
           <View style={styles.upcomingBadge}>
-            <Text style={styles.upcomingText}>Upcoming</Text>
+            <Text style={styles.upcomingText}>{isToday ? "Today" : "Upcoming"}</Text>
           </View>
         </View>
 

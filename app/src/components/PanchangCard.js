@@ -39,66 +39,75 @@ const PanchangCard = () => {
         return "N/A";
     };
 
-    // Extract tithi name from API response
+    // Extract tithi - synced with web app structure
     const getTithi = () => {
         if (!panchangData) return "N/A";
-        return panchangData.tithi?.name || 
+        // Web app returns tithi as string directly
+        return panchangData.tithi || 
+               panchangData.tithi?.name || 
                panchangData.tithi?.details?.tithi_name || 
                panchangData.tithi_name || 
                "N/A";
     };
 
-    // Extract location from API response
+    // Extract location - synced with web app
     const getLocation = () => {
         if (!panchangData) return "N/A";
+        // Web app returns location as string "Mumbai, India"
         return panchangData.location || 
                (panchangData.latitude && panchangData.longitude 
                 ? `${panchangData.latitude.toFixed(2)}°, ${panchangData.longitude.toFixed(2)}°`
                 : "N/A");
     };
 
-    // Extract sunrise from API response
+    // Extract sunrise - synced with web app (already formatted as "HH:MM")
     const getSunrise = () => {
         if (!panchangData) return "N/A";
-        return formatTime(panchangData.sunrise || panchangData.sunrise_time || panchangData.suryoday);
+        // Web app returns time as formatted string "HH:MM"
+        return panchangData.sunrise || formatTime(panchangData.sunrise_time || panchangData.suryoday) || "N/A";
     };
 
-    // Extract sunset from API response
+    // Extract sunset - synced with web app (already formatted as "HH:MM")
     const getSunset = () => {
         if (!panchangData) return "N/A";
-        return formatTime(panchangData.sunset || panchangData.sunset_time || panchangData.suryast);
+        // Web app returns time as formatted string "HH:MM"
+        return panchangData.sunset || formatTime(panchangData.sunset_time || panchangData.suryast) || "N/A";
     };
 
-    // Extract moonrise from API response
+    // Extract moonrise - synced with web app (already formatted as "HH:MM")
     const getMoonrise = () => {
         if (!panchangData) return "N/A";
-        return formatTime(panchangData.moonrise || panchangData.moonrise_time || panchangData.chandroday);
+        // Web app returns time as formatted string "HH:MM"
+        return panchangData.moonrise || formatTime(panchangData.moonrise_time || panchangData.chandroday) || "N/A";
     };
 
-    // Extract nakshatra from API response
+    // Extract nakshatra - synced with web app structure
     const getNakshatra = () => {
         if (!panchangData) return "N/A";
-        return panchangData.nakshatra?.name || 
+        // Web app returns nakshatra as string directly
+        return panchangData.nakshatra || 
+               panchangData.nakshatra?.name || 
                panchangData.nakshatra_name || 
-               panchangData.nakshatra || 
                "N/A";
     };
 
-    // Extract yoga from API response
+    // Extract yoga - synced with web app structure
     const getYoga = () => {
         if (!panchangData) return "N/A";
-        return panchangData.yoga?.name || 
+        // Web app returns yoga as string directly
+        return panchangData.yoga || 
+               panchangData.yoga?.name || 
                panchangData.yoga_name || 
-               panchangData.yoga || 
                "N/A";
     };
 
-    // Extract karana from API response
+    // Extract karana - synced with web app structure
     const getKarana = () => {
         if (!panchangData) return "N/A";
-        return panchangData.karana?.name || 
+        // Web app returns karana as string directly
+        return panchangData.karana || 
+               panchangData.karana?.name || 
                panchangData.karana_name || 
-               panchangData.karana || 
                "N/A";
     };
 
