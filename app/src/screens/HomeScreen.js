@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NextEkadashiCard from "../components/NextEkadashiCard";
 import PanchangCard from "../components/PanchangCard";
@@ -10,15 +11,18 @@ import { dh, dw } from "../constants/Dimensions";
 import { logo } from "../constants/Images";
 
 const HomeScreen = () => {
+  const navigation = useNavigation()
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Feather
-          name="bell"
-          size={24}
-          color="#4A5568"
-          style={{ alignSelf: "flex-end", margin: 20 }}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+          <Feather
+            name="bell"
+            size={24}
+            color="#4A5568"
+            style={{ alignSelf: "flex-end", margin: 20 }}
+          />
+        </TouchableOpacity>
         <View>
           <Image resizeMode="contain" source={logo} style={styles.logo} />
           <Text style={styles.title}>Ekadashi Din</Text>
@@ -44,8 +48,9 @@ const HomeScreen = () => {
             icon={"book-outline"}
             iconColor={DarkBlue}
             iconBackground={BackgroundGrey}
-            title={"All Ekadashi"}
+            title={"Daily Wisdom"}
             subTitle={"Spiritual Guidance"}
+            onPress={() => navigation.navigate('DailyWisdom')}
           />
           <SplitCard
             icon={"calendar-outline"}

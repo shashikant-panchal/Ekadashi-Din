@@ -4,9 +4,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import CalendarScreen from "../../screens/CalendarScreen";
 import EkadashisScreen from "../../screens/EkadashisScreen";
-import HomeScreen from "../../screens/HomeScreen";
 import ProfileScreen from "../../screens/ProfileScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
+import HomeStack from "../stacknavigation/HomeStack";
 
 const TAB_ACTIVE_COLOR = "#16366B";
 const PALE_COLOR = "#34629E";
@@ -102,7 +102,7 @@ const BottomTab = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           tabBarLabel: "Home",
           tabBarIconName: "home",

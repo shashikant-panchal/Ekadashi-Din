@@ -29,7 +29,7 @@ export const getEkadashiList = async (year) => {
     });
     return response.data;
   } catch (error) {
-    // If API fails, use static data
+
     console.log("API unavailable, using static data for Ekadashi list");
 
     // Use static data for the requested year
@@ -38,8 +38,6 @@ export const getEkadashiList = async (year) => {
     if (ekadashiList.length > 0) {
       return ekadashiList;
     }
-
-    // If no data for requested year, throw error
     throw new Error(`No Ekadashi data available for year ${year}`);
   }
 };

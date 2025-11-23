@@ -1,10 +1,13 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { StyleSheet, Text, View } from 'react-native'
+// 1. Import TouchableOpacity
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { DarkBlue, LightBlue } from '../constants/Colors'
 
-const SplitCard = ({ icon, iconColor, iconBackground, list, title, subTitle }) => {
+// 2. Add 'onPress' to the list of props
+const SplitCard = ({ icon, iconColor, iconBackground, list, title, subTitle, onPress }) => {
     return (
-        <View style={styles.container}>
+        // 3. Change the root <View> to <TouchableOpacity> and pass the onPress prop
+        <TouchableOpacity style={styles.container} onPress={onPress}>
             {list ? (<View style={[styles.iconBackground, { backgroundColor: iconBackground }]}>
                 <MaterialCommunityIcons name={list} size={24} color={iconColor} />
             </View>) : <View style={[styles.iconBackground, { backgroundColor: iconBackground }]}>
@@ -12,7 +15,7 @@ const SplitCard = ({ icon, iconColor, iconBackground, list, title, subTitle }) =
             </View>}
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subTitle}</Text>
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -32,7 +35,6 @@ const styles = StyleSheet.create({
         margin: 10
     },
     iconBackground: {
-        // backgroundColor: "#D5DBE2",
         borderRadius: 10,
         padding: 10,
         marginRight: 10,

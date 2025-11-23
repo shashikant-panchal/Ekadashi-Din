@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons"; // ✅ Import Ionicons
 import { LinearGradient } from "expo-linear-gradient";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import moment from "moment";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { DarkBlue, LightBlue } from "../constants/Colors";
 import { useNextEkadashi } from "../hooks/useEkadashi";
 import { getTodayEkadashi } from "../services/api";
-import { useState, useEffect } from "react";
 
 // --- Configuration ---
 
@@ -98,10 +98,8 @@ const NextEkadashiCard = () => {
       />
 
       <View style={styles.cardContentContainer}>
-        {/* --- Top Section --- */}
         <View style={styles.topSection}>
           <View style={styles.iconBackground}>
-            {/* ✅ Replaced Calendar emoji with Ionicon */}
             <Ionicons name="calendar-outline" size={24} color={DarkBlue} />
           </View>
 
@@ -114,11 +112,8 @@ const NextEkadashiCard = () => {
             <Text style={styles.upcomingText}>{isToday ? "Today" : "Upcoming"}</Text>
           </View>
         </View>
-
-        {/* --- Bottom Section --- */}
-        <View style={styles.bottomSection}>
+        {/* <View style={styles.bottomSection}>
           <View style={styles.dateInfoContainer}>
-            {/* ✅ Replaced Clock emoji with Ionicon */}
             <Ionicons
               name="time-outline"
               size={18}
@@ -137,13 +132,12 @@ const NextEkadashiCard = () => {
           >
             <Text style={styles.detailsButtonText}>View Details</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </View>
   );
 };
 
-// --- Styles ---
 
 const styles = StyleSheet.create({
   cardWrapper: {
@@ -156,6 +150,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+    // alignContent: 'center'
   },
   gradientBackground: {
     position: "absolute",
