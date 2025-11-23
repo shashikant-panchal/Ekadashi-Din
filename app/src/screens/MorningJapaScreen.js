@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import { DarkBlue, LightBlue } from '../constants/Colors';
+import { mantrasList } from '../data/bhajansData';
 
 const MorningJapaScreen = ({ navigation }) => {
     const [roundsCompleted, setRoundsCompleted] = useState(0);
@@ -125,11 +126,20 @@ const MorningJapaScreen = ({ navigation }) => {
 
                 {/* Hare Krishna Maha Mantra Card */}
                 <View style={styles.mantraCard}>
-                    <Text style={styles.mantraCardTitle}>Hare Krishna Maha Mantra</Text>
-                    <Text style={styles.sanskritMantra}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे</Text>
-                    <Text style={styles.sanskritMantra}>हरे राम हरे राम राम राम हरे हरे</Text>
-                    <Text style={styles.englishMantra}>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</Text>
-                    <Text style={styles.englishMantra}>Hare Rama Hare Rama Rama Rama Hare Hare</Text>
+                    {(() => {
+                        const hareKrishnaMantra = mantrasList.find(m => m.name === "Hare Krishna Mahamantra") || mantrasList[0];
+                        return (
+                            <>
+                                <Text style={styles.mantraCardTitle}>{hareKrishnaMantra.name}</Text>
+                                {hareKrishnaMantra.sanskrit.split('\n').map((line, index) => (
+                                    <Text key={index} style={styles.sanskritMantra}>{line}</Text>
+                                ))}
+                                {hareKrishnaMantra.transliteration.split('\n').map((line, index) => (
+                                    <Text key={index} style={styles.englishMantra}>{line}</Text>
+                                ))}
+                            </>
+                        );
+                    })()}
                 </View>
 
                 {/* Complete Round Button */}

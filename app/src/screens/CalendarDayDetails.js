@@ -1,21 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Dimensions, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import moment from 'moment';
 import { DarkBlue, Grey, LightBlue } from '../constants/Colors';
 import { Feather } from '@expo/vector-icons';
 import { useEkadashiList } from '../hooks/useEkadashi';
+import { getAllBhajans, getBhajanById } from '../data/bhajansData';
 
 const PRIMARY_COLOR = '#4A90E2';
 const SECONDARY_BG = '#F5F5F5';
 
 const BORDER_COLOR = '#E0E0E0';
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const BHAIJAN_LIST = [
-    "Hare Krishna Mahamantra",
-    "Ekadashi Vrata Katha",
-    "Om Namo Bhagavate Vasudevaya",
-];
 
 // --- Icon Component using Feather ---
 const AppIcon = ({ name, style, size = 24, color = PRIMARY_COLOR }) => (
@@ -92,20 +88,29 @@ const TimingsSection = ({ panchangData }) => {
 };
 
 // --- Section 4: Bhajans & Mantras ---
-const BhajansSection = ({ onBhajanPress }) => (
-    <DetailCard iconName="music" title="Bhajans & Mantras">
-        {BHAIJAN_LIST.map((mantra, index) => (
-            <TouchableOpacity
-                key={index}
-                style={[styles.bhajanButton, { borderColor: BORDER_COLOR, backgroundColor: SECONDARY_BG }]}
-                onPress={() => onBhajanPress(mantra)}
-            >
-                <AppIcon name="music" style={styles.bhajanIcon} color={PRIMARY_COLOR} size={18} />
-                <Text style={styles.bhajanText}>{mantra}</Text>
-            </TouchableOpacity>
-        ))}
-    </DetailCard>
-);
+const BhajansSection = ({ onBhajanPress, bhajans }) => {
+    const displayBhajans = bhajans || getAllBhajans().slice(0, 3); // Show first 3 by default
+    
+    return (
+        <DetailCard iconName="music" title="Bhajans & Mantras">
+            {displayBhajans.map((bhajan) => (
+                <TouchableOpacity
+                    key={bhajan.id}
+                    style={[styles.bhajanButton, { borderColor: BORDER_COLOR, backgroundColor: SECONDARY_BG }]}
+                    onPress={() => onBhajanPress(bhajan)}
+                >
+                    <AppIcon name="music" style={styles.bhajanIcon} color={PRIMARY_COLOR} size={18} />
+                    <View style={styles.bhajanTextContainer}>
+                        <Text style={styles.bhajanText}>{bhajan.name}</Text>
+                        {bhajan.artist && (
+                            <Text style={styles.bhajanArtist}>{bhajan.artist}</Text>
+                        )}
+                    </View>
+                </TouchableOpacity>
+            ))}
+        </DetailCard>
+    );
+};
 
 // --- Section 5: Sattvic Recipes ---
 const RecipesSection = () => {
@@ -167,65 +172,148 @@ const StoryModal = ({ isVisible, onClose, ekadashi }) => {
 };
 
 // --- Modal 2: Bhajan Player ---
-const BhajanModal = ({ isVisible, onClose, selectedBhajan }) => (
-    <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={onClose}
-    >
-        <View style={styles.modalOverlay}>
-            <View style={styles.bhajanModalContainer}>
-                <View style={[styles.bhajanHandle]} />
-                <View style={styles.modalHeader}>
-                    <AppIcon name="music" size={24} color={DarkBlue} style={{ marginRight: 8 }} />
-                    <Text style={[styles.modalTitle, { flex: 1 }]}>{selectedBhajan}</Text>
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <AppIcon name="x" size={24} color={Grey} />
-                    </TouchableOpacity>
-                </View>
+const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => {
+    const [isOpening, setIsOpening] = useState(false);
+    const allBhajans = getAllBhajans();
+    const currentBhajan = typeof selectedBhajan === 'object' ? selectedBhajan : allBhajans.find(b => b.name === selectedBhajan) || allBhajans[0];
 
-                {/* --- Embedded Player Area (Placeholder) --- */}
-                <View style={styles.playerPlaceholder}>
-                    <View style={styles.playerArtwork} />
-                    <View style={styles.playerControls}>
-                        <Text style={{ fontSize: 16, fontWeight: '600' }}>{selectedBhajan}</Text>
-                        {/* Placeholder for waveform/progress bar */}
-                        <View style={styles.progressBar} />
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={styles.privacyText}>*Privacy policy</Text>
-                            <AppIcon name="play-circle" size={40} color={PRIMARY_COLOR} />
+    const handlePlay = async () => {
+        if (!currentBhajan?.url) return;
+        
+        setIsOpening(true);
+        try {
+            const canOpen = await Linking.canOpenURL(currentBhajan.url);
+            if (canOpen) {
+                await Linking.openURL(currentBhajan.url);
+            } else {
+                alert('Unable to open this URL. Please check your internet connection.');
+            }
+        } catch (error) {
+            console.error('Error opening URL:', error);
+            alert('Unable to open this URL. Please try again.');
+        } finally {
+            setIsOpening(false);
+        }
+    };
+
+    const handleBhajanSelect = (bhajan) => {
+        if (onBhajanChange) {
+            onBhajanChange(bhajan);
+        }
+    };
+
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isVisible}
+            onRequestClose={onClose}
+        >
+            <View style={styles.modalOverlay}>
+                <View style={styles.bhajanModalContainer}>
+                    <View style={[styles.bhajanHandle]} />
+                    <View style={styles.modalHeader}>
+                        <AppIcon name="music" size={24} color={DarkBlue} style={{ marginRight: 8 }} />
+                        <Text style={[styles.modalTitle, { flex: 1 }]} numberOfLines={1}>
+                            {currentBhajan?.name || 'Bhajan'}
+                        </Text>
+                        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                            <AppIcon name="x" size={24} color={Grey} />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* --- Player Area --- */}
+                    <View style={styles.playerPlaceholder}>
+                        <View style={styles.playerArtwork}>
+                            <AppIcon name="music" size={40} color={Grey} />
+                        </View>
+                        <View style={styles.playerControls}>
+                            <Text style={styles.playerTitle} numberOfLines={1}>
+                                {currentBhajan?.name || 'Bhajan'}
+                            </Text>
+                            {currentBhajan?.artist && (
+                                <Text style={styles.playerArtist} numberOfLines={1}>
+                                    {currentBhajan.artist}
+                                </Text>
+                            )}
+                            {currentBhajan?.description && (
+                                <Text style={styles.playerDescription} numberOfLines={2}>
+                                    {currentBhajan.description}
+                                </Text>
+                            )}
+                            {currentBhajan?.duration && (
+                                <Text style={styles.playerDuration}>{currentBhajan.duration}</Text>
+                            )}
+                            
+                            {/* Progress bar placeholder */}
+                            <View style={styles.progressBarContainer}>
+                                <View style={styles.progressBar} />
+                            </View>
+                            
+                            <View style={styles.playerActions}>
+                                <Text style={styles.privacyText}>*Opens in external player</Text>
+                                <TouchableOpacity 
+                                    style={styles.playButton}
+                                    onPress={handlePlay}
+                                    disabled={isOpening || !currentBhajan?.url}
+                                >
+                                    {isOpening ? (
+                                        <ActivityIndicator size="small" color="#fff" />
+                                    ) : (
+                                        <AppIcon name="play-circle" size={40} color="#fff" />
+                                    )}
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
-                {/* --- End Embedded Player Area --- */}
 
-                <Text style={styles.devotionalText}>Playing devotional music for your spiritual journey</Text>
+                    {currentBhajan?.sanskrit && (
+                        <View style={styles.mantraDisplay}>
+                            <Text style={styles.mantraSanskrit}>{currentBhajan.sanskrit}</Text>
+                            {currentBhajan.transliteration && (
+                                <Text style={styles.mantraTransliteration}>{currentBhajan.transliteration}</Text>
+                            )}
+                        </View>
+                    )}
 
-                <View style={styles.bhajanListFooter}>
-                    {BHAIJAN_LIST.map((bhajan, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={[styles.footerBhajanButton, bhajan === selectedBhajan && styles.activeFooterBhajanButton]}
-                            onPress={() => console.log(`Playing ${bhajan}`)} // Logic to change playing track
-                        >
-                            <Text style={[styles.footerBhajanText, bhajan === selectedBhajan && styles.activeFooterBhajanText]}>
-                                {bhajan}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
+                    <Text style={styles.devotionalText}>
+                        Tap play to open in your preferred music app
+                    </Text>
+
+                    <View style={styles.bhajanListFooter}>
+                        {allBhajans.map((bhajan) => (
+                            <TouchableOpacity
+                                key={bhajan.id}
+                                style={[
+                                    styles.footerBhajanButton,
+                                    currentBhajan?.id === bhajan.id && styles.activeFooterBhajanButton
+                                ]}
+                                onPress={() => handleBhajanSelect(bhajan)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.footerBhajanText,
+                                        currentBhajan?.id === bhajan.id && styles.activeFooterBhajanText
+                                    ]}
+                                    numberOfLines={1}
+                                >
+                                    {bhajan.name}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
             </View>
-        </View>
-    </Modal>
-);
+        </Modal>
+    );
+};
 
 
 // --- Main Component: CalendarDayDetails ---
 const CalendarDayDetails = ({ navigation, route }) => {
     const [isStoryModalVisible, setStoryModalVisible] = useState(false);
     const [isBhajanModalVisible, setBhajanModalVisible] = useState(false);
-    const [activeBhajan, setActiveBhajan] = useState(BHAIJAN_LIST[0]);
+    const [activeBhajan, setActiveBhajan] = useState(getAllBhajans()[0]);
     const [ekadashi, setEkadashi] = useState(null);
     const [panchangData, setPanchangData] = useState(null);
 
@@ -264,9 +352,13 @@ const CalendarDayDetails = ({ navigation, route }) => {
         fetchPanchang();
     }, [ekadashiDate]);
 
-    const handleBhajanPress = (bhajanName) => {
-        setActiveBhajan(bhajanName);
+    const handleBhajanPress = (bhajan) => {
+        setActiveBhajan(bhajan);
         setBhajanModalVisible(true);
+    };
+
+    const handleBhajanChange = (bhajan) => {
+        setActiveBhajan(bhajan);
     };
 
     // Format date for display
@@ -293,7 +385,7 @@ const CalendarDayDetails = ({ navigation, route }) => {
                 <StorySection onReadStory={() => setStoryModalVisible(true)} ekadashi={ekadashi} />
                 <VrataRulesSection ekadashi={ekadashi} />
                 <TimingsSection panchangData={panchangData} />
-                <BhajansSection onBhajanPress={handleBhajanPress} />
+                <BhajansSection onBhajanPress={handleBhajanPress} bhajans={getAllBhajans().slice(0, 3)} />
                 <RecipesSection />
                 {/* Spacer for bottom padding */}
                 <View style={{ height: 40 }} />
@@ -309,6 +401,7 @@ const CalendarDayDetails = ({ navigation, route }) => {
                 isVisible={isBhajanModalVisible}
                 onClose={() => setBhajanModalVisible(false)}
                 selectedBhajan={activeBhajan}
+                onBhajanChange={handleBhajanChange}
             />
         </SafeAreaView>
     );
@@ -454,10 +547,18 @@ const styles = StyleSheet.create({
     bhajanIcon: {
         marginRight: 10,
     },
+    bhajanTextContainer: {
+        flex: 1,
+    },
     bhajanText: {
         fontSize: 15,
         fontWeight: '500',
         color: DarkBlue,
+    },
+    bhajanArtist: {
+        fontSize: 12,
+        color: LightBlue,
+        marginTop: 2,
     },
     // --- Recipes Styles (styles remain mostly the same) ---
     recipeItem: {
@@ -548,32 +649,93 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         backgroundColor: SECONDARY_BG,
         borderRadius: 10,
-        padding: 10,
+        padding: 15,
         marginVertical: 15,
     },
     playerArtwork: {
-        width: 80,
-        height: 80,
-        backgroundColor: Grey || '#A0A0A0', // Placeholder for album art
-        borderRadius: 8,
+        width: 100,
+        height: 100,
+        backgroundColor: PRIMARY_COLOR,
+        borderRadius: 12,
         marginRight: 15,
-        opacity: 0.5
+        justifyContent: 'center',
+        alignItems: 'center',
+        opacity: 0.8,
     },
     playerControls: {
         flex: 1,
         justifyContent: 'space-between',
-        height: 80,
+        minHeight: 100,
+    },
+    playerTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: DarkBlue,
+        marginBottom: 4,
+    },
+    playerArtist: {
+        fontSize: 14,
+        color: LightBlue,
+        marginBottom: 4,
+    },
+    playerDescription: {
+        fontSize: 12,
+        color: LightBlue,
+        marginBottom: 8,
+        lineHeight: 16,
+    },
+    playerDuration: {
+        fontSize: 11,
+        color: Grey,
+        marginBottom: 8,
+    },
+    progressBarContainer: {
+        marginVertical: 10,
     },
     progressBar: {
         height: 4,
         width: '100%',
         backgroundColor: BORDER_COLOR,
         borderRadius: 2,
-        marginVertical: 5,
+    },
+    playerActions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    playButton: {
+        backgroundColor: PRIMARY_COLOR,
+        borderRadius: 25,
+        padding: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     privacyText: {
         fontSize: 10,
         color: LightBlue,
+    },
+    mantraDisplay: {
+        backgroundColor: SECONDARY_BG,
+        borderRadius: 10,
+        padding: 15,
+        marginVertical: 10,
+        alignItems: 'center',
+    },
+    mantraSanskrit: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: DarkBlue,
+        textAlign: 'center',
+        marginBottom: 8,
+        lineHeight: 28,
+    },
+    mantraTransliteration: {
+        fontSize: 14,
+        color: LightBlue,
+        textAlign: 'center',
+        fontStyle: 'italic',
+        lineHeight: 20,
     },
     devotionalText: {
         fontSize: 14,
