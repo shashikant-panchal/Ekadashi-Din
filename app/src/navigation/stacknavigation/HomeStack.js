@@ -8,7 +8,7 @@ import Notification from "../../screens/Notification";
 const HomeStack = () => {
     const Stack = createStackNavigator();
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="HomeScreen">
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen options={{ title: 'Home' }} name="HomeScreen" component={HomeScreen} />
             <Stack.Screen options={{
                 title: 'Notifications',
