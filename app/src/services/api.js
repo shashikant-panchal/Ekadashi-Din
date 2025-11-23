@@ -2,6 +2,9 @@ import axios from "axios";
 import moment from "moment";
 import { EKADASHI_CALENDAR_2025 } from "../data/ekadashiData";
 
+const SUPABASE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpb2NpZ3JncHdkY2FhanJ4dnJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxODE0NDMsImV4cCI6MjA3MTc1NzQ0M30.3wL7Z4bUNkmAVPUE43gW97Bpq2bqYLW1i-KOaZQb3ko";
+
 const BASE_URL = "https://panchang-api.herokuapp.com/api/v1";
 const PANCHANG_API_URL =
   "https://giocigrgpwdcaajrxvrf.supabase.co/functions/v1/get-panchang";
@@ -9,10 +12,18 @@ const PANCHANG_API_URL =
 export const getPanchangData = async (date) => {
   try {
     // Use new Supabase API endpoint
-    const response = await axios.post(PANCHANG_API_URL, {
-      latitude: 19.076,
-      longitude: 72.8777,
-    });
+    const response = await axios.post(
+      PANCHANG_API_URL,
+      {
+        latitude: 19.076,
+        longitude: 72.8777,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching panchang data:", error);
@@ -29,7 +40,7 @@ export const getEkadashiList = async (year) => {
     });
     return response.data;
   } catch (error) {
-
+    // If API fails, use static data
     console.log("API unavailable, using static data for Ekadashi list");
 
     // Use static data for the requested year
@@ -38,6 +49,8 @@ export const getEkadashiList = async (year) => {
     if (ekadashiList.length > 0) {
       return ekadashiList;
     }
+
+    // If no data for requested year, throw error
     throw new Error(`No Ekadashi data available for year ${year}`);
   }
 };
