@@ -18,7 +18,7 @@ const relativeWidth = (percentage) => WINDOW_WIDTH * (percentage / 100);
 const relativeHeight = (percentage) => WINDOW_HEIGHT * (percentage / 100);
 // ----------------------------------------
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -81,7 +81,7 @@ const ProfileScreen = () => {
             Explore the profound wisdom of the Bhagavad Gita and Mahabharata
             through engaging questions that inspire spiritual growth.
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Challenge')}>
             <LinearGradient
               // 1. Define vibrant, spiritual colors (e.g., deep orange to gold)
               colors={["#A556F6", "#437FF6"]}

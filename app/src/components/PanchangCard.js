@@ -1,6 +1,6 @@
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import moment from 'moment'
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { BackgroundGrey, LightBlue } from '../constants/Colors'
 import { dh, dw } from '../constants/Dimensions'
 import { usePanchang } from '../hooks/usePanchang'
@@ -43,19 +43,19 @@ const PanchangCard = () => {
     const getTithi = () => {
         if (!panchangData) return "N/A";
         // Web app returns tithi as string directly
-        return panchangData.tithi || 
-               panchangData.tithi?.name || 
-               panchangData.tithi?.details?.tithi_name || 
-               panchangData.tithi_name || 
-               "N/A";
+        return panchangData.tithi ||
+            panchangData.tithi?.name ||
+            panchangData.tithi?.details?.tithi_name ||
+            panchangData.tithi_name ||
+            "N/A";
     };
 
     // Extract location - synced with web app
     const getLocation = () => {
         if (!panchangData) return "N/A";
         // Web app returns location as string "Mumbai, India"
-        return panchangData.location || 
-               (panchangData.latitude && panchangData.longitude 
+        return panchangData.location ||
+            (panchangData.latitude && panchangData.longitude
                 ? `${panchangData.latitude.toFixed(2)}°, ${panchangData.longitude.toFixed(2)}°`
                 : "N/A");
     };
@@ -85,30 +85,30 @@ const PanchangCard = () => {
     const getNakshatra = () => {
         if (!panchangData) return "N/A";
         // Web app returns nakshatra as string directly
-        return panchangData.nakshatra || 
-               panchangData.nakshatra?.name || 
-               panchangData.nakshatra_name || 
-               "N/A";
+        return panchangData.nakshatra ||
+            panchangData.nakshatra?.name ||
+            panchangData.nakshatra_name ||
+            "N/A";
     };
 
     // Extract yoga - synced with web app structure
     const getYoga = () => {
         if (!panchangData) return "N/A";
         // Web app returns yoga as string directly
-        return panchangData.yoga || 
-               panchangData.yoga?.name || 
-               panchangData.yoga_name || 
-               "N/A";
+        return panchangData.yoga ||
+            panchangData.yoga?.name ||
+            panchangData.yoga_name ||
+            "N/A";
     };
 
     // Extract karana - synced with web app structure
     const getKarana = () => {
         if (!panchangData) return "N/A";
         // Web app returns karana as string directly
-        return panchangData.karana || 
-               panchangData.karana?.name || 
-               panchangData.karana_name || 
-               "N/A";
+        return panchangData.karana ||
+            panchangData.karana?.name ||
+            panchangData.karana_name ||
+            "N/A";
     };
 
     if (loading) {

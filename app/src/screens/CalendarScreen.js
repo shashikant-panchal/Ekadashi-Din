@@ -12,6 +12,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -109,10 +110,10 @@ const DateCell = ({ date, isEkadashi, isToday }) => {
   );
 };
 
-const CalendarScreen = () => {
+const CalendarScreen = ({ navigation }) => {
   // State to track the currently viewed month
   const [currentDate, setCurrentDate] = useState(moment());
-  
+
   // Fetch ekadashi list for the current year
   const currentYear = currentDate.year();
   const { ekadashiList, loading, error } = useEkadashiList(currentYear);
@@ -120,12 +121,12 @@ const CalendarScreen = () => {
   // Get ekadashi dates for the current month
   const getEkadashiDates = (monthMoment) => {
     if (!ekadashiList || ekadashiList.length === 0) return [];
-    
+
     return ekadashiList
       .filter(ekadashi => {
         const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
-        return ekadashiDate.isSame(monthMoment, 'month') && 
-               ekadashiDate.isSame(monthMoment, 'year');
+        return ekadashiDate.isSame(monthMoment, 'month') &&
+          ekadashiDate.isSame(monthMoment, 'year');
       })
       .map(ekadashi => {
         const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
@@ -136,12 +137,12 @@ const CalendarScreen = () => {
   // Get ekadashi details for the current month (for observances section)
   const getMonthEkadashis = () => {
     if (!ekadashiList || ekadashiList.length === 0) return [];
-    
+
     return ekadashiList
       .filter(ekadashi => {
         const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
-        return ekadashiDate.isSame(currentDate, 'month') && 
-               ekadashiDate.isSame(currentDate, 'year');
+        return ekadashiDate.isSame(currentDate, 'month') &&
+          ekadashiDate.isSame(currentDate, 'year');
       })
       .map(ekadashi => ({
         name: ekadashi.name || ekadashi.ekadashi_name || "Ekadashi",
@@ -157,17 +158,17 @@ const CalendarScreen = () => {
     () => generateCalendarGrid(currentDate),
     [currentDate]
   );
-  
+
   const ekadashiDates = useMemo(
     () => getEkadashiDates(currentDate),
     [currentDate, ekadashiList]
   );
-  
+
   const monthEkadashis = useMemo(
     () => getMonthEkadashis(),
     [currentDate, ekadashiList]
   );
-  
+
   const todayDate = moment().date().toString(); // Day number of today
 
   // --- Month Navigation Handlers ---
@@ -204,22 +205,24 @@ const CalendarScreen = () => {
   const renderObservanceItem = (ekadashi) => {
     const formattedDate = ekadashi.date.format('ddd, MMM D');
     const phase = ekadashi.paksha || "";
-    
+
     return (
-      <View key={ekadashi.date.format('YYYY-MM-DD')} style={styles.observanceItem}>
-        <View style={styles.observanceImagePlaceholder}>
-          <Text style={{ fontSize: relativeWidth(5) }}>
-            {ekadashi.moonPhase === "waxing" ? "🌕" : "🌑"}
-          </Text>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails')}>
+        <View key={ekadashi.date.format('YYYY-MM-DD')} style={styles.observanceItem}>
+          <View style={styles.observanceImagePlaceholder}>
+            <Text style={{ fontSize: relativeWidth(5) }}>
+              {ekadashi.moonPhase === "waxing" ? "🌕" : "🌑"}
+            </Text>
+          </View>
+          <View style={styles.observanceTextContainer}>
+            <Text style={styles.observanceTitleText}>{ekadashi.name}</Text>
+            <Text style={styles.observanceDateText}>{formattedDate}</Text>
+          </View>
+          <View style={styles.phaseBadge}>
+            <Text style={styles.phaseBadgeText}>{phase}</Text>
+          </View>
         </View>
-        <View style={styles.observanceTextContainer}>
-          <Text style={styles.observanceTitleText}>{ekadashi.name}</Text>
-          <Text style={styles.observanceDateText}>{formattedDate}</Text>
-        </View>
-        <View style={styles.phaseBadge}>
-          <Text style={styles.phaseBadgeText}>{phase}</Text>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   };
 

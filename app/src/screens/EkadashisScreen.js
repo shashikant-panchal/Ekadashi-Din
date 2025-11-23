@@ -1,5 +1,6 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import moment from "moment";
 import {
   ActivityIndicator,
   Dimensions,
@@ -7,10 +8,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import moment from "moment";
 import {
   AppYellow,
   DarkBlue,
@@ -49,22 +50,24 @@ const MonthCard = ({ month, ekadashis, isUpcoming, onPress }) => {
 };
 
 // --- Component for the Next Ekadashi Card ---
-const NextEkadashiCard = ({ title, date, details }) => (
-  <LinearGradient
-    colors={[GRADIENT_START, GRADIENT_END]}
-    start={{ x: 0, y: 0 }} // Top-left
-    end={{ x: 1, y: 1 }} // Bottom-right
-    style={styles.nextEkadashiCard}
-  >
-    <View style={styles.moonPlaceholder}>
-      <Ionicons name="moon" size={relativeWidth(10)} color="#FFC107" />
-    </View>
-    <View style={styles.nextEkadashiTextContainer}>
-      <Text style={styles.nextEkadashiTitle}>{title}</Text>
-      <Text style={styles.nextEkadashiDate}>{date}</Text>
-      <Text style={styles.nextEkadashiDetails}>{details}</Text>
-    </View>
-  </LinearGradient>
+const NextEkadashiCard = ({ title, date, details, navigation }) => (
+  <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails')}>
+    <LinearGradient
+      colors={[GRADIENT_START, GRADIENT_END]}
+      start={{ x: 0, y: 0 }} // Top-left
+      end={{ x: 1, y: 1 }} // Bottom-right
+      style={styles.nextEkadashiCard}
+    >
+      <View style={styles.moonPlaceholder}>
+        <Ionicons name="moon" size={relativeWidth(10)} color="#FFC107" />
+      </View>
+      <View style={styles.nextEkadashiTextContainer}>
+        <Text style={styles.nextEkadashiTitle}>{title}</Text>
+        <Text style={styles.nextEkadashiDate}>{date}</Text>
+        <Text style={styles.nextEkadashiDetails}>{details}</Text>
+      </View>
+    </LinearGradient>
+  </TouchableWithoutFeedback>
 );
 
 const EkadashiScreen = ({ navigation }) => {
@@ -73,41 +76,38 @@ const EkadashiScreen = ({ navigation }) => {
   const { nextEkadashi, loading: nextLoading } = useNextEkadashi();
 
   const handleMonthPress = (month) => {
-    // Example navigation logic: navigate back to the calendar screen
-    // and set the view to the selected month.
-    // navigation.navigate('Calendar', { month: month });
-    console.log(`Navigating to ${month} calendar view`);
+    navigation.navigate('CalendarMonth')
   };
 
   // Group ekadashis by month
   const getEkadashisByMonth = () => {
     if (!ekadashiList || ekadashiList.length === 0) return {};
-    
+
     const grouped = {};
     ekadashiList.forEach((ekadashi) => {
       const date = moment(ekadashi.date || ekadashi.ekadashi_date);
       const monthName = date.format('MMMM');
-      
+
       if (!grouped[monthName]) {
         grouped[monthName] = [];
       }
       grouped[monthName].push(ekadashi);
     });
-    
+
     return grouped;
   };
 
-  // Get month data with real counts
+
   const getMonthData = () => {
     const grouped = getEkadashisByMonth();
     const months = moment.months();
     const today = moment();
-    
+
     return months.map((month, index) => {
       const monthEkadashis = grouped[month] || [];
       const monthDate = moment().month(index);
       const isUpcoming = monthDate.isAfter(today, 'month') || (monthDate.month() === today.month() && monthDate.year() === today.year());
-      
+
       return {
         month,
         ekadashis: monthEkadashis.length,
@@ -121,25 +121,25 @@ const EkadashiScreen = ({ navigation }) => {
   const totalEkadashis = ekadashiList ? ekadashiList.length : 0;
   const today = moment();
   // Exclude today's Ekadashi from remaining count
-  const remainingEkadashis = ekadashiList 
+  const remainingEkadashis = ekadashiList
     ? ekadashiList.filter(e => {
-        const date = moment(e.date || e.ekadashi_date);
-        return date.isAfter(today, 'day'); // Only count future Ekadashis, exclude today
-      }).length
+      const date = moment(e.date || e.ekadashi_date);
+      return date.isAfter(today, 'day'); // Only count future Ekadashis, exclude today
+    }).length
     : 0;
 
   // Format next ekadashi data
   const getNextEkadashiData = () => {
     if (!nextEkadashi) return null;
-    
+
     const date = moment(nextEkadashi.date || nextEkadashi.ekadashi_date);
     const month = date.format('MMM');
     const day = date.format('D');
     const year = date.format('YYYY');
-    
+
     // Get Hindu month name if available, otherwise use English month
     const hinduMonth = nextEkadashi.month || month;
-    
+
     return {
       title: nextEkadashi.name || nextEkadashi.ekadashi_name || "Next Ekadashi",
       date: `${day} ${month} ${year} • ${hinduMonth}`,
@@ -212,13 +212,14 @@ const EkadashiScreen = ({ navigation }) => {
           <>
             <Text style={styles.sectionTitle}>Next Ekadashi</Text>
             <NextEkadashiCard
+              navigation={navigation}
               title={nextEkadashiData.title}
               date={nextEkadashiData.date}
               details={nextEkadashiData.details}
             />
           </>
         )}
-        
+
         {listError && (
           <View style={{ padding: 20, alignItems: 'center' }}>
             <Text style={{ color: '#dc3545', fontSize: 14 }}>{listError}</Text>

@@ -2,11 +2,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
-import CalendarScreen from "../../screens/CalendarScreen";
-import EkadashisScreen from "../../screens/EkadashisScreen";
-import ProfileScreen from "../../screens/ProfileScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
+import CalendarStack from "../stacknavigation/CalendarStack";
+import EkadashiStack from "../stacknavigation/EkadashiStack";
 import HomeStack from "../stacknavigation/HomeStack";
+import ProfileStack from "../stacknavigation/ProfileStack";
 
 const TAB_ACTIVE_COLOR = "#16366B";
 const PALE_COLOR = "#34629E";
@@ -110,7 +110,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Calendar"
-        component={CalendarScreen}
+        component={CalendarStack}
         options={{
           tabBarLabel: "Calendar",
           tabBarIconName: "calendar",
@@ -118,7 +118,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Ekadashis"
-        component={EkadashisScreen}
+        component={EkadashiStack}
         options={{
           tabBarLabel: "Ekadashis",
           tabBarIconName: "list",
@@ -126,7 +126,7 @@ const BottomTab = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStack}
         options={{
           tabBarLabel: "Profile",
           tabBarIconName: "user",
