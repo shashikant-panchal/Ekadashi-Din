@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
@@ -17,7 +18,27 @@ const ACTIVE_BORDER_COLOR = "#C2CAD5";
 
 const Tab = createBottomTabNavigator();
 
+// Main screens that should show bottom tab
+const MAIN_SCREENS = [
+  "HomeScreen",      // HomeStack main screen
+  "CalendarScreen",  // CalendarStack main screen
+  "Ekadashi",        // EkadashiStack main screen
+  "Profile",         // ProfileStack main screen
+  "Settings",        // SettingsScreen (direct)
+];
+
 const CustomTabBar = ({ state, descriptors, navigation }) => {
+  // Get the current focused route
+  const focusedRoute = state.routes[state.index];
+  const focusedRouteName = getFocusedRouteNameFromRoute(focusedRoute) || focusedRoute.name;
+  
+  // Hide tab bar if current screen is not a main screen
+  const shouldShowTabBar = MAIN_SCREENS.includes(focusedRouteName);
+  
+  if (!shouldShowTabBar) {
+    return null;
+  }
+
   return (
     <View style={styles.tabBarWrapper}>
       <View style={styles.tabContainer}>
