@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
+import { useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -18,8 +19,51 @@ import {
   LightBlue,
   LIGHTBLUEBG,
 } from "../constants/Colors";
+import { getTimeBasedWisdom, getTodaysWisdom } from "../data/dailyWisdomData";
 
 const DailyWisdom = ({ navigation }) => {
+  const [currentWisdom, setCurrentWisdom] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [timeOfDay, setTimeOfDay] = useState("morning");
+  const [wisdom, setWisdom] = useState(null);
+  const [reflectionText, setReflectionText] = useState("");
+
+  useEffect(() => {
+    // Determine time of day
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setTimeOfDay("morning");
+    } else if (hour < 18) {
+      setTimeOfDay("afternoon");
+    } else {
+      setTimeOfDay("evening");
+    }
+
+    // Get today's wisdom
+    const todaysWisdom = getTodaysWisdom();
+    setWisdom(todaysWisdom);
+
+    // Get time-based reflection
+    const reflection = getTimeBasedWisdom(timeOfDay);
+    setReflectionText(reflection);
+  }, []);
+
+  const nextWisdom = () => {
+    const todaysWisdom = getTodaysWisdom();
+    setCurrentWisdom((prev) => (prev + 1) % 3);
+    setWisdom(todaysWisdom);
+    setIsLiked(false);
+  };
+
+  const displayWisdom = wisdom || {
+    sanskrit: "हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे",
+    transliteration: "Hare Krishna Hare Krishna Krishna Krishna Hare Hare",
+    english:
+      "Chanting the holy names purifies the heart and connects us with the divine consciousness",
+    verse: "Bhagavad Gita 7.7",
+    type: "mantra",
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -34,7 +78,10 @@ const DailyWisdom = ({ navigation }) => {
         <Text style={styles.headerSubtitle}>
           Spiritual teachings for your journey
         </Text>
-        <DailyWisdomReflectionCard />
+        <DailyWisdomReflectionCard
+          reflectionText={reflectionText}
+          timeOfDay={timeOfDay}
+        />
         <View style={styles.mantraCard}>
           <View style={styles.mantraHeader}>
             <View style={styles.mantraIconContainer}>
@@ -45,37 +92,46 @@ const DailyWisdom = ({ navigation }) => {
                 color={"grey"}
               />
             </View>
-            <Text style={styles.mantraTag}>MANTRA</Text>
+            <Text style={styles.mantraTag}>
+              {displayWisdom.type?.toUpperCase() || "MANTRA"}
+            </Text>
             <View style={styles.bhagavadGitaTag}>
-              <Text style={styles.bhagavadGitaText}>Bhagavad Gita 7.7</Text>
+              <Text style={styles.bhagavadGitaText}>
+                {displayWisdom.verse || "Bhagavad Gita 7.7"}
+              </Text>
             </View>
           </View>
           <View style={styles.mainMantraContainer}>
-            <Text style={styles.sanskritMantra}>
-              हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे
-            </Text>
+            <Text style={styles.sanskritMantra}>{displayWisdom.sanskrit}</Text>
             <Text style={styles.englishMantra}>
-              Hare Krishna Hare Krishna Krishna Krishna Hare Hare
+              {displayWisdom.transliteration}
             </Text>
           </View>
 
-          <Text style={styles.mantraDescription}>
-            Chanting the holy names purifies the heart and connects us with the
-            divine consciousness
-          </Text>
+          <Text style={styles.mantraDescription}>{displayWisdom.english}</Text>
 
           <View style={styles.mantraFooter}>
             <View style={styles.mantraActions}>
-              <TouchableOpacity style={styles.actionButton}>
-                <Feather name="heart" size={18} color={LightBlue} />
-                <Text style={styles.actionText}>Love</Text>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => setIsLiked(!isLiked)}
+              >
+                <Feather
+                  name="heart"
+                  size={18}
+                  color={isLiked ? "#FF6B6B" : LightBlue}
+                  fill={isLiked ? "#FF6B6B" : "none"}
+                />
+                <Text style={styles.actionText}>
+                  {isLiked ? "Loved" : "Love"}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButton}>
                 <Feather name="share-2" size={18} color={LightBlue} />
                 <Text style={styles.actionText}>Share</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.nextButton}>
+            <TouchableOpacity style={styles.nextButton} onPress={nextWisdom}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
           </View>

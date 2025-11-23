@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import moment from 'moment';
 import { DarkBlue, Grey, LightBlue } from '../constants/Colors';
-
 import { Feather } from '@expo/vector-icons';
+import { useEkadashiList } from '../hooks/useEkadashi';
 
 const PRIMARY_COLOR = '#4A90E2';
 const SECONDARY_BG = '#F5F5F5';
@@ -34,10 +34,10 @@ const DetailCard = ({ iconName, title, children }) => (
 );
 
 // --- Section 1: Story & Significance ---
-const StorySection = ({ onReadStory }) => (
+const StorySection = ({ onReadStory, ekadashi }) => (
     <DetailCard iconName="book-open" title="Story & Significance">
         <Text style={styles.bodyText}>
-            Observing Ekadashi with devotion helps overcome life's obstacles and brings inner peace. This sacred day is particularly beneficial for those seeking spiritual growth and material prosperity.
+            {ekadashi?.significance || ekadashi?.vrataKatha || "Observing Ekadashi with devotion helps overcome life's obstacles and brings inner peace. This sacred day is particularly beneficial for those seeking spiritual growth and material prosperity."}
         </Text>
         <TouchableOpacity style={styles.readButton} onPress={onReadStory}>
             <Text style={styles.readButtonText}>Read Full Story</Text>
@@ -46,14 +46,15 @@ const StorySection = ({ onReadStory }) => (
 );
 
 // --- Section 2: Vrata Rules & Guidelines ---
-const VrataRulesSection = () => {
-    const rules = [
+const VrataRulesSection = ({ ekadashi }) => {
+    const defaultRules = [
         "Begin fasting from sunrise on Ekadashi day",
         "Avoid grains, beans, and certain vegetables",
         "Stay hydrated with water and fruit juices",
         "Spend time in prayer and meditation",
         "Read spiritual texts or chant mantras",
     ];
+    const rules = ekadashi?.fastingRules || defaultRules;
 
     return (
         <DetailCard iconName="heart" title="Vrata Rules & Guidelines">
@@ -70,20 +71,25 @@ const VrataRulesSection = () => {
 };
 
 // --- Section 3: Important Timings ---
-const TimingsSection = () => (
-    <DetailCard iconName="clock" title="Important Timings">
-        <View style={styles.timingRow}>
-            <View style={styles.timingItem}>
-                <Text style={styles.timingLabel}>Fasting Begins</Text>
-                <Text style={[styles.timingValue, { color: PRIMARY_COLOR }]}>06:09 AM</Text>
+const TimingsSection = ({ panchangData }) => {
+    const sunrise = panchangData?.sunrise || "06:09 AM";
+    const sunset = panchangData?.sunset || "06:09 PM";
+    
+    return (
+        <DetailCard iconName="clock" title="Important Timings">
+            <View style={styles.timingRow}>
+                <View style={styles.timingItem}>
+                    <Text style={styles.timingLabel}>Fasting Begins</Text>
+                    <Text style={[styles.timingValue, { color: PRIMARY_COLOR }]}>{sunrise}</Text>
+                </View>
+                <View style={styles.timingItem}>
+                    <Text style={styles.timingLabel}>Parana Window</Text>
+                    <Text style={[styles.timingValue, { color: PRIMARY_COLOR }]}>{sunrise} - {sunset}</Text>
+                </View>
             </View>
-            <View style={styles.timingItem}>
-                <Text style={styles.timingLabel}>Parana Window</Text>
-                <Text style={[styles.timingValue, { color: PRIMARY_COLOR }]}>06:09 - 08:39 AM</Text>
-            </View>
-        </View>
-    </DetailCard>
-);
+        </DetailCard>
+    );
+};
 
 // --- Section 4: Bhajans & Mantras ---
 const BhajansSection = ({ onBhajanPress }) => (
@@ -123,42 +129,42 @@ const RecipesSection = () => {
 };
 
 // --- Modal 1: Story Details ---
-const StoryModal = ({ isVisible, onClose }) => (
-    <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={onClose}
-    >
-        <SafeAreaView style={styles.modalOverlay}>
-            <View style={styles.storyModalContainer}>
-                <View style={styles.modalHeader}>
-                    <AppIcon name="book-open" size={20} color={DarkBlue} />
-                    <Text style={styles.modalTitle}>Pausha Putrada Ekadashi - Complete Story</Text>
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <AppIcon name="x" size={24} color={Grey} />
-                    </TouchableOpacity>
+const StoryModal = ({ isVisible, onClose, ekadashi }) => {
+    const ekadashiName = ekadashi?.name || ekadashi?.ekadashi_name || "Ekadashi";
+    const vrataKatha = ekadashi?.vrataKatha || "Long ago, in the celestial realm, there lived a demon named Mura who tormented the demigods and sages. Unable to defeat him through conventional means, Lord Vishnu engaged in a fierce battle that lasted for thousands of years. During this cosmic struggle, a divine maiden emerged from the Lord's body, radiating immense spiritual power. This celestial being, born from the Lord's transcendental energy, defeated the demon Mura with ease. Pleased with her service, Lord Vishnu granted her a boon. She requested that those who fast on her appearance day would be blessed with spiritual advancement and liberation from material bondage. The Lord named her Ekadashi, as she appeared on the eleventh day of the lunar month. He declared that observing Ekadashi with devotion, fasting, and spiritual practices would grant devotees immense spiritual benefit, purification of consciousness, and progress on the path of devotion.";
+    const significance = ekadashi?.significance || "Ekadashi represents the transcendence of material consciousness and the awakening of spiritual awareness. By observing this sacred day, devotees align themselves with higher spiritual vibrations, purify their hearts, and develop deeper love and devotion for the Supreme Lord. The practice of fasting on Ekadashi is not merely about restricting food intake; it is a powerful spiritual discipline intended to reduce bodily demands and increase concentration on transcendental sound and service.";
+    
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isVisible}
+            onRequestClose={onClose}
+        >
+            <SafeAreaView style={styles.modalOverlay}>
+                <View style={styles.storyModalContainer}>
+                    <View style={styles.modalHeader}>
+                        <AppIcon name="book-open" size={20} color={DarkBlue} />
+                        <Text style={styles.modalTitle}>{ekadashiName} - Complete Story</Text>
+                        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                            <AppIcon name="x" size={24} color={Grey} />
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.storyModalContent}>
+                        <Text style={[styles.modalContentHeading, { color: DarkBlue }]}>The Sacred Legend</Text>
+                        <Text style={[styles.modalContentText, { color: LightBlue }]}>
+                            {vrataKatha}
+                        </Text>
+                        <Text style={[styles.modalContentHeading, { color: DarkBlue }]}>Spiritual Significance</Text>
+                        <Text style={[styles.modalContentText, { color: LightBlue }]}>
+                            {significance}
+                        </Text>
+                    </ScrollView>
                 </View>
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.storyModalContent}>
-                    <Text style={[styles.modalContentHeading, { color: DarkBlue }]}>The Sacred Legend</Text>
-                    <Text style={[styles.modalContentText, { color: LightBlue }]}>
-                        Long ago, in the celestial realm, there lived a demon named Mura who tormented the demigods and sages. Unable to defeat him through conventional means, Lord Vishnu engaged in a fierce battle that lasted for thousands of years. During this cosmic struggle, a divine maiden emerged from the Lord's body, radiating immense spiritual power.
-                    </Text>
-                    <Text style={[styles.modalContentText, { color: LightBlue }]}>
-                        This celestial being, born from the Lord's transcendental energy, defeated the demon Mura with ease. Pleased with her service, Lord Vishnu granted her a boon. She requested that those who fast on her appearance day would be blessed with spiritual advancement and liberation from material bondage.
-                    </Text>
-                    <Text style={[styles.modalContentText, { color: LightBlue, marginBottom: 20 }]}>
-                        The Lord named her Ekadashi, as she appeared on the eleventh day of the lunar month. He declared that observing Ekadashi with devotion, fasting, and spiritual practices would grant devotees immense spiritual benefit, purification of consciousness, and progress on the path of devotion.
-                    </Text>
-                    <Text style={[styles.modalContentHeading, { color: DarkBlue }]}>Spiritual Significance</Text>
-                    <Text style={[styles.modalContentText, { color: LightBlue }]}>
-                        Ekadashi represents the transcendence of material consciousness and the awakening of spiritual awareness. By observing this sacred day, devotees align themselves with higher spiritual vibrations, purify their hearts, and develop deeper love and devotion for the Supreme Lord. The practice of fasting on Ekadashi is not merely about restricting food intake; it is a powerful spiritual discipline intended to reduce bodily demands and increase concentration on transcendental sound and service.
-                    </Text>
-                </ScrollView>
-            </View>
-        </SafeAreaView>
-    </Modal>
-);
+            </SafeAreaView>
+        </Modal>
+    );
+};
 
 // --- Modal 2: Bhajan Player ---
 const BhajanModal = ({ isVisible, onClose, selectedBhajan }) => (
@@ -216,15 +222,56 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan }) => (
 
 
 // --- Main Component: CalendarDayDetails ---
-const CalendarDayDetails = ({ navigation }) => {
+const CalendarDayDetails = ({ navigation, route }) => {
     const [isStoryModalVisible, setStoryModalVisible] = useState(false);
     const [isBhajanModalVisible, setBhajanModalVisible] = useState(false);
     const [activeBhajan, setActiveBhajan] = useState(BHAIJAN_LIST[0]);
+    const [ekadashi, setEkadashi] = useState(null);
+    const [panchangData, setPanchangData] = useState(null);
+
+    // Get ekadashi from route params or fetch from list
+    const ekadashiFromRoute = route?.params?.ekadashi;
+    const ekadashiDate = route?.params?.date ? moment(route.params.date) : moment();
+    const currentYear = moment().year();
+    const { ekadashiList } = useEkadashiList(currentYear);
+
+    useEffect(() => {
+        if (ekadashiFromRoute) {
+            setEkadashi(ekadashiFromRoute);
+        } else if (ekadashiList && ekadashiList.length > 0) {
+            // Find ekadashi for the date
+            const foundEkadashi = ekadashiList.find(e => {
+                const eDate = moment(e.date || e.ekadashi_date);
+                return eDate.isSame(ekadashiDate, 'day');
+            });
+            if (foundEkadashi) {
+                setEkadashi(foundEkadashi);
+            }
+        }
+    }, [ekadashiFromRoute, ekadashiList, ekadashiDate]);
+
+    // Fetch panchang data for the date
+    useEffect(() => {
+        const fetchPanchang = async () => {
+            try {
+                const { getPanchangData } = require('../services/api');
+                const data = await getPanchangData(ekadashiDate.format('YYYY-MM-DD'));
+                setPanchangData(data);
+            } catch (error) {
+                console.error('Error fetching panchang:', error);
+            }
+        };
+        fetchPanchang();
+    }, [ekadashiDate]);
 
     const handleBhajanPress = (bhajanName) => {
         setActiveBhajan(bhajanName);
         setBhajanModalVisible(true);
     };
+
+    // Format date for display
+    const formattedDate = ekadashiDate.format('dddd D MMMM');
+    const ekadashiName = ekadashi?.name || ekadashi?.ekadashi_name || "Ekadashi";
 
     // Navigation Header
     const Header = () => (
@@ -233,8 +280,8 @@ const CalendarDayDetails = ({ navigation }) => {
                 <AppIcon name="arrow-left" size={24} color={DarkBlue} />
             </TouchableOpacity>
             <View>
-                <Text style={styles.mainTitle}>Pausha Putrada Ekadashi</Text>
-                <Text style={styles.subtitle}>Friday 10 January</Text>
+                <Text style={styles.mainTitle}>{ekadashiName}</Text>
+                <Text style={styles.subtitle}>{formattedDate}</Text>
             </View>
         </View>
     );
@@ -243,9 +290,9 @@ const CalendarDayDetails = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
             <Header />
             <ScrollView style={[styles.container, { backgroundColor: SECONDARY_BG }]} contentContainerStyle={styles.contentContainer}>
-                <StorySection onReadStory={() => setStoryModalVisible(true)} />
-                <VrataRulesSection />
-                <TimingsSection />
+                <StorySection onReadStory={() => setStoryModalVisible(true)} ekadashi={ekadashi} />
+                <VrataRulesSection ekadashi={ekadashi} />
+                <TimingsSection panchangData={panchangData} />
                 <BhajansSection onBhajanPress={handleBhajanPress} />
                 <RecipesSection />
                 {/* Spacer for bottom padding */}
@@ -256,6 +303,7 @@ const CalendarDayDetails = ({ navigation }) => {
             <StoryModal
                 isVisible={isStoryModalVisible}
                 onClose={() => setStoryModalVisible(false)}
+                ekadashi={ekadashi}
             />
             <BhajanModal
                 isVisible={isBhajanModalVisible}

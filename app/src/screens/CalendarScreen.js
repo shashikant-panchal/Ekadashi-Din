@@ -207,7 +207,13 @@ const CalendarScreen = ({ navigation }) => {
     const phase = ekadashi.paksha || "";
 
     return (
-      <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails')}>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails', { 
+        ekadashi: {
+          ...ekadashi,
+          date: ekadashi.date.format('YYYY-MM-DD')
+        },
+        date: ekadashi.date.format('YYYY-MM-DD')
+      })}>
         <View key={ekadashi.date.format('YYYY-MM-DD')} style={styles.observanceItem}>
           <View style={styles.observanceImagePlaceholder}>
             <Text style={{ fontSize: relativeWidth(5) }}>

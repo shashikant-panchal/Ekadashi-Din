@@ -1,6 +1,9 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import moment from 'moment';
+import { useEkadashiList } from '../hooks/useEkadashi';
+import { DarkBlue, LightBlue } from '../constants/Colors';
 
 const BackIcon = '←';
 const CalendarIcon = '\u{1F4C5}'; // 📅
@@ -8,31 +11,13 @@ const ForwardIcon = '>';
 const MoonIcon = '☾';
 
 
-const ekadashiData = [
-    {
-        id: 1,
-        title: "Pausha Putrada Ekadashi",
-        date: "10 Jan 2025",
-        paksha: "Shukla Paksha",
-        description: "Grants happiness, prosperity and children to devotees",
-    },
-    {
-        id: 2,
-        title: "Shat Tila Ekadashi",
-        date: "25 Jan 2025",
-        paksha: "Krishna Paksha",
-        description: "Removes all sins and grants liberation",
-    },
-];
-
-
-const Header = () => (
+const Header = ({ monthName, onBack }) => (
     <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={styles.backButton} onPress={onBack}>
             <Text style={styles.backButtonText}>{BackIcon} Back</Text>
         </TouchableOpacity>
         <View style={styles.titleContainer}>
-            <Text style={styles.title}>January</Text>
+            <Text style={styles.title}>{monthName}</Text>
             <Text style={styles.subtitle}>Ekadashi days this month</Text>
         </View>
     </View>
@@ -48,44 +33,86 @@ const PakshaPill = ({ paksha }) => {
     );
 };
 
-const EkadashiItem = ({ item, navigation }) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={() => navigation.navigate('DayDetails')}>
-        <View style={styles.cardContent}>
+const EkadashiItem = ({ item, navigation }) => {
+    const ekadashiDate = moment(item.date || item.ekadashi_date);
+    const formattedDate = ekadashiDate.format('D MMM YYYY');
+    const paksha = item.paksha || '';
+    const pakshaDisplay = paksha === 'Shukla' ? 'Shukla Paksha' : paksha === 'Krishna' ? 'Krishna Paksha' : paksha;
+    
+    return (
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={() => navigation.navigate('DayDetails', { 
+            ekadashi: item,
+            date: ekadashiDate.format('YYYY-MM-DD')
+          })}>
+            <View style={styles.cardContent}>
 
-            <View style={styles.moonIconWrapper}>
-                <Text style={styles.moonIcon}>{MoonIcon}</Text>
-            </View>
-
-            <View style={styles.textContainer}>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-
-
-                <View style={styles.dateRow}>
-                    <Text style={styles.dateText}>
-                        <Text style={styles.icon}>{CalendarIcon}</Text> {item.date}
-                    </Text>
-                    <PakshaPill paksha={item.paksha} />
+                <View style={styles.moonIconWrapper}>
+                    <Text style={styles.moonIcon}>{MoonIcon}</Text>
                 </View>
 
-                <Text style={styles.description}>{item.description}</Text>
-            </View>
-            <View style={styles.arrowContainer}>
-                <Text style={styles.arrowIcon}>{ForwardIcon}</Text>
-            </View>
-        </View>
-    </TouchableOpacity>
-);
+                <View style={styles.textContainer}>
+                    <Text style={styles.cardTitle}>{item.name || item.ekadashi_name || item.title}</Text>
 
-const CalendarMonth = ({ navigation }) => {
+                    <View style={styles.dateRow}>
+                        <Text style={styles.dateText}>
+                            <Text style={styles.icon}>{CalendarIcon}</Text> {formattedDate}
+                        </Text>
+                        {pakshaDisplay && <PakshaPill paksha={pakshaDisplay} />}
+                    </View>
+
+                    <Text style={styles.description}>{item.significance || item.description || ''}</Text>
+                </View>
+                <View style={styles.arrowContainer}>
+                    <Text style={styles.arrowIcon}>{ForwardIcon}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+const CalendarMonth = ({ navigation, route }) => {
+    const [month, setMonth] = useState(moment());
+    const currentYear = moment().year();
+    const { ekadashiList, loading, error } = useEkadashiList(currentYear);
+
+    useEffect(() => {
+        // Get month from route params if available
+        if (route?.params?.month) {
+            setMonth(moment(route.params.month));
+        }
+    }, [route?.params?.month]);
+
+    // Filter ekadashis for the selected month
+    const monthEkadashis = ekadashiList?.filter(ekadashi => {
+        const ekadashiDate = moment(ekadashi.date || ekadashi.ekadashi_date);
+        return ekadashiDate.isSame(month, 'month') && ekadashiDate.isSame(month, 'year');
+    }) || [];
+
+    const monthName = month.format('MMMM');
+
     return (
         <SafeAreaView style={styles.safeArea}>
-            <Header />
+            <Header monthName={monthName} />
             <ScrollView style={styles.scrollView}>
-                <View style={styles.listContainer}>
-                    {ekadashiData.map((item) => (
-                        <EkadashiItem key={item.id} item={item} navigation={navigation} />
-                    ))}
-                </View>
+                {loading ? (
+                    <View style={{ padding: 40, alignItems: 'center' }}>
+                        <ActivityIndicator size="large" color={DarkBlue} />
+                    </View>
+                ) : error ? (
+                    <View style={{ padding: 20, alignItems: 'center' }}>
+                        <Text style={{ color: '#dc3545', fontSize: 14 }}>{error}</Text>
+                    </View>
+                ) : monthEkadashis.length > 0 ? (
+                    <View style={styles.listContainer}>
+                        {monthEkadashis.map((item, index) => (
+                            <EkadashiItem key={index} item={item} navigation={navigation} />
+                        ))}
+                    </View>
+                ) : (
+                    <View style={{ padding: 20, alignItems: 'center' }}>
+                        <Text style={{ color: LightBlue, fontSize: 14 }}>No Ekadashis this month</Text>
+                    </View>
+                )}
             </ScrollView>
         </SafeAreaView>
     );

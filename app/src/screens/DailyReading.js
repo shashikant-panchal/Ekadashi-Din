@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
     Platform,
     ScrollView,
@@ -11,6 +12,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AppYellow, DarkBlue, LightBlue, LIGHTBLUEBG } from '../constants/Colors';
+import { bhagavadGitaChapters, getTodaysVerse } from '../data/bhagavadGitaData';
 
 // Reusable component for the Chapter List Item
 const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress }) => (
@@ -31,29 +33,41 @@ const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress }
 );
 
 
-const BHAGAVAD_GITA_CHAPTERS = [
-    { num: 1, title: "Arjuna's Dilemma", verses: 47, progress: 0 },
-    { num: 2, title: "Sankya Yoga", verses: 72, progress: 1 },
-    { num: 3, title: "Karma Yoga", verses: 43, progress: 0 },
-    { num: 4, title: "Jnana Yoga", verses: 42, progress: 0 },
-    { num: 5, title: "Karma-Sannyasa Yoga", verses: 29, progress: 0 },
-    { num: 6, title: "Dhyana Yoga", verses: 47, progress: 0 },
-    { num: 7, title: "Jnana-Vijnana Yoga", verses: 30, progress: 0 },
-    { num: 14, title: "Gunatraya-Vibhaga Yoga", verses: 27, progress: 0 },
-    { num: 15, title: "Purusottama Yoga", verses: 20, progress: 0 },
-    { num: 16, title: "Sampad-Vibhaga Yoga", verses: 24, progress: 0 },
-    { num: 17, title: "Sraddhatraya-Vibhaga Yoga", verses: 28, progress: 0 },
-    { num: 18, title: "Moksa-Sannyasa Yoga", verses: 78, progress: 0 },
-];
-
 const DailyReading = ({ navigation }) => {
-    const totalChapters = 18;
-    const chaptersCompleted = 0;
-    const studyProgress = chaptersCompleted / totalChapters;
-    const sanskritVerse = "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥";
-    const transliteration = "yadā yadā hi dharmasya glānirbhavati bhārata |\nabhyutthānam adharmasya tadātmānaṁ sṛjāmy aham ||";
-    const englishMeaning = "Whenever there is a decline in righteousness and an increase in unrighteousness, O Arjuna, at that time I manifest myself on earth.";
-    const significance = "Significance: This famous verse explains the purpose of divine incarnation - to restore dharma when it declines.";
+    const [todaysVerse, setTodaysVerse] = useState(null);
+    const [chaptersCompleted, setChaptersCompleted] = useState(0);
+    const [totalVersesRead, setTotalVersesRead] = useState(0);
+
+    useEffect(() => {
+        // Get today's verse dynamically
+        const verse = getTodaysVerse();
+        setTodaysVerse(verse);
+
+        // Calculate progress from chapters (in a real app, this would come from API/database)
+        const completed = bhagavadGitaChapters.filter(ch => ch.completed).length;
+        setChaptersCompleted(completed);
+        
+        // Calculate total verses read (placeholder - would come from API in real app)
+        setTotalVersesRead(1);
+    }, []);
+
+    const totalChapters = bhagavadGitaChapters.length;
+    const studyProgress = totalChapters > 0 ? chaptersCompleted / totalChapters : 0;
+    
+    // Use today's verse or fallback
+    const verse = todaysVerse || {
+        chapter: 4,
+        verse: 7,
+        sanskrit: "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥",
+        transliteration: "yadā yadā hi dharmasya glānirbhavati bhārata |\nabhyutthānam adharmasya tadātmānaṁ sṛjāmy aham ||",
+        translation: "Whenever and wherever there is a decline in religious practice, O descendant of Bharata, and a predominant rise of irreligion—at that time I descend Myself.",
+        purport: "The Supreme Lord appears in this world to reestablish dharma (righteousness) and protect the devotees. This verse assures us that divine intervention comes whenever darkness threatens to overcome light."
+    };
+
+    const sanskritVerse = verse.sanskrit;
+    const transliteration = verse.transliteration;
+    const englishMeaning = verse.translation;
+    const significance = verse.purport || "This famous verse explains the purpose of divine incarnation - to restore dharma when it declines.";
 
 
     return (
@@ -114,7 +128,7 @@ const DailyReading = ({ navigation }) => {
                         <Feather name="book-open" size={20} color="#333" />
                         <Text style={styles.verseTitle}>Today's Verse</Text>
                     </View>
-                    <Text style={styles.verseChapter}>Chapter 4, Verse 7</Text>
+                    <Text style={styles.verseChapter}>Chapter {verse.chapter}, Verse {verse.verse}</Text>
 
                     <View style={styles.verseContent}>
                         <Text style={styles.sanskritText}>{sanskritVerse}</Text>
@@ -138,14 +152,14 @@ const DailyReading = ({ navigation }) => {
                     <Text style={styles.chapterSectionTitle}>Bhagavad Gita Chapters</Text>
 
 
-                    {BHAGAVAD_GITA_CHAPTERS.map(chapter => (
+                    {bhagavadGitaChapters.map(chapter => (
                         <ChapterListItem
-                            key={chapter.num}
-                            chapterNumber={chapter.num}
-                            title={chapter.title}
-                            verseCount={chapter.verses}
-                            progress={chapter.progress}
-                            onPress={() => console.log(`Navigating to Chapter ${chapter.num}`)}
+                            key={chapter.id}
+                            chapterNumber={chapter.id}
+                            title={chapter.englishName}
+                            verseCount={chapter.verseCount}
+                            progress={chapter.completed ? chapter.verseCount : 0}
+                            onPress={() => console.log(`Navigating to Chapter ${chapter.id}`)}
                         />
                     ))}
 
@@ -160,7 +174,7 @@ const DailyReading = ({ navigation }) => {
                     </View>
                     <View style={styles.footerMetricCard}>
                         <Ionicons name="book-outline" size={32} color={DarkBlue} />
-                        <Text style={styles.footerMetricValue}>1</Text>
+                        <Text style={styles.footerMetricValue}>{totalVersesRead}</Text>
                         <Text style={styles.footerMetricLabel}>Verses read</Text>
                     </View>
                 </View>
