@@ -46,14 +46,14 @@ const DailyReading = ({ navigation }) => {
         // Calculate progress from chapters (in a real app, this would come from API/database)
         const completed = bhagavadGitaChapters.filter(ch => ch.completed).length;
         setChaptersCompleted(completed);
-        
+
         // Calculate total verses read (placeholder - would come from API in real app)
         setTotalVersesRead(1);
     }, []);
 
     const totalChapters = bhagavadGitaChapters.length;
     const studyProgress = totalChapters > 0 ? chaptersCompleted / totalChapters : 0;
-    
+
     // Use today's verse or fallback
     const verse = todaysVerse || {
         chapter: 4,

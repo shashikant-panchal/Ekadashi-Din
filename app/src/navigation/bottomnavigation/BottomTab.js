@@ -23,18 +23,22 @@ const MAIN_SCREENS = [
   "HomeScreen",      // HomeStack main screen
   "CalendarScreen",  // CalendarStack main screen
   "Ekadashi",        // EkadashiStack main screen
-  "Profile",         // ProfileStack main screen
+  "ProfileMain",         // ProfileStack main screen
   "Settings",        // SettingsScreen (direct)
+  "Home",            // Home Tab
+  "Calendar",        // Calendar Tab
+  "Ekadashis",
+  'Profile'      // Ekadashis Tab
 ];
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   // Get the current focused route
   const focusedRoute = state.routes[state.index];
   const focusedRouteName = getFocusedRouteNameFromRoute(focusedRoute) || focusedRoute.name;
-  
+
   // Hide tab bar if current screen is not a main screen
   const shouldShowTabBar = MAIN_SCREENS.includes(focusedRouteName);
-  
+
   if (!shouldShowTabBar) {
     return null;
   }

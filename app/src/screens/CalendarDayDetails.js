@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Dimensions, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import moment from 'moment';
-import { DarkBlue, Grey, LightBlue } from '../constants/Colors';
 import { Feather } from '@expo/vector-icons';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { DarkBlue, Grey, LightBlue } from '../constants/Colors';
+import { getAllBhajans } from '../data/bhajansData';
 import { useEkadashiList } from '../hooks/useEkadashi';
-import { getAllBhajans, getBhajanById } from '../data/bhajansData';
 
 const PRIMARY_COLOR = '#4A90E2';
 const SECONDARY_BG = '#F5F5F5';
@@ -70,7 +70,7 @@ const VrataRulesSection = ({ ekadashi }) => {
 const TimingsSection = ({ panchangData }) => {
     const sunrise = panchangData?.sunrise || "06:09 AM";
     const sunset = panchangData?.sunset || "06:09 PM";
-    
+
     return (
         <DetailCard iconName="clock" title="Important Timings">
             <View style={styles.timingRow}>
@@ -90,7 +90,7 @@ const TimingsSection = ({ panchangData }) => {
 // --- Section 4: Bhajans & Mantras ---
 const BhajansSection = ({ onBhajanPress, bhajans }) => {
     const displayBhajans = bhajans || getAllBhajans().slice(0, 3); // Show first 3 by default
-    
+
     return (
         <DetailCard iconName="music" title="Bhajans & Mantras">
             {displayBhajans.map((bhajan) => (
@@ -138,7 +138,7 @@ const StoryModal = ({ isVisible, onClose, ekadashi }) => {
     const ekadashiName = ekadashi?.name || ekadashi?.ekadashi_name || "Ekadashi";
     const vrataKatha = ekadashi?.vrataKatha || "Long ago, in the celestial realm, there lived a demon named Mura who tormented the demigods and sages. Unable to defeat him through conventional means, Lord Vishnu engaged in a fierce battle that lasted for thousands of years. During this cosmic struggle, a divine maiden emerged from the Lord's body, radiating immense spiritual power. This celestial being, born from the Lord's transcendental energy, defeated the demon Mura with ease. Pleased with her service, Lord Vishnu granted her a boon. She requested that those who fast on her appearance day would be blessed with spiritual advancement and liberation from material bondage. The Lord named her Ekadashi, as she appeared on the eleventh day of the lunar month. He declared that observing Ekadashi with devotion, fasting, and spiritual practices would grant devotees immense spiritual benefit, purification of consciousness, and progress on the path of devotion.";
     const significance = ekadashi?.significance || "Ekadashi represents the transcendence of material consciousness and the awakening of spiritual awareness. By observing this sacred day, devotees align themselves with higher spiritual vibrations, purify their hearts, and develop deeper love and devotion for the Supreme Lord. The practice of fasting on Ekadashi is not merely about restricting food intake; it is a powerful spiritual discipline intended to reduce bodily demands and increase concentration on transcendental sound and service.";
-    
+
     return (
         <Modal
             animationType="slide"
@@ -179,7 +179,7 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
 
     const handlePlay = async () => {
         if (!currentBhajan?.url) return;
-        
+
         setIsOpening(true);
         try {
             const canOpen = await Linking.canOpenURL(currentBhajan.url);
@@ -244,15 +244,15 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
                             {currentBhajan?.duration && (
                                 <Text style={styles.playerDuration}>{currentBhajan.duration}</Text>
                             )}
-                            
+
                             {/* Progress bar placeholder */}
                             <View style={styles.progressBarContainer}>
                                 <View style={styles.progressBar} />
                             </View>
-                            
+
                             <View style={styles.playerActions}>
                                 <Text style={styles.privacyText}>*Opens in external player</Text>
-                                <TouchableOpacity 
+                                <TouchableOpacity
                                     style={styles.playButton}
                                     onPress={handlePlay}
                                     disabled={isOpening || !currentBhajan?.url}
