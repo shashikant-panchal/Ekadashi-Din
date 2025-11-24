@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, Linking, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { WebView } from 'react-native-webview';
 import { DarkBlue, Grey, LightBlue } from '../constants/Colors';
 import { getAllBhajans } from '../data/bhajansData';
 import { useEkadashiList } from '../hooks/useEkadashi';
@@ -173,28 +174,14 @@ const StoryModal = ({ isVisible, onClose, ekadashi }) => {
 
 // --- Modal 2: Bhajan Player ---
 const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => {
-    const [isOpening, setIsOpening] = useState(false);
     const allBhajans = getAllBhajans();
     const currentBhajan = typeof selectedBhajan === 'object' ? selectedBhajan : allBhajans.find(b => b.name === selectedBhajan) || allBhajans[0];
 
-    const handlePlay = async () => {
-        if (!currentBhajan?.url) return;
-
-        setIsOpening(true);
-        try {
-            const canOpen = await Linking.canOpenURL(currentBhajan.url);
-            if (canOpen) {
-                await Linking.openURL(currentBhajan.url);
-            } else {
-                alert('Unable to open this URL. Please check your internet connection.');
-            }
-        } catch (error) {
-            console.error('Error opening URL:', error);
-            alert('Unable to open this URL. Please try again.');
-        } finally {
-            setIsOpening(false);
-        }
-    };
+    // Construct SoundCloud Embed URL
+    // Using visual=true for the large artwork player as shown in the screenshot
+    const soundCloudEmbedUrl = currentBhajan?.url
+        ? `https://w.soundcloud.com/player/?url=${encodeURIComponent(currentBhajan.url)}&auto_play=true&visual=true&show_artwork=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
+        : null;
 
     const handleBhajanSelect = (bhajan) => {
         if (onBhajanChange) {
@@ -211,7 +198,9 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
         >
             <View style={styles.modalOverlay}>
                 <View style={styles.bhajanModalContainer}>
-                    <View style={[styles.bhajanHandle]} />
+                    <View style={styles.bhajanHandle} />
+
+                    {/* Header */}
                     <View style={styles.modalHeader}>
                         <AppIcon name="music" size={24} color={DarkBlue} style={{ marginRight: 8 }} />
                         <Text style={[styles.modalTitle, { flex: 1 }]} numberOfLines={1}>
@@ -222,64 +211,28 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
                         </TouchableOpacity>
                     </View>
 
-                    {/* --- Player Area --- */}
-                    <View style={styles.playerPlaceholder}>
-                        <View style={styles.playerArtwork}>
-                            <AppIcon name="music" size={40} color={Grey} />
-                        </View>
-                        <View style={styles.playerControls}>
-                            <Text style={styles.playerTitle} numberOfLines={1}>
-                                {currentBhajan?.name || 'Bhajan'}
-                            </Text>
-                            {currentBhajan?.artist && (
-                                <Text style={styles.playerArtist} numberOfLines={1}>
-                                    {currentBhajan.artist}
-                                </Text>
-                            )}
-                            {currentBhajan?.description && (
-                                <Text style={styles.playerDescription} numberOfLines={2}>
-                                    {currentBhajan.description}
-                                </Text>
-                            )}
-                            {currentBhajan?.duration && (
-                                <Text style={styles.playerDuration}>{currentBhajan.duration}</Text>
-                            )}
-
-                            {/* Progress bar placeholder */}
-                            <View style={styles.progressBarContainer}>
-                                <View style={styles.progressBar} />
+                    {/* Player Area - WebView */}
+                    <View style={styles.webviewContainer}>
+                        {soundCloudEmbedUrl ? (
+                            <WebView
+                                source={{ uri: soundCloudEmbedUrl }}
+                                style={styles.webview}
+                                scrollEnabled={false}
+                                allowsInlineMediaPlayback={true}
+                                mediaPlaybackRequiresUserAction={false}
+                            />
+                        ) : (
+                            <View style={styles.errorContainer}>
+                                <Text style={styles.errorText}>Audio not available</Text>
                             </View>
-
-                            <View style={styles.playerActions}>
-                                <Text style={styles.privacyText}>*Opens in external player</Text>
-                                <TouchableOpacity
-                                    style={styles.playButton}
-                                    onPress={handlePlay}
-                                    disabled={isOpening || !currentBhajan?.url}
-                                >
-                                    {isOpening ? (
-                                        <ActivityIndicator size="small" color="#fff" />
-                                    ) : (
-                                        <AppIcon name="play-circle" size={40} color="#fff" />
-                                    )}
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                        )}
                     </View>
 
-                    {currentBhajan?.sanskrit && (
-                        <View style={styles.mantraDisplay}>
-                            <Text style={styles.mantraSanskrit}>{currentBhajan.sanskrit}</Text>
-                            {currentBhajan.transliteration && (
-                                <Text style={styles.mantraTransliteration}>{currentBhajan.transliteration}</Text>
-                            )}
-                        </View>
-                    )}
-
                     <Text style={styles.devotionalText}>
-                        Tap play to open in your preferred music app
+                        Playing devotional music for your spiritual journey
                     </Text>
 
+                    {/* Footer - Other Bhajans */}
                     <View style={styles.bhajanListFooter}>
                         {allBhajans.map((bhajan) => (
                             <TouchableOpacity
@@ -644,98 +597,26 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 8,
     },
-    playerPlaceholder: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        backgroundColor: SECONDARY_BG,
+    webviewContainer: {
+        height: 200, // Adjust height as needed for the visual player
+        backgroundColor: '#000',
         borderRadius: 10,
-        padding: 15,
+        overflow: 'hidden',
         marginVertical: 15,
     },
-    playerArtwork: {
-        width: 100,
-        height: 100,
-        backgroundColor: PRIMARY_COLOR,
-        borderRadius: 12,
-        marginRight: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        opacity: 0.8,
-    },
-    playerControls: {
+    webview: {
         flex: 1,
-        justifyContent: 'space-between',
-        minHeight: 100,
+        backgroundColor: 'transparent',
     },
-    playerTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: DarkBlue,
-        marginBottom: 4,
-    },
-    playerArtist: {
-        fontSize: 14,
-        color: LightBlue,
-        marginBottom: 4,
-    },
-    playerDescription: {
-        fontSize: 12,
-        color: LightBlue,
-        marginBottom: 8,
-        lineHeight: 16,
-    },
-    playerDuration: {
-        fontSize: 11,
-        color: Grey,
-        marginBottom: 8,
-    },
-    progressBarContainer: {
-        marginVertical: 10,
-    },
-    progressBar: {
-        height: 4,
-        width: '100%',
-        backgroundColor: BORDER_COLOR,
-        borderRadius: 2,
-    },
-    playerActions: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    playButton: {
-        backgroundColor: PRIMARY_COLOR,
-        borderRadius: 25,
-        padding: 5,
+    errorContainer: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    privacyText: {
-        fontSize: 10,
-        color: LightBlue,
-    },
-    mantraDisplay: {
         backgroundColor: SECONDARY_BG,
-        borderRadius: 10,
-        padding: 15,
-        marginVertical: 10,
-        alignItems: 'center',
     },
-    mantraSanskrit: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: DarkBlue,
-        textAlign: 'center',
-        marginBottom: 8,
-        lineHeight: 28,
-    },
-    mantraTransliteration: {
+    errorText: {
+        color: Grey,
         fontSize: 14,
-        color: LightBlue,
-        textAlign: 'center',
-        fontStyle: 'italic',
-        lineHeight: 20,
     },
     devotionalText: {
         fontSize: 14,
