@@ -1,9 +1,7 @@
-import { Ionicons } from "@expo/vector-icons"; // ✅ Import Ionicons
-import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { DarkBlue, LightBlue } from "../constants/Colors";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { DarkBlue } from "../constants/Colors";
 import { useNextEkadashi } from "../hooks/useEkadashi";
 import { getTodayEkadashi } from "../services/api";
 
@@ -27,8 +25,8 @@ const NextEkadashiCard = () => {
     fetchTodayEkadashi();
   }, []);
 
-  const handleViewDetails = () => {
-    console.log("View Details Pressed!");
+  const handleBeginObservance = () => {
+    console.log("Begin Observance Pressed!");
     // Navigation logic here
   };
 
@@ -55,12 +53,6 @@ const NextEkadashiCard = () => {
   if (loading) {
     return (
       <View style={styles.cardWrapper}>
-        <LinearGradient
-          colors={[GRADIENT_START, GRADIENT_END]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1.2 }}
-          style={styles.gradientBackground}
-        />
         <View style={[styles.cardContentContainer, { alignItems: 'center', justifyContent: 'center', padding: 40 }]}>
           <ActivityIndicator size="large" color={DarkBlue} />
         </View>
@@ -71,12 +63,6 @@ const NextEkadashiCard = () => {
   if (error || !displayEkadashi) {
     return (
       <View style={styles.cardWrapper}>
-        <LinearGradient
-          colors={[GRADIENT_START, GRADIENT_END]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1.2 }}
-          style={styles.gradientBackground}
-        />
         <View style={styles.cardContentContainer}>
           <Text style={styles.errorText}>{error || "No upcoming Ekadashi found"}</Text>
         </View>
@@ -90,49 +76,20 @@ const NextEkadashiCard = () => {
 
   return (
     <View style={styles.cardWrapper}>
-      <LinearGradient
-        colors={[GRADIENT_START, GRADIENT_END]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1.2 }}
-        style={styles.gradientBackground}
-      />
-
       <View style={styles.cardContentContainer}>
-        <View style={styles.topSection}>
-          <View style={styles.iconBackground}>
-            <Ionicons name="calendar-outline" size={24} color={DarkBlue} />
-          </View>
-
-          <View style={styles.textGroup}>
-            <Text style={styles.nextEkadashiText}>{isToday ? "Today's Ekadashi" : "Next Ekadashi"}</Text>
-            <Text style={[styles.ekadashiNameText, { color: LightBlue }]}>{ekadashiName}</Text>
-          </View>
-
-          <View style={styles.upcomingBadge}>
-            <Text style={styles.upcomingText}>{isToday ? "Today" : "Upcoming"}</Text>
-          </View>
+        {/* Moon Icon and "Today is Ekadashi!" Text in Same Row */}
+        <View style={styles.headerRow}>
+          <Text style={styles.moonIcon}>🌙</Text>
+          <Text style={styles.todayText}>Today is Ekadashi!</Text>
         </View>
-        {/* <View style={styles.bottomSection}>
-          <View style={styles.dateInfoContainer}>
-            <Ionicons
-              name="time-outline"
-              size={18}
-              color="#6c757d"
-              style={{ marginRight: 10 }}
-            />
-            <View>
-              <Text style={styles.dateText}>{formatDate(ekadashiDate)}</Text>
-              {daysRemaining && <Text style={styles.daysRemainingText}>{daysRemaining}</Text>}
-            </View>
-          </View>
 
-          <TouchableOpacity
-            style={styles.detailsButton}
-            onPress={handleViewDetails}
-          >
-            <Text style={styles.detailsButtonText}>View Details</Text>
-          </TouchableOpacity>
-        </View> */}
+        {/* Ekadashi Name */}
+        <Text style={styles.ekadashiNameText}>{ekadashiName}</Text>
+
+        {/* Begin Observance Button */}
+        <TouchableOpacity style={styles.observanceButton} onPress={handleBeginObservance}>
+          <Text style={styles.observanceButtonText}>Begin Observance</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -142,15 +99,17 @@ const NextEkadashiCard = () => {
 const styles = StyleSheet.create({
   cardWrapper: {
     backgroundColor: CARD_WHITE,
-    borderRadius: 16,
-    margin: 10,
+    borderRadius: 20,
+    margin: 16,
+    marginTop: 20,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
-    // alignContent: 'center'
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   gradientBackground: {
     position: "absolute",
@@ -160,87 +119,44 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   cardContentContainer: {
-    padding: 16,
-    backgroundColor: "transparent",
+    padding: 32,
+    backgroundColor: CARD_WHITE,
+    alignItems: "center",
   },
-  topSection: {
+  headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: 16,
-  },
-  iconBackground: {
-    backgroundColor: "#D5DBE2",
-    borderRadius: 12,
-    padding: 10,
-    marginRight: 10,
-    alignItems: "center",
     justifyContent: "center",
+    marginBottom: 16,
   },
-  textGroup: {
-    flex: 1,
-    justifyContent: "center",
+  moonIcon: {
+    fontSize: 40,
+    marginRight: 12,
   },
-  nextEkadashiText: {
-    fontSize: 16,
-    color: DarkBlue,
-    fontWeight: "600",
-
-    marginBottom: 2,
+  todayText: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#1C2C56",
   },
   ekadashiNameText: {
-    fontSize: 14,
-
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#5B7AB8",
+    textAlign: "center",
+    marginBottom: 24,
   },
-  upcomingBadge: {
-    backgroundColor: "#e9ecef",
-    borderRadius: 15,
-    borderWidth: 0.5,
-    borderColor: "#ced4da",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginLeft: 10,
-  },
-  upcomingText: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#495057",
-  },
-  bottomSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#f8f9fa",
+  observanceButton: {
+    backgroundColor: "#1C2C56",
     borderRadius: 12,
-    padding: 12,
-    marginTop: 8,
-  },
-  dateInfoContainer: {
-    flexDirection: "row",
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    width: "100%",
     alignItems: "center",
-    flex: 1,
   },
-  dateText: {
+  observanceButtonText: {
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
-    color: "#343a40",
-  },
-  daysRemainingText: {
-    fontSize: 12,
-    color: LightBlue,
-  },
-  detailsButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ced4da",
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-  },
-  detailsButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: DarkBlue,
   },
   errorText: {
     fontSize: 14,
