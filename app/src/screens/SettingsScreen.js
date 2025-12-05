@@ -19,13 +19,14 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   AppYellow,
   BackgroundGrey,
   DarkBlue,
   LightBlue,
 } from "../constants/Colors";
+import { detectLocation, setAutoDetect } from "../redux/locationSlice";
 import { signOut } from "../redux/userSlice";
 // Assume DarkBlue and LightBlue are defined in constants/Colors
 
@@ -110,7 +111,9 @@ const LanguageModal = ({
 
 const SettingsScreen = () => {
   const dispatch = useDispatch();
-  const [autoDetect, setAutoDetect] = useState(false);
+  const { city, country, autoDetect, loading } = useSelector((state) => state.location);
+
+  // const [autoDetect, setAutoDetect] = useState(false); // Replaced by Redux state
   const [ekadashiReminder, setEkadashiReminder] = useState(true);
   const [morningReminder, setMorningReminder] = useState(true);
   const [paranaReminder, setParanaReminder] = useState(true);
@@ -139,7 +142,7 @@ const SettingsScreen = () => {
           <View style={styles.rowBetween}>
             <View>
               <Text style={styles.label}>Current Location</Text>
-              <Text style={styles.subLabel}>Not detected</Text>
+              <Text style={styles.subLabel}>{loading ? "Detecting..." : (city ? `${city}, ${country}` : "Not detected")}</Text>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
               <Text style={styles.smallBtnText}>Change</Text>
@@ -155,7 +158,12 @@ const SettingsScreen = () => {
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
               thumbColor="#fff"
               value={autoDetect}
-              onValueChange={setAutoDetect}
+              onValueChange={(value) => {
+                dispatch(setAutoDetect(value));
+                if (value) {
+                  dispatch(detectLocation());
+                }
+              }}
             />
           </View>
         </View>
