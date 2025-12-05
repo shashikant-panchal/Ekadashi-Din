@@ -1,11 +1,12 @@
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import moment from 'moment'
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { BackgroundGrey, LightBlue } from '../constants/Colors'
 import { dh, dw } from '../constants/Dimensions'
+import { useTheme } from '../context/ThemeContext'
 import { usePanchang } from '../hooks/usePanchang'
 
 const PanchangCard = () => {
+    const { colors, isDark } = useTheme();
     const { panchangData, loading, error, refreshData } = usePanchang();
 
     const handleRefresh = () => {
@@ -15,34 +16,28 @@ const PanchangCard = () => {
     const renderHeader = () => (
         <View style={styles.header}>
             <View style={styles.headerLeft}>
-                <Ionicons name="moon-outline" size={dw * 0.05} color="#1C2C56" />
-                <Text style={styles.headerTitle}>Today's Panchang</Text>
+                <Ionicons name="moon-outline" size={dw * 0.05} color={colors.foreground} />
+                <Text style={[styles.headerTitle, { color: colors.foreground }]}>Today's Panchang</Text>
             </View>
             <TouchableOpacity onPress={handleRefresh}>
-                <Ionicons name="refresh-outline" size={dw * 0.05} color="#1C2C56" />
+                <Ionicons name="refresh-outline" size={dw * 0.05} color={colors.foreground} />
             </TouchableOpacity>
         </View>
     )
 
-    // Format time from API response
     const formatTime = (timeString) => {
         if (!timeString) return "N/A";
-        // Handle different time formats
         if (typeof timeString === 'string') {
-            // If already formatted
             if (timeString.includes(':')) {
-                return timeString.split(' ')[0]; // Get HH:MM part
+                return timeString.split(' ')[0];
             }
-            // If it's a timestamp or date string
             return moment(timeString).format('HH:mm');
         }
         return "N/A";
     };
 
-    // Extract tithi - synced with web app structure
     const getTithi = () => {
         if (!panchangData) return "N/A";
-        // Web app returns tithi as string directly
         return panchangData.tithi ||
             panchangData.tithi?.name ||
             panchangData.tithi?.details?.tithi_name ||
@@ -50,61 +45,47 @@ const PanchangCard = () => {
             "N/A";
     };
 
-    // Extract location - synced with web app
     const getLocation = () => {
         if (!panchangData) return "N/A";
-        // Web app returns location as string "Mumbai, India"
         return panchangData.location ||
             (panchangData.latitude && panchangData.longitude
                 ? `${panchangData.latitude.toFixed(2)}°, ${panchangData.longitude.toFixed(2)}°`
                 : "N/A");
     };
 
-    // Extract sunrise - synced with web app (already formatted as "HH:MM")
     const getSunrise = () => {
         if (!panchangData) return "N/A";
-        // Web app returns time as formatted string "HH:MM"
         return panchangData.sunrise || formatTime(panchangData.sunrise_time || panchangData.suryoday) || "N/A";
     };
 
-    // Extract sunset - synced with web app (already formatted as "HH:MM")
     const getSunset = () => {
         if (!panchangData) return "N/A";
-        // Web app returns time as formatted string "HH:MM"
         return panchangData.sunset || formatTime(panchangData.sunset_time || panchangData.suryast) || "N/A";
     };
 
-    // Extract moonrise - synced with web app (already formatted as "HH:MM")
     const getMoonrise = () => {
         if (!panchangData) return "N/A";
-        // Web app returns time as formatted string "HH:MM"
         return panchangData.moonrise || formatTime(panchangData.moonrise_time || panchangData.chandroday) || "N/A";
     };
 
-    // Extract nakshatra - synced with web app structure
     const getNakshatra = () => {
         if (!panchangData) return "N/A";
-        // Web app returns nakshatra as string directly
         return panchangData.nakshatra ||
             panchangData.nakshatra?.name ||
             panchangData.nakshatra_name ||
             "N/A";
     };
 
-    // Extract yoga - synced with web app structure
     const getYoga = () => {
         if (!panchangData) return "N/A";
-        // Web app returns yoga as string directly
         return panchangData.yoga ||
             panchangData.yoga?.name ||
             panchangData.yoga_name ||
             "N/A";
     };
 
-    // Extract karana - synced with web app structure
     const getKarana = () => {
         if (!panchangData) return "N/A";
-        // Web app returns karana as string directly
         return panchangData.karana ||
             panchangData.karana?.name ||
             panchangData.karana_name ||
@@ -113,10 +94,10 @@ const PanchangCard = () => {
 
     if (loading) {
         return (
-            <View style={styles.card}>
+            <View style={[styles.card, { backgroundColor: colors.card }]}>
                 {renderHeader()}
                 <View style={{ padding: 40, alignItems: 'center' }}>
-                    <ActivityIndicator size="large" color="#1C2C56" />
+                    <ActivityIndicator size="large" color={colors.primary} />
                 </View>
             </View>
         );
@@ -124,45 +105,45 @@ const PanchangCard = () => {
 
     if (error || !panchangData) {
         return (
-            <View style={styles.card}>
+            <View style={[styles.card, { backgroundColor: colors.card }]}>
                 {renderHeader()}
                 <View style={{ padding: 20, alignItems: 'center' }}>
-                    <Text style={{ color: '#dc3545', fontSize: 14 }}>{error || "Failed to load Panchang data"}</Text>
+                    <Text style={{ color: colors.destructive, fontSize: 14 }}>{error || "Failed to load Panchang data"}</Text>
                 </View>
             </View>
         );
     }
 
     const renderInfoCard = (label, value, bgColor, align = 'flex-start') => (
-        <View style={[styles.smallCard, { backgroundColor: bgColor, alignItems: align }]}>
-            <Text style={styles.label}>{label}</Text>
-            <Text style={styles.value}>{value}</Text>
+        <View style={[styles.smallCard, { backgroundColor: isDark ? colors.muted : bgColor, alignItems: align }]}>
+            <Text style={[styles.label, { color: colors.mutedForeground }]}>{label}</Text>
+            <Text style={[styles.value, { color: colors.foreground }]}>{value}</Text>
         </View>
     )
 
     const renderIconCard = (icon, iconType, label, value, bgColor, iconBgColor, iconColor) => (
-        <View style={[styles.smallCard, styles.rowAlign, { backgroundColor: bgColor }]}>
-            <View style={[styles.iconBackground, iconBgColor && { backgroundColor: iconBgColor }]}>
-                {iconType === 'fa5' && <FontAwesome5 name={icon} size={dw * 0.05} color={iconColor} />}
-                {iconType === 'mc' && <MaterialCommunityIcons name={icon} size={dw * 0.055} color={iconColor} />}
-                {iconType === 'ion' && <Ionicons name={icon} size={dw * 0.05} color={iconColor} />}
+        <View style={[styles.smallCard, styles.rowAlign, { backgroundColor: isDark ? colors.muted : bgColor }]}>
+            <View style={[styles.iconBackground, { backgroundColor: isDark ? colors.lightBlueBg : (iconBgColor || colors.muted) }]}>
+                {iconType === 'fa5' && <FontAwesome5 name={icon} size={dw * 0.05} color={isDark ? colors.primary : iconColor} />}
+                {iconType === 'mc' && <MaterialCommunityIcons name={icon} size={dw * 0.055} color={isDark ? colors.secondary : iconColor} />}
+                {iconType === 'ion' && <Ionicons name={icon} size={dw * 0.05} color={isDark ? colors.primary : iconColor} />}
             </View>
             <View style={styles.iconTextContainer}>
-                <Text style={styles.subLabel}>{label}</Text>
-                <Text style={styles.value}>{value}</Text>
+                <Text style={[styles.subLabel, { color: colors.mutedForeground }]}>{label}</Text>
+                <Text style={[styles.value, { color: colors.foreground }]}>{value}</Text>
             </View>
         </View>
     )
 
     const renderBottomCard = (label, value, bgColor) => (
-        <View style={[styles.bottomCard, { backgroundColor: bgColor }]}>
-            <Text style={styles.subLabel}>{label}</Text>
-            <Text style={styles.value} numberOfLines={2}>{value}</Text>
+        <View style={[styles.bottomCard, { backgroundColor: isDark ? colors.muted : bgColor }]}>
+            <Text style={[styles.subLabel, { color: colors.mutedForeground }]}>{label}</Text>
+            <Text style={[styles.value, { color: colors.foreground }]} numberOfLines={2}>{value}</Text>
         </View>
     )
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: colors.card }]}>
             {renderHeader()}
 
             <View style={styles.row}>
@@ -170,24 +151,21 @@ const PanchangCard = () => {
                 {renderInfoCard('LOCATION', getLocation(), '#E8F0FB')}
             </View>
 
-            {/* Second Row */}
             <View style={styles.row}>
-                {renderIconCard('sun', 'fa5', 'Sunrise', getSunrise(), '#F1F6FE', null, '#1C2C56')}
+                {renderIconCard('sun', 'fa5', 'Sunrise', getSunrise(), '#F1F6FE', null, colors.foreground)}
                 {renderIconCard('weather-sunset-down', 'mc', 'Sunset', getSunset(), '#FFF7E5', '#FEFCEB', '#FAE013')}
             </View>
 
-            {/* Moonrise */}
-            <View style={[styles.fullCard, { backgroundColor: '#F1F6FE' }]}>
-                <View style={[styles.iconBackground, { backgroundColor: BackgroundGrey }]}>
-                    <Ionicons name="moon" size={dw * 0.05} color="#1C2C56" />
+            <View style={[styles.fullCard, { backgroundColor: isDark ? colors.muted : '#F1F6FE' }]}>
+                <View style={[styles.iconBackground, { backgroundColor: colors.lightBlueBg }]}>
+                    <Ionicons name="moon" size={dw * 0.05} color={colors.primary} />
                 </View>
                 <View style={styles.iconTextContainer}>
-                    <Text style={styles.subLabel}>Moonrise</Text>
-                    <Text style={styles.value}>{getMoonrise()}</Text>
+                    <Text style={[styles.subLabel, { color: colors.mutedForeground }]}>Moonrise</Text>
+                    <Text style={[styles.value, { color: colors.foreground }]}>{getMoonrise()}</Text>
                 </View>
             </View>
 
-            {/* Bottom Row */}
             <View style={styles.row}>
                 {renderBottomCard('Nakshatra', getNakshatra(), '#E9F0E6')}
                 {renderBottomCard('Yoga', getYoga(), '#EDE7F6')}
@@ -201,7 +179,6 @@ export default PanchangCard
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#fff',
         borderRadius: dw * 0.03,
         padding: dw * 0.04,
         margin: dw * 0.04,
@@ -224,7 +201,6 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: dw * 0.045,
         fontWeight: '600',
-        color: '#1C2C56',
         marginLeft: dw * 0.015,
     },
     row: {
@@ -257,24 +233,20 @@ const styles = StyleSheet.create({
     label: {
         fontSize: dw * 0.032,
         fontWeight: '600',
-        color: LightBlue,
         textAlign: 'flex-start',
     },
     subLabel: {
         fontSize: dw * 0.034,
-        color: LightBlue,
         marginTop: dh * 0.004,
     },
     value: {
         fontSize: dw * 0.036,
         padding: 4,
         fontWeight: '600',
-        color: '#1C2C56',
         marginTop: dh * 0.003,
         textAlign: 'center',
     },
     iconBackground: {
-        backgroundColor: "#D5DBE2",
         borderRadius: 10,
         padding: 10,
         marginRight: 10,

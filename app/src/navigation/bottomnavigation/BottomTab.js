@@ -3,45 +3,41 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
+import { useTheme } from "../../context/ThemeContext";
 import SettingsScreen from "../../screens/SettingsScreen";
 import CalendarStack from "../stacknavigation/CalendarStack";
 import EkadashiStack from "../stacknavigation/EkadashiStack";
 import HomeStack from "../stacknavigation/HomeStack";
 import ProfileStack from "../stacknavigation/ProfileStack";
 
-const TAB_ACTIVE_COLOR = "#16366B";
-const PALE_COLOR = "#34629E";
-const TEXT_INACTIVE_COLOR = "#4071BF";
-const TEXT_ACTIVE_COLOR = "#FFFFFF";
-const TAB_BAR_BACKGROUND_COLOR = "#FAFBFA";
-const ACTIVE_BORDER_COLOR = "#C2CAD5";
-
 const Tab = createBottomTabNavigator();
 
 // Main screens that should show bottom tab
 const MAIN_SCREENS = [
-  "HomeScreen",      // HomeStack main screen
-  "CalendarScreen",  // CalendarStack main screen
-  "Ekadashi",        // EkadashiStack main screen
-  "ProfileMain",         // ProfileStack main screen
-  "Settings",        // SettingsScreen (direct)
-  "Home",            // Home Tab
-  "Calendar",        // Calendar Tab
+  "HomeScreen",
+  "CalendarScreen",
+  "Ekadashi",
+  "ProfileMain",
+  "Settings",
+  "Home",
+  "Calendar",
   "Ekadashis",
-  'Profile'      // Ekadashis Tab
+  'Profile'
 ];
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
-  // Get the current focused route
+  const { colors, isDark } = useTheme();
+
   const focusedRoute = state.routes[state.index];
   const focusedRouteName = getFocusedRouteNameFromRoute(focusedRoute) || focusedRoute.name;
 
-  // Hide tab bar if current screen is not a main screen
   const shouldShowTabBar = MAIN_SCREENS.includes(focusedRouteName);
 
   if (!shouldShowTabBar) {
     return null;
   }
+
+  const styles = getStyles(colors, isDark);
 
   return (
     <View style={styles.tabBarWrapper}>
@@ -70,14 +66,12 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           };
 
           const iconName = options.tabBarIconName;
-          const iconColor = isFocused ? TEXT_ACTIVE_COLOR : TEXT_INACTIVE_COLOR;
-          const textColor = isFocused ? TEXT_ACTIVE_COLOR : TEXT_INACTIVE_COLOR;
-
-          const iconType = iconName;
+          const iconColor = isFocused ? colors.tabActiveText : colors.tabInactiveText;
+          const textColor = isFocused ? colors.tabActiveText : colors.tabInactiveText;
 
           const TabContent = () => (
             <>
-              <Feather name={iconType} size={24} color={iconColor} />
+              <Feather name={iconName} size={24} color={iconColor} />
               <Text style={[styles.tabLabel, { color: textColor }]}>
                 {String(label)}
               </Text>
@@ -96,7 +90,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             >
               {isFocused ? (
                 <LinearGradient
-                  colors={[PALE_COLOR, TAB_ACTIVE_COLOR]}
+                  colors={isDark ? [colors.primary, colors.accent] : ['#34629E', '#16366B']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={[styles.tabPill, styles.tabPillActive]}
@@ -169,21 +163,21 @@ const BottomTab = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (colors, isDark) => StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: colors.background,
   },
   screenText: {
     fontSize: 24,
     fontWeight: "bold",
   },
   tabBarWrapper: {
-    backgroundColor: TAB_BAR_BACKGROUND_COLOR,
+    backgroundColor: colors.tabBarBackground,
     borderTopWidth: 1,
-    borderTopColor: "#CED9E4",
+    borderTopColor: colors.tabBarBorder,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.05,
@@ -218,7 +212,7 @@ const styles = StyleSheet.create({
   tabPillActive: {
     borderRadius: 15,
     borderWidth: 3,
-    borderColor: ACTIVE_BORDER_COLOR,
+    borderColor: isDark ? colors.border : "#C2CAD5",
   },
   tabLabel: {
     fontSize: 12,

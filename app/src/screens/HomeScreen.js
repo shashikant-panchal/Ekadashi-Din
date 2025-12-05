@@ -6,41 +6,45 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NextEkadashiCard from "../components/NextEkadashiCard";
 import PanchangCard from "../components/PanchangCard";
 import SplitCard from "../components/SplitCard";
-import { BackgroundGrey, DarkBlue } from "../constants/Colors";
 import { dw } from "../constants/Dimensions";
 import { logo } from "../constants/Images";
+import { useTheme } from "../context/ThemeContext";
 
 const HomeScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const { colors, isDark } = useTheme();
+
+  const styles = getStyles(colors);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F9FA" }}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header with Logo, Title and Notification Bell */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Image resizeMode="contain" source={logo} style={styles.logo} />
+            <Image resizeMode="contain" source={logo} style={[styles.logo, { backgroundColor: colors.card }]} />
             <View style={styles.titleContainer}>
-              <Text style={styles.title}>Ekadashi Din</Text>
-              <Text style={styles.subtitle}>Sacred Fasting Calendar</Text>
+              <Text style={[styles.title, { color: colors.foreground }]}>Ekadashi Din</Text>
+              <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Sacred Fasting Calendar</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Notification')} style={styles.notificationButton}>
-            <Feather name="bell" size={22} color="#1C2C56" />
-            <View style={styles.notificationDot} />
+          <TouchableOpacity onPress={() => navigation.navigate('Notification')} style={[styles.notificationButton, { backgroundColor: colors.card }]}>
+            <Feather name="bell" size={22} color={colors.foreground} />
+            <View style={[styles.notificationDot, { backgroundColor: colors.primary, borderColor: colors.card }]} />
           </TouchableOpacity>
         </View>
 
         {/* Decorative Diya Section with Hindi Text */}
-        <View style={styles.diyaSection}>
+        <View style={[styles.diyaSection, { backgroundColor: colors.lightBlueBg }]}>
           <Text style={styles.diyaIcon}>🪔</Text>
           <View style={styles.mantraContainer}>
-            <Text style={styles.mantraText}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे</Text>
-            <Text style={styles.mantraText}>हरे राम हरे राम राम राम हरे हरे</Text>
+            <Text style={[styles.mantraText, { color: colors.primary }]}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे</Text>
+            <Text style={[styles.mantraText, { color: colors.primary }]}>हरे राम हरे राम राम राम हरे हरे</Text>
           </View>
           <Text style={styles.diyaIcon}>🪔</Text>
         </View>
 
-        <StatusBar style="auto" backgroundColor="grey" />
+        <StatusBar style={isDark ? "light" : "auto"} backgroundColor={colors.background} />
 
         {/* Next Ekadashi Card */}
         <NextEkadashiCard />
@@ -50,16 +54,16 @@ const HomeScreen = () => {
           <SplitCard
             width={dw / 2.25}
             icon={"book-outline"}
-            iconColor={DarkBlue}
-            iconBackground={BackgroundGrey}
+            iconColor={colors.primary}
+            iconBackground={colors.lightBlueBg}
             title={"Daily Wisdom"}
             subTitle={"Spiritual guidance"}
             onPress={() => navigation.navigate('DailyWisdom')}
           />
           <SplitCard
             icon={"calendar-outline"}
-            iconColor={"#FAE013"}
-            iconBackground={"#FEFCEB"}
+            iconColor={colors.secondary}
+            iconBackground={isDark ? colors.muted : "#FEFCEB"}
             title={"Calendar"}
             subTitle={"Monthly view"}
           />
@@ -69,8 +73,8 @@ const HomeScreen = () => {
         <SplitCard
           width={dw}
           list={"format-list-bulleted"}
-          iconBackground={BackgroundGrey}
-          iconColor={DarkBlue}
+          iconBackground={colors.lightBlueBg}
+          iconColor={colors.primary}
           title={"All Ekadashi"}
           subTitle={"Complete list"}
         />
@@ -84,14 +88,17 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#F8F9FA",
+    backgroundColor: colors.background,
   },
   headerLeft: {
     flexDirection: "row",
@@ -101,7 +108,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginRight: 16,
-    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 8,
   },
@@ -111,16 +117,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1C2C56",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#5B7AB8",
     fontWeight: "500",
   },
   notificationButton: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 14,
     position: "relative",
@@ -136,16 +139,13 @@ const styles = StyleSheet.create({
     right: 10,
     width: 10,
     height: 10,
-    backgroundColor: "#1C2C56",
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: "#FFFFFF",
   },
   diyaSection: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#E8EFF7",
     paddingVertical: 20,
     paddingHorizontal: 20,
     marginHorizontal: 16,
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
   },
   mantraText: {
     fontSize: 15,
-    color: "#4675C2",
     textAlign: "center",
     fontWeight: "600",
     lineHeight: 24,

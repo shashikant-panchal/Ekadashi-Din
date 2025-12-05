@@ -14,7 +14,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
-import { DarkBlue, LIGHTBLUEBG } from "../constants/Colors";
+import { useTheme } from "../context/ThemeContext";
 import { clearError, resetRegistrationSuccess, signIn, signInWithGoogle, signUp } from "../redux/userSlice";
 
 const { width } = Dimensions.get("window");
@@ -28,6 +28,7 @@ export default function Login() {
 
   const dispatch = useDispatch();
   const { loading, error, registrationSuccess } = useSelector((state) => state.user);
+  const { colors, isDark } = useTheme();
 
   useEffect(() => {
     if (error) {
@@ -79,6 +80,8 @@ export default function Login() {
     dispatch(signInWithGoogle());
   };
 
+  const styles = getStyles(colors);
+
   const renderSignIn = () => (
     <>
       <Text style={styles.formTitle}>Welcome Back</Text>
@@ -88,11 +91,11 @@ export default function Login() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Email</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="mail" size={18} color="#777" style={styles.icon} />
+          <Feather name="mail" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your email"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedForeground}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -102,11 +105,11 @@ export default function Login() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Password</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="lock" size={18} color="#777" style={styles.icon} />
+          <Feather name="lock" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your password"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedForeground}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!isPasswordVisible}
@@ -117,15 +120,14 @@ export default function Login() {
             <Feather
               name={isPasswordVisible ? "eye" : "eye-off"}
               size={18}
-              color="#777"
+              color={colors.mutedForeground}
             />
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.passwordOptions}>
         <View style={styles.checkboxContainer}>
-          <TouchableOpacity style={styles.checkbox}>
-            {/* <Feather name="check" size={14} color={DarkBlue} /> */}
+          <TouchableOpacity style={[styles.checkbox, { borderColor: colors.border }]}>
           </TouchableOpacity>
           <Text style={styles.checkboxLabel}>Remember me</Text>
         </View>
@@ -183,7 +185,7 @@ export default function Login() {
           <TextInput
             style={styles.textInput}
             placeholder="Enter your display name"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedForeground}
             value={displayName}
             onChangeText={setDisplayName}
           />
@@ -192,11 +194,11 @@ export default function Login() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Email</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="mail" size={18} color="#777" style={styles.icon} />
+          <Feather name="mail" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your email"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedForeground}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -206,11 +208,11 @@ export default function Login() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Password</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="lock" size={18} color="#777" style={styles.icon} />
+          <Feather name="lock" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your password"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.mutedForeground}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!isPasswordVisible}
@@ -221,7 +223,7 @@ export default function Login() {
             <Feather
               name={isPasswordVisible ? "eye" : "eye-off"}
               size={18}
-              color="#777"
+              color={colors.mutedForeground}
             />
           </TouchableOpacity>
         </View>
@@ -266,9 +268,9 @@ export default function Login() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.logoContainer}>
+          <View style={[styles.logoContainer, { backgroundColor: colors.lightBlueBg }]}>
             <Image
               source={require("../assets/images/logo.png")}
               style={styles.logo}
@@ -318,22 +320,20 @@ export default function Login() {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   container: {
     flexGrow: 1,
     padding: 20,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
   },
   logoContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: LIGHTBLUEBG,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -345,12 +345,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: DarkBlue,
+    color: colors.foreground,
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: "#4A6583", // A nice blue-grey
+    color: colors.mutedForeground,
     textAlign: "center",
     marginBottom: 30,
     paddingHorizontal: 20,
@@ -358,16 +358,11 @@ const styles = StyleSheet.create({
   },
   card: {
     width: width * 0.9,
-    backgroundColor: "#fff",
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
-    // elevation: 2,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.05,
-    // shadowRadius: 4,
+    borderColor: colors.border,
   },
   tabContainer: {
     flexDirection: "row",
@@ -383,28 +378,28 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent",
   },
   activeTab: {
-    borderBottomColor: DarkBlue,
+    borderBottomColor: colors.primary,
   },
   tabText: {
     fontSize: 16,
-    color: "#777",
+    color: colors.mutedForeground,
     fontWeight: "500",
   },
   activeTabText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: DarkBlue,
+    color: colors.primary,
   },
   formTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: DarkBlue,
+    color: colors.foreground,
     textAlign: "center",
     marginBottom: 5,
   },
   formSubtitle: {
     fontSize: 14,
-    color: "#4A6583",
+    color: colors.mutedForeground,
     textAlign: "center",
     marginBottom: 25,
   },
@@ -414,17 +409,17 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: DarkBlue,
+    color: colors.foreground,
     marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    borderColor: "#E0E0E0",
+    borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.muted,
   },
   icon: {
     marginRight: 10,
@@ -433,7 +428,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     fontSize: 16,
-    color: "#333",
+    color: colors.foreground,
   },
   passwordOptions: {
     flexDirection: "row",
@@ -447,7 +442,6 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 4,
     width: 18,
     height: 18,
@@ -457,15 +451,15 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: 14,
-    color: "#777",
+    color: colors.mutedForeground,
   },
   forgotPassword: {
     fontSize: 14,
-    color: DarkBlue,
+    color: colors.primary,
     fontWeight: "600",
   },
   signInButton: {
-    backgroundColor: DarkBlue,
+    backgroundColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 14,
     flexDirection: "row",
@@ -486,11 +480,11 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: colors.border,
   },
   orText: {
     textAlign: "center",
-    color: "#999",
+    color: colors.mutedForeground,
     marginHorizontal: 10,
     fontSize: 12,
     fontWeight: "600",
@@ -499,8 +493,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
-    borderColor: "#E0E0E0",
+    backgroundColor: colors.card,
+    borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 12,
@@ -514,16 +508,16 @@ const styles = StyleSheet.create({
   googleButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
+    color: colors.foreground,
   },
   privacyText: {
     fontSize: 12,
-    color: "#777",
+    color: colors.mutedForeground,
     textAlign: "center",
     lineHeight: 18,
   },
   privacyLink: {
-    color: DarkBlue,
+    color: colors.primary,
     fontWeight: "600",
   },
 });

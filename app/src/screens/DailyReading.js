@@ -17,7 +17,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
-import { AppYellow, DarkBlue, LightBlue, LIGHTBLUEBG } from '../constants/Colors';
+import { useTheme } from '../context/ThemeContext';
 import { bhagavadGitaChapters, getTodaysVerse } from '../data/bhagavadGitaData';
 import { fetchChapterVerses } from '../services/gitaApi';
 import * as ReadingService from '../services/readingProgress';
@@ -63,7 +63,6 @@ const getChapterVerses = (chapterId, verseCount) => {
     if (sampleChapterVerses[chapterId]) {
         return sampleChapterVerses[chapterId];
     }
-    // Generate placeholder verses for chapters without sample data
     const chapter = bhagavadGitaChapters.find(c => c.id === chapterId);
     return Array.from({ length: Math.min(verseCount, 5) }, (_, i) => ({
         verse: i + 1,
@@ -75,18 +74,18 @@ const getChapterVerses = (chapterId, verseCount) => {
 };
 
 // Reusable component for the Chapter List Item
-const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress }) => (
+const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress, colors }) => (
     <View >
-        <View style={chapterStyles.itemContainer}>
-            <View style={chapterStyles.numberContainer}>
-                <Text style={chapterStyles.numberText}>{chapterNumber}</Text>
+        <View style={[chapterStyles.itemContainer, { backgroundColor: colors.lightBlueBg }]}>
+            <View style={[chapterStyles.numberContainer, { backgroundColor: colors.card }]}>
+                <Text style={[chapterStyles.numberText, { color: colors.foreground }]}>{chapterNumber}</Text>
             </View>
             <View style={chapterStyles.textContainer}>
-                <Text style={chapterStyles.titleText}>{`Chapter ${chapterNumber}: ${title}`}</Text>
-                <Text style={chapterStyles.progressText}>{`${progress}/${verseCount} verses`}</Text>
+                <Text style={[chapterStyles.titleText, { color: colors.foreground }]}>{`Chapter ${chapterNumber}: ${title}`}</Text>
+                <Text style={[chapterStyles.progressText, { color: colors.mutedForeground }]}>{`${progress}/${verseCount} verses`}</Text>
             </View>
-            <TouchableOpacity style={chapterStyles.continueButton} onPress={onPress}>
-                <Text style={chapterStyles.buttonText}>Continue</Text>
+            <TouchableOpacity style={[chapterStyles.continueButton, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={onPress}>
+                <Text style={[chapterStyles.buttonText, { color: colors.foreground }]}>Continue</Text>
             </TouchableOpacity>
         </View>
     </View>
@@ -95,6 +94,7 @@ const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress }
 
 const DailyReading = ({ navigation }) => {
     const user = useSelector((state) => state.user.user);
+    const { colors, isDark } = useTheme();
     const [todaysVerse, setTodaysVerse] = useState(null);
     const [chapterProgress, setChapterProgress] = useState([]);
     const [stats, setStats] = useState({
@@ -115,7 +115,6 @@ const DailyReading = ({ navigation }) => {
     const loadReadingData = async () => {
         if (!user?.id) {
             setLoading(false);
-            // Still get today's verse even without user login
             const verse = getTodaysVerse();
             setTodaysVerse(verse);
             return;
@@ -123,23 +122,17 @@ const DailyReading = ({ navigation }) => {
 
         try {
             setLoading(true);
-            // Use getTodaysVerse from bhagavadGitaData which has full content
             const verse = getTodaysVerse();
             setTodaysVerse(verse);
 
-            // Fetch reading progress from Supabase
             const progressData = await ReadingService.fetchReadingProgress(user.id);
-
-            // Calculate chapter progress
             const chapters = ReadingService.calculateChapterProgress(progressData);
             setChapterProgress(chapters);
 
-            // Calculate stats
             const calculatedStats = ReadingService.calculateReadingStats(progressData, chapters);
             setStats(calculatedStats);
         } catch (error) {
             console.error('Error loading reading data:', error);
-            // Use default values on error
             const verse = getTodaysVerse();
             setTodaysVerse(verse);
         } finally {
@@ -171,13 +164,10 @@ const DailyReading = ({ navigation }) => {
 
         try {
             const result = await ReadingService.markVerseComplete(user.id, verse.chapter, verse.verse);
-
-            // Check if verse was already marked as read (result would be an update, not new)
             if (result?.already_read) {
                 showToast("You've already read this verse today! 🙏");
             } else {
                 showToast('Verse marked as read! Hare Krishna! 🙏');
-                // Refresh data after marking as read
                 await loadReadingData();
             }
         } catch (error) {
@@ -186,7 +176,6 @@ const DailyReading = ({ navigation }) => {
         }
     };
 
-    // Open chapter modal and fetch verses from API
     const handleOpenChapter = async (chapter) => {
         const chapterId = chapter.id || chapter.chapter;
         setSelectedChapter(chapter);
@@ -195,12 +184,10 @@ const DailyReading = ({ navigation }) => {
         setModalLoading(true);
 
         try {
-            // Fetch all verses for this chapter from API
             const verses = await fetchChapterVerses(chapterId);
             setChapterVerses(verses);
         } catch (error) {
             console.error('Error fetching chapter verses:', error);
-            // Fallback to local sample verses
             const fallbackVerses = getChapterVerses(chapterId, chapter.verseCount || chapter.totalVerses);
             setChapterVerses(fallbackVerses);
         } finally {
@@ -208,21 +195,18 @@ const DailyReading = ({ navigation }) => {
         }
     };
 
-    // Navigate to previous verse
     const handlePreviousVerse = () => {
         if (currentVerseIndex > 0) {
             setCurrentVerseIndex(currentVerseIndex - 1);
         }
     };
 
-    // Navigate to next verse
     const handleNextVerse = () => {
         if (currentVerseIndex < chapterVerses.length - 1) {
             setCurrentVerseIndex(currentVerseIndex + 1);
         }
     };
 
-    // Mark current modal verse as read
     const handleModalMarkAsRead = async () => {
         if (!user?.id) {
             showToast('Please log in to track your progress');
@@ -246,7 +230,6 @@ const DailyReading = ({ navigation }) => {
         }
     };
 
-    // Close modal
     const handleCloseModal = () => {
         setModalVisible(false);
         setSelectedChapter(null);
@@ -254,7 +237,6 @@ const DailyReading = ({ navigation }) => {
         setCurrentVerseIndex(0);
     };
 
-    // Use today's verse or fallback
     const verse = todaysVerse || {
         chapter: 4,
         verse: 7,
@@ -269,35 +251,35 @@ const DailyReading = ({ navigation }) => {
     const englishMeaning = verse.translation;
     const significance = verse.purport || "This famous verse explains the purpose of divine incarnation - to restore dharma when it declines.";
 
-    // Get current verse from modal
     const currentModalVerse = chapterVerses[currentVerseIndex];
-    const chapterName = selectedChapter?.name || selectedChapter?.title || '';
     const chapterEnglishName = selectedChapter?.englishName || '';
     const totalVerseCount = selectedChapter?.verseCount || selectedChapter?.totalVerses || chapterVerses.length;
 
+    const styles = getStyles(colors);
+    const mStyles = getModalStyles(colors);
 
     if (loading && !todaysVerse) {
         return (
-            <SafeAreaView style={styles.safeArea}>
+            <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={DarkBlue} />
-                    <Text style={styles.loadingText}>Loading reading progress...</Text>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                    <Text style={[styles.loadingText, { color: colors.mutedForeground }]}>Loading reading progress...</Text>
                 </View>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
 
                 {/* Header */}
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                        <Feather name="arrow-left" size={24} color={LightBlue} />
+                        <Feather name="arrow-left" size={24} color={colors.mutedForeground} />
                         <Text style={{
                             paddingHorizontal: 10,
-                            color: LightBlue,
+                            color: colors.mutedForeground,
                             fontSize: 14,
                             fontWeight: '700'
                         }}>Back</Text>
@@ -306,67 +288,66 @@ const DailyReading = ({ navigation }) => {
                 </View>
 
                 <View style={styles.headerTitleContainer}>
-                    <View style={styles.headerIconBg}>
-                        <Ionicons name="book-outline" size={32} color={DarkBlue} />
+                    <View style={[styles.headerIconBg, { backgroundColor: colors.lightBlueBg }]}>
+                        <Ionicons name="book-outline" size={32} color={colors.primary} />
                     </View>
-                    <Text style={styles.headerTitle}>Daily Reading</Text>
-                    <Text style={styles.headerSubtitle}>Bhagavad Gita study</Text>
+                    <Text style={[styles.headerTitle, { color: colors.foreground }]}>Daily Reading</Text>
+                    <Text style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>Bhagavad Gita study</Text>
                 </View>
                 <View style={styles.placeholderRight} />
 
                 {/* Study Progress Card */}
-                <View style={styles.progressCard}>
+                <View style={[styles.progressCard, { backgroundColor: colors.card }]}>
                     <View style={styles.progressHeader}>
-                        <Text style={styles.progressTitle}>Study Progress</Text>
-                        <Text style={styles.progressCounter}>{stats.chaptersCompleted}/{totalChapters} chapters</Text>
+                        <Text style={[styles.progressTitle, { color: colors.foreground }]}>Study Progress</Text>
+                        <Text style={[styles.progressCounter, { color: colors.mutedForeground }]}>{stats.chaptersCompleted}/{totalChapters} chapters</Text>
                     </View>
 
-                    {/* Progress Bar */}
-                    <View style={styles.progressBarContainer}>
-                        <View style={[styles.progressBarFill, { width: `${studyProgress * 100}%` }]} />
+                    <View style={[styles.progressBarContainer, { backgroundColor: colors.muted }]}>
+                        <View style={[styles.progressBarFill, { width: `${studyProgress * 100}%`, backgroundColor: colors.secondary }]} />
                     </View>
 
                     <View style={styles.progressStats}>
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>{stats.chaptersCompleted}</Text>
-                            <Text style={styles.statLabel}>Completed</Text>
+                            <Text style={[styles.statValue, { color: colors.foreground }]}>{stats.chaptersCompleted}</Text>
+                            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Completed</Text>
                         </View>
-                        <View style={styles.statDivider} />
+                        <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>{stats.currentStreak}</Text>
-                            <Text style={styles.statLabel}>Days streak</Text>
+                            <Text style={[styles.statValue, { color: colors.foreground }]}>{stats.currentStreak}</Text>
+                            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Days streak</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Today's Verse Card */}
-                <View style={styles.verseCard}>
+                <View style={[styles.verseCard, { backgroundColor: colors.card }]}>
                     <View style={styles.verseHeader}>
-                        <Feather name="book-open" size={20} color="#333" />
-                        <Text style={styles.verseTitle}>Today's Verse</Text>
+                        <Feather name="book-open" size={20} color={colors.foreground} />
+                        <Text style={[styles.verseTitle, { color: colors.foreground }]}>Today's Verse</Text>
                     </View>
-                    <Text style={styles.verseChapter}>Chapter {verse.chapter}, Verse {verse.verse}</Text>
+                    <Text style={[styles.verseChapter, { color: colors.mutedForeground }]}>Chapter {verse.chapter}, Verse {verse.verse}</Text>
 
-                    <View style={styles.verseContent}>
-                        <Text style={styles.sanskritText}>{sanskritVerse}</Text>
-                        <Text style={styles.transliterationText}>{transliteration}</Text>
+                    <View style={[styles.verseContent, { backgroundColor: colors.lightBlueBg }]}>
+                        <Text style={[styles.sanskritText, { color: colors.foreground }]}>{sanskritVerse}</Text>
+                        <Text style={[styles.transliterationText, { color: colors.primary }]}>{transliteration}</Text>
                     </View>
 
-                    <Text style={styles.englishMeaningText}>{englishMeaning}</Text>
+                    <Text style={[styles.englishMeaningText, { color: colors.foreground }]}>{englishMeaning}</Text>
 
-                    <Text style={styles.significanceText}>
+                    <Text style={[styles.significanceText, { color: colors.mutedForeground }]}>
                         <Text style={{ fontWeight: 'bold' }}>Significance:</Text>
                         {significance.replace("Significance: ", "")}
                     </Text>
 
-                    <TouchableOpacity style={styles.markAsReadButton} onPress={handleMarkAsRead} disabled={loading}>
+                    <TouchableOpacity style={[styles.markAsReadButton, { backgroundColor: colors.primary }]} onPress={handleMarkAsRead} disabled={loading}>
                         <Text style={styles.markAsReadButtonText}>Mark as Read</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Bhagavad Gita Chapters Section */}
-                <View style={styles.chapterSection}>
-                    <Text style={styles.chapterSectionTitle}>Bhagavad Gita Chapters</Text>
+                <View style={[styles.chapterSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <Text style={[styles.chapterSectionTitle, { color: colors.foreground }]}>Bhagavad Gita Chapters</Text>
 
 
                     {(chapterProgress.length > 0 ? chapterProgress : bhagavadGitaChapters.map((ch, i) => ({
@@ -383,6 +364,7 @@ const DailyReading = ({ navigation }) => {
                             verseCount={chapter.totalVerses}
                             progress={chapter.completedVerses}
                             onPress={() => handleOpenChapter(chapter)}
+                            colors={colors}
                         />
                     ))}
 
@@ -390,15 +372,15 @@ const DailyReading = ({ navigation }) => {
 
                 {/* Footer Metrics */}
                 <View style={styles.footerMetricsContainer}>
-                    <View style={styles.footerMetricCard}>
-                        <MaterialCommunityIcons name="clock-outline" size={32} color={AppYellow} />
-                        <Text style={styles.footerMetricValue}>{stats.averageReadingTime}</Text>
-                        <Text style={styles.footerMetricLabel}>Avg minutes</Text>
+                    <View style={[styles.footerMetricCard, { backgroundColor: colors.card }]}>
+                        <MaterialCommunityIcons name="clock-outline" size={32} color={colors.secondary} />
+                        <Text style={[styles.footerMetricValue, { color: colors.foreground }]}>{stats.averageReadingTime}</Text>
+                        <Text style={[styles.footerMetricLabel, { color: colors.mutedForeground }]}>Avg minutes</Text>
                     </View>
-                    <View style={styles.footerMetricCard}>
-                        <Ionicons name="book-outline" size={32} color={DarkBlue} />
-                        <Text style={styles.footerMetricValue}>{stats.totalVersesRead}</Text>
-                        <Text style={styles.footerMetricLabel}>Verses read</Text>
+                    <View style={[styles.footerMetricCard, { backgroundColor: colors.card }]}>
+                        <Ionicons name="book-outline" size={32} color={colors.primary} />
+                        <Text style={[styles.footerMetricValue, { color: colors.foreground }]}>{stats.totalVersesRead}</Text>
+                        <Text style={[styles.footerMetricLabel, { color: colors.mutedForeground }]}>Verses read</Text>
                     </View>
                 </View>
 
@@ -411,59 +393,59 @@ const DailyReading = ({ navigation }) => {
                 visible={modalVisible}
                 onRequestClose={handleCloseModal}
             >
-                <SafeAreaView style={modalStyles.container}>
+                <SafeAreaView style={[mStyles.container, { backgroundColor: colors.background }]}>
                     {/* Modal Header */}
-                    <View style={modalStyles.header}>
-                        <TouchableOpacity onPress={handleCloseModal} style={modalStyles.closeButton}>
-                            <AntDesign name="close" size={24} color="#666" />
+                    <View style={[mStyles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+                        <TouchableOpacity onPress={handleCloseModal} style={mStyles.closeButton}>
+                            <AntDesign name="close" size={24} color={colors.mutedForeground} />
                         </TouchableOpacity>
-                        <View style={modalStyles.headerCenter}>
-                            <Text style={modalStyles.chapterTitle}>Chapter {selectedChapter?.id || selectedChapter?.chapter}</Text>
-                            <Text style={modalStyles.chapterSubtitle}>{chapterEnglishName}</Text>
+                        <View style={mStyles.headerCenter}>
+                            <Text style={[mStyles.chapterTitle, { color: colors.foreground }]}>Chapter {selectedChapter?.id || selectedChapter?.chapter}</Text>
+                            <Text style={[mStyles.chapterSubtitle, { color: colors.mutedForeground }]}>{chapterEnglishName}</Text>
                         </View>
-                        <Text style={modalStyles.verseCounter}>{currentVerseIndex + 1} / {totalVerseCount}</Text>
+                        <Text style={[mStyles.verseCounter, { color: colors.mutedForeground }]}>{currentVerseIndex + 1} / {totalVerseCount}</Text>
                     </View>
 
                     {/* Verse Content */}
-                    <ScrollView style={modalStyles.scrollView} contentContainerStyle={modalStyles.scrollContent}>
+                    <ScrollView style={mStyles.scrollView} contentContainerStyle={mStyles.scrollContent}>
                         {modalLoading ? (
-                            <View style={modalStyles.loadingContainer}>
-                                <ActivityIndicator size="large" color={DarkBlue} />
-                                <Text style={modalStyles.loadingText}>Loading verses...</Text>
+                            <View style={mStyles.loadingContainer}>
+                                <ActivityIndicator size="large" color={colors.primary} />
+                                <Text style={[mStyles.loadingText, { color: colors.mutedForeground }]}>Loading verses...</Text>
                             </View>
                         ) : currentModalVerse && (
                             <>
                                 {/* Sanskrit Banner */}
-                                <View style={modalStyles.sanskritBanner}>
-                                    <Text style={modalStyles.sanskritBannerText}>{currentModalVerse.sanskrit}</Text>
+                                <View style={[mStyles.sanskritBanner, { backgroundColor: colors.primary }]}>
+                                    <Text style={mStyles.sanskritBannerText}>{currentModalVerse.sanskrit}</Text>
                                 </View>
 
                                 {/* Verse Card */}
-                                <View style={modalStyles.verseCard}>
-                                    <View style={modalStyles.verseHeader}>
-                                        <View style={modalStyles.verseLabelContainer}>
-                                            <Feather name="book-open" size={18} color={DarkBlue} />
-                                            <Text style={modalStyles.verseLabel}>Verse {currentModalVerse.verse}</Text>
+                                <View style={[mStyles.verseCard, { backgroundColor: colors.card }]}>
+                                    <View style={mStyles.verseHeader}>
+                                        <View style={mStyles.verseLabelContainer}>
+                                            <Feather name="book-open" size={18} color={colors.primary} />
+                                            <Text style={[mStyles.verseLabel, { color: colors.foreground }]}>Verse {currentModalVerse.verse}</Text>
                                         </View>
-                                        <TouchableOpacity style={modalStyles.readBadge} onPress={handleModalMarkAsRead}>
-                                            <AntDesign name="check" size={14} color={DarkBlue} />
-                                            <Text style={modalStyles.readBadgeText}>Read</Text>
+                                        <TouchableOpacity style={[mStyles.readBadge, { backgroundColor: colors.lightBlueBg }]} onPress={handleModalMarkAsRead}>
+                                            <AntDesign name="check" size={14} color={colors.primary} />
+                                            <Text style={[mStyles.readBadgeText, { color: colors.primary }]}>Read</Text>
                                         </TouchableOpacity>
                                     </View>
 
-                                    <View style={modalStyles.verseContent}>
-                                        <Text style={modalStyles.verseSanskrit}>{currentModalVerse.sanskrit}</Text>
-                                        <Text style={modalStyles.verseTransliteration}>{currentModalVerse.transliteration}</Text>
+                                    <View style={[mStyles.verseContent, { backgroundColor: colors.lightBlueBg }]}>
+                                        <Text style={[mStyles.verseSanskrit, { color: colors.foreground }]}>{currentModalVerse.sanskrit}</Text>
+                                        <Text style={[mStyles.verseTransliteration, { color: colors.mutedForeground }]}>{currentModalVerse.transliteration}</Text>
                                     </View>
 
-                                    <View style={modalStyles.translationSection}>
-                                        <Text style={modalStyles.translationLabel}>Translation</Text>
-                                        <Text style={modalStyles.translationText}>{currentModalVerse.translation}</Text>
+                                    <View style={mStyles.translationSection}>
+                                        <Text style={[mStyles.translationLabel, { color: colors.foreground }]}>Translation</Text>
+                                        <Text style={[mStyles.translationText, { color: colors.mutedForeground }]}>{currentModalVerse.translation}</Text>
                                     </View>
 
-                                    <View style={modalStyles.significanceSection}>
-                                        <Text style={modalStyles.significanceLabel}>Significance</Text>
-                                        <Text style={modalStyles.significanceText}>{currentModalVerse.significance}</Text>
+                                    <View style={[mStyles.significanceSection, { borderTopColor: colors.border }]}>
+                                        <Text style={[mStyles.significanceLabel, { color: colors.foreground }]}>Significance</Text>
+                                        <Text style={[mStyles.significanceText, { color: colors.mutedForeground }]}>{currentModalVerse.significance}</Text>
                                     </View>
                                 </View>
                             </>
@@ -471,28 +453,28 @@ const DailyReading = ({ navigation }) => {
                     </ScrollView>
 
                     {/* Navigation Footer */}
-                    <View style={modalStyles.footer}>
+                    <View style={[mStyles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
                         <TouchableOpacity
-                            style={[modalStyles.navButton, modalStyles.prevButton, currentVerseIndex === 0 && modalStyles.disabledButton]}
+                            style={[mStyles.navButton, mStyles.prevButton, { backgroundColor: colors.muted, borderColor: colors.border }, currentVerseIndex === 0 && mStyles.disabledButton]}
                             onPress={handlePreviousVerse}
                             disabled={currentVerseIndex === 0}
                         >
-                            <AntDesign name="left" size={16} color={currentVerseIndex === 0 ? '#ccc' : '#666'} />
-                            <Text style={[modalStyles.navButtonText, currentVerseIndex === 0 && modalStyles.disabledText]}>Previous</Text>
+                            <AntDesign name="left" size={16} color={currentVerseIndex === 0 ? colors.mutedForeground : colors.foreground} />
+                            <Text style={[mStyles.navButtonText, { color: currentVerseIndex === 0 ? colors.mutedForeground : colors.foreground }]}>Previous</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[modalStyles.navButton, modalStyles.nextButton]}
+                            style={[mStyles.navButton, mStyles.nextButton, { backgroundColor: colors.primary }]}
                             onPress={handleNextVerse}
                             disabled={currentVerseIndex >= chapterVerses.length - 1}
                         >
-                            <Text style={modalStyles.nextButtonText}>Next</Text>
+                            <Text style={mStyles.nextButtonText}>Next</Text>
                             <AntDesign name="right" size={16} color="#fff" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={modalStyles.markReadButton} onPress={handleModalMarkAsRead}>
-                            <AntDesign name="check" size={16} color={DarkBlue} />
-                            <Text style={modalStyles.markReadText}>Read</Text>
+                        <TouchableOpacity style={mStyles.markReadButton} onPress={handleModalMarkAsRead}>
+                            <AntDesign name="check" size={16} color={colors.primary} />
+                            <Text style={[mStyles.markReadText, { color: colors.primary }]}>Read</Text>
                         </TouchableOpacity>
                     </View>
                 </SafeAreaView>
@@ -501,9 +483,7 @@ const DailyReading = ({ navigation }) => {
     );
 };
 
-// Reusable card base style definition (prevents "cardBase of undefined" errors)
 const CARD_BASE_STYLE = {
-    backgroundColor: '#fff',
     borderRadius: 12,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -514,22 +494,19 @@ const CARD_BASE_STYLE = {
     elevation: 2,
 };
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
     },
     scrollViewContent: {
         paddingBottom: 20,
     },
-    // --- Header Styles ---
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 10 : 0,
-        // marginBottom: 20,
     },
     backButton: {
         padding: 8,
@@ -545,27 +522,21 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 15,
-        backgroundColor: LIGHTBLUEBG, // Light Blue background
         justifyContent: 'center',
         alignItems: 'center',
-        // marginBottom: 8,
-
     },
     headerTitle: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: DarkBlue,
         marginBottom: 4,
     },
     headerSubtitle: {
         fontSize: 14,
-        color: LightBlue,
         textAlign: 'center',
     },
     placeholderRight: {
         width: 40,
     },
-    // --- Study Progress Card ---
     progressCard: {
         ...CARD_BASE_STYLE,
         padding: 16,
@@ -579,22 +550,18 @@ const styles = StyleSheet.create({
     progressTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: DarkBlue,
     },
     progressCounter: {
         fontSize: 14,
-        color: LightBlue,
     },
     progressBarContainer: {
         height: 8,
-        backgroundColor: '#e0e0e0',
         borderRadius: 4,
         overflow: 'hidden',
         marginBottom: 16,
     },
     progressBarFill: {
         height: '100%',
-        backgroundColor: '#FFD700', // Yellow/Gold
         borderRadius: 4,
     },
     progressStats: {
@@ -609,19 +576,15 @@ const styles = StyleSheet.create({
     statValue: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: DarkBlue,
     },
     statLabel: {
         fontSize: 14,
-        color: LightBlue,
     },
     statDivider: {
         width: 1,
         height: '80%',
-        backgroundColor: '#eee',
         alignSelf: 'center',
     },
-    // --- Today's Verse Card ---
     verseCard: {
         ...CARD_BASE_STYLE,
         paddingHorizontal: 16,
@@ -635,21 +598,15 @@ const styles = StyleSheet.create({
     verseTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: DarkBlue,
         marginLeft: 8,
     },
     verseChapter: {
         fontSize: 14,
-        color: LightBlue,
         marginBottom: 16,
         marginLeft: 4,
     },
     verseContent: {
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#eee',
-        backgroundColor: LIGHTBLUEBG,
         alignItems: 'flex-start',
-        // paddingBottom: 16,
         marginBottom: 16,
         borderRadius: 10,
         padding: '5%'
@@ -658,33 +615,26 @@ const styles = StyleSheet.create({
         fontSize: 20,
         lineHeight: 30,
         fontWeight: '600',
-        color: DarkBlue,
-        // textAlign: 'right',
-        fontFamily: Platform.OS === 'android' ? 'sans-serif' : 'Arial', // Fallback for Devanagari
+        fontFamily: Platform.OS === 'android' ? 'sans-serif' : 'Arial',
     },
     transliterationText: {
         fontSize: 12,
         lineHeight: 18,
-        color: '#007bff', // Blue
-        // textAlign: 'right',
         fontStyle: 'italic',
         marginTop: 4,
     },
     englishMeaningText: {
         fontSize: 16,
         lineHeight: 24,
-        color: DarkBlue,
         marginBottom: 16,
         fontWeight: '500',
     },
     significanceText: {
         fontSize: 14,
         lineHeight: 20,
-        color: LightBlue,
         marginBottom: 20,
     },
     markAsReadButton: {
-        backgroundColor: '#1E293B', // Dark Blue
         borderRadius: 8,
         paddingVertical: 14,
         alignItems: 'center',
@@ -694,9 +644,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    // --- Chapter List Section ---
     chapterSection: {
-        backgroundColor: '#fff',
         marginHorizontal: 16,
         borderRadius: 10,
         borderWidth: 0.5,
@@ -705,10 +653,8 @@ const styles = StyleSheet.create({
     chapterSectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: DarkBlue,
         margin: 10,
     },
-    // --- Footer Metrics ---
     footerMetricsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -722,18 +668,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 20,
-        // Resetting marginHorizontal because CARD_BASE_STYLE adds 16
-
     },
     footerMetricValue: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: DarkBlue,
         marginTop: 8,
     },
     footerMetricLabel: {
         fontSize: 14,
-        color: LightBlue,
         textAlign: 'center',
     },
     loadingContainer: {
@@ -744,16 +686,13 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 10,
         fontSize: 16,
-        color: LightBlue,
     },
 });
 
-// Styles specifically for the Chapter List Items
 const chapterStyles = StyleSheet.create({
     itemContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: LIGHTBLUEBG,
         padding: 18,
         borderRadius: 5,
         marginVertical: 10,
@@ -764,7 +703,6 @@ const chapterStyles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: '#FFFFFF',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
@@ -772,7 +710,6 @@ const chapterStyles = StyleSheet.create({
     numberText: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: DarkBlue,
     },
     textContainer: {
         flex: 1,
@@ -781,38 +718,26 @@ const chapterStyles = StyleSheet.create({
     titleText: {
         fontSize: 16,
         fontWeight: '500',
-        color: DarkBlue,
     },
     progressText: {
         fontSize: 12,
-        color: LightBlue,
         marginTop: 2,
     },
     continueButton: {
-        backgroundColor: '#fff', // Light blue background
         borderRadius: 10,
         paddingVertical: 8,
         paddingHorizontal: 15,
         borderWidth: 0.5,
-        borderColor: '##D7E0EA',
     },
     buttonText: {
-        color: DarkBlue,
         fontSize: 14,
         fontWeight: 'bold',
     },
-    horizontalLine: {
-        height: 10,
-        width: 100,
-        backgroundColor: 'red'
-    }
 });
 
-// Modal styles for verse reader
-const modalStyles = StyleSheet.create({
+const getModalStyles = (colors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
     },
     header: {
         flexDirection: 'row',
@@ -820,9 +745,7 @@ const modalStyles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingVertical: 12,
-        backgroundColor: '#fff',
         borderBottomWidth: 1,
-        borderBottomColor: '#e0e0e0',
     },
     closeButton: {
         padding: 8,
@@ -834,16 +757,13 @@ const modalStyles = StyleSheet.create({
     chapterTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: DarkBlue,
     },
     chapterSubtitle: {
         fontSize: 14,
-        color: LightBlue,
         marginTop: 2,
     },
     verseCounter: {
         fontSize: 14,
-        color: LightBlue,
         fontWeight: '500',
     },
     scrollView: {
@@ -853,7 +773,6 @@ const modalStyles = StyleSheet.create({
         paddingBottom: 20,
     },
     sanskritBanner: {
-        backgroundColor: DarkBlue,
         paddingVertical: 20,
         paddingHorizontal: 16,
     },
@@ -865,7 +784,6 @@ const modalStyles = StyleSheet.create({
         fontWeight: '500',
     },
     verseCard: {
-        backgroundColor: '#fff',
         margin: 16,
         borderRadius: 16,
         padding: 16,
@@ -888,25 +806,21 @@ const modalStyles = StyleSheet.create({
     verseLabel: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: DarkBlue,
         marginLeft: 8,
     },
     readBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#e8f4fd',
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 20,
     },
     readBadgeText: {
         fontSize: 14,
-        color: DarkBlue,
         marginLeft: 4,
         fontWeight: '500',
     },
     verseContent: {
-        backgroundColor: '#f0f7ff',
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
@@ -914,7 +828,6 @@ const modalStyles = StyleSheet.create({
     verseSanskrit: {
         fontSize: 16,
         fontWeight: '600',
-        color: DarkBlue,
         textAlign: 'center',
         lineHeight: 26,
         marginBottom: 12,
@@ -922,7 +835,6 @@ const modalStyles = StyleSheet.create({
     verseTransliteration: {
         fontSize: 14,
         fontStyle: 'italic',
-        color: LightBlue,
         textAlign: 'center',
         lineHeight: 22,
     },
@@ -932,28 +844,23 @@ const modalStyles = StyleSheet.create({
     translationLabel: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
         marginBottom: 8,
     },
     translationText: {
         fontSize: 15,
-        color: '#444',
         lineHeight: 24,
     },
     significanceSection: {
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
         paddingTop: 16,
     },
     significanceLabel: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
         marginBottom: 8,
     },
     significanceText: {
         fontSize: 14,
-        color: '#666',
         lineHeight: 22,
     },
     footer: {
@@ -962,9 +869,7 @@ const modalStyles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingVertical: 12,
-        backgroundColor: '#fff',
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
     },
     navButton: {
         flexDirection: 'row',
@@ -974,19 +879,14 @@ const modalStyles = StyleSheet.create({
         borderRadius: 8,
     },
     prevButton: {
-        backgroundColor: '#f0f0f0',
         borderWidth: 1,
-        borderColor: '#ddd',
     },
-    nextButton: {
-        backgroundColor: DarkBlue,
-    },
+    nextButton: {},
     disabledButton: {
         opacity: 0.5,
     },
     navButtonText: {
         fontSize: 16,
-        color: '#666',
         marginLeft: 8,
     },
     nextButtonText: {
@@ -994,9 +894,6 @@ const modalStyles = StyleSheet.create({
         color: '#fff',
         fontWeight: '600',
         marginRight: 8,
-    },
-    disabledText: {
-        color: '#ccc',
     },
     markReadButton: {
         flexDirection: 'row',
@@ -1006,7 +903,6 @@ const modalStyles = StyleSheet.create({
     },
     markReadText: {
         fontSize: 14,
-        color: DarkBlue,
         fontWeight: '600',
         marginLeft: 4,
     },
@@ -1019,7 +915,6 @@ const modalStyles = StyleSheet.create({
     loadingText: {
         marginTop: 15,
         fontSize: 16,
-        color: LightBlue,
     },
 });
 

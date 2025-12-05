@@ -4,46 +4,42 @@ import { useEffect, useState } from 'react';
 import { Dimensions, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-import { DarkBlue, Grey, LightBlue } from '../constants/Colors';
+import { useTheme } from '../context/ThemeContext';
 import { getAllBhajans } from '../data/bhajansData';
 import { useEkadashiList } from '../hooks/useEkadashi';
 
-const PRIMARY_COLOR = '#4A90E2';
-const SECONDARY_BG = '#F5F5F5';
-
-const BORDER_COLOR = '#E0E0E0';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // --- Icon Component using Feather ---
-const AppIcon = ({ name, style, size = 24, color = PRIMARY_COLOR }) => (
+const AppIcon = ({ name, style, size = 24, color }) => (
     <Feather name={name} size={size} color={color} style={style} />
 );
 
 // --- Reusable Card Component ---
-const DetailCard = ({ iconName, title, children }) => (
-    <View style={styles.cardContainer}>
+const DetailCard = ({ iconName, title, children, colors }) => (
+    <View style={[styles.cardContainer, { backgroundColor: colors.card }]}>
         <View style={styles.cardHeader}>
-            <AppIcon name={iconName} style={styles.cardIcon} color={DarkBlue} />
-            <Text style={styles.cardTitle}>{title}</Text>
+            <AppIcon name={iconName} style={styles.cardIcon} color={colors.primary} />
+            <Text style={[styles.cardTitle, { color: colors.foreground }]}>{title}</Text>
         </View>
         <View style={styles.cardContent}>{children}</View>
     </View>
 );
 
 // --- Section 1: Story & Significance ---
-const StorySection = ({ onReadStory, ekadashi }) => (
-    <DetailCard iconName="book-open" title="Story & Significance">
-        <Text style={styles.bodyText}>
+const StorySection = ({ onReadStory, ekadashi, colors }) => (
+    <DetailCard iconName="book-open" title="Story & Significance" colors={colors}>
+        <Text style={[styles.bodyText, { color: colors.mutedForeground }]}>
             {ekadashi?.significance || ekadashi?.vrataKatha || "Observing Ekadashi with devotion helps overcome life's obstacles and brings inner peace. This sacred day is particularly beneficial for those seeking spiritual growth and material prosperity."}
         </Text>
-        <TouchableOpacity style={styles.readButton} onPress={onReadStory}>
-            <Text style={styles.readButtonText}>Read Full Story</Text>
+        <TouchableOpacity style={[styles.readButton, { borderColor: colors.primary }]} onPress={onReadStory}>
+            <Text style={[styles.readButtonText, { color: colors.primary }]}>Read Full Story</Text>
         </TouchableOpacity>
     </DetailCard>
 );
 
 // --- Section 2: Vrata Rules & Guidelines ---
-const VrataRulesSection = ({ ekadashi }) => {
+const VrataRulesSection = ({ ekadashi, colors }) => {
     const defaultRules = [
         "Begin fasting from sunrise on Ekadashi day",
         "Avoid grains, beans, and certain vegetables",
@@ -54,13 +50,13 @@ const VrataRulesSection = ({ ekadashi }) => {
     const rules = ekadashi?.fastingRules || defaultRules;
 
     return (
-        <DetailCard iconName="heart" title="Vrata Rules & Guidelines">
+        <DetailCard iconName="heart" title="Vrata Rules & Guidelines" colors={colors}>
             {rules.map((rule, index) => (
                 <View key={index} style={styles.ruleItem}>
-                    <View style={styles.ruleNumberCircle}>
-                        <Text style={styles.ruleNumberText}>{index + 1}</Text>
+                    <View style={[styles.ruleNumberCircle, { borderColor: colors.grey, backgroundColor: colors.card }]}>
+                        <Text style={[styles.ruleNumberText, { color: colors.foreground }]}>{index + 1}</Text>
                     </View>
-                    <Text style={styles.ruleText}>{rule}</Text>
+                    <Text style={[styles.ruleText, { color: colors.mutedForeground }]}>{rule}</Text>
                 </View>
             ))}
         </DetailCard>
@@ -68,20 +64,20 @@ const VrataRulesSection = ({ ekadashi }) => {
 };
 
 // --- Section 3: Important Timings ---
-const TimingsSection = ({ panchangData }) => {
+const TimingsSection = ({ panchangData, colors }) => {
     const sunrise = panchangData?.sunrise || "06:09 AM";
     const sunset = panchangData?.sunset || "06:09 PM";
 
     return (
-        <DetailCard iconName="clock" title="Important Timings">
+        <DetailCard iconName="clock" title="Important Timings" colors={colors}>
             <View style={styles.timingRow}>
                 <View style={styles.timingItem}>
-                    <Text style={styles.timingLabel}>Fasting Begins</Text>
-                    <Text style={[styles.timingValue, { color: PRIMARY_COLOR }]}>{sunrise}</Text>
+                    <Text style={[styles.timingLabel, { color: colors.foreground }]}>Fasting Begins</Text>
+                    <Text style={[styles.timingValue, { color: colors.primary }]}>{sunrise}</Text>
                 </View>
                 <View style={styles.timingItem}>
-                    <Text style={styles.timingLabel}>Parana Window</Text>
-                    <Text style={[styles.timingValue, { color: PRIMARY_COLOR }]}>{sunrise} - {sunset}</Text>
+                    <Text style={[styles.timingLabel, { color: colors.foreground }]}>Parana Window</Text>
+                    <Text style={[styles.timingValue, { color: colors.primary }]}>{sunrise} - {sunset}</Text>
                 </View>
             </View>
         </DetailCard>
@@ -89,22 +85,22 @@ const TimingsSection = ({ panchangData }) => {
 };
 
 // --- Section 4: Bhajans & Mantras ---
-const BhajansSection = ({ onBhajanPress, bhajans }) => {
-    const displayBhajans = bhajans || getAllBhajans().slice(0, 3); // Show first 3 by default
+const BhajansSection = ({ onBhajanPress, bhajans, colors }) => {
+    const displayBhajans = bhajans || getAllBhajans().slice(0, 3);
 
     return (
-        <DetailCard iconName="music" title="Bhajans & Mantras">
+        <DetailCard iconName="music" title="Bhajans & Mantras" colors={colors}>
             {displayBhajans.map((bhajan) => (
                 <TouchableOpacity
                     key={bhajan.id}
-                    style={[styles.bhajanButton, { borderColor: BORDER_COLOR, backgroundColor: SECONDARY_BG }]}
+                    style={[styles.bhajanButton, { borderColor: colors.border, backgroundColor: colors.muted }]}
                     onPress={() => onBhajanPress(bhajan)}
                 >
-                    <AppIcon name="music" style={styles.bhajanIcon} color={PRIMARY_COLOR} size={18} />
+                    <AppIcon name="music" style={styles.bhajanIcon} color={colors.primary} size={18} />
                     <View style={styles.bhajanTextContainer}>
-                        <Text style={styles.bhajanText}>{bhajan.name}</Text>
+                        <Text style={[styles.bhajanText, { color: colors.foreground }]}>{bhajan.name}</Text>
                         {bhajan.artist && (
-                            <Text style={styles.bhajanArtist}>{bhajan.artist}</Text>
+                            <Text style={[styles.bhajanArtist, { color: colors.mutedForeground }]}>{bhajan.artist}</Text>
                         )}
                     </View>
                 </TouchableOpacity>
@@ -114,7 +110,7 @@ const BhajansSection = ({ onBhajanPress, bhajans }) => {
 };
 
 // --- Section 5: Sattvic Recipes ---
-const RecipesSection = () => {
+const RecipesSection = ({ colors }) => {
     const recipes = [
         { name: "Fruit Salad", desc: "Mixed seasonal fruits with honey" },
         { name: "Sabudana Kheer", desc: "Sweet tapioca pudding with nuts" },
@@ -122,12 +118,11 @@ const RecipesSection = () => {
     ];
 
     return (
-        // Using 'chef' from FontAwesome or similar is more accurate, but sticking to Feather's 'feather' as placeholder.
-        <DetailCard iconName="feather" title="Sattvic Recipes">
+        <DetailCard iconName="feather" title="Sattvic Recipes" colors={colors}>
             {recipes.map((recipe, index) => (
-                <TouchableOpacity key={index} style={[styles.recipeItem, { borderColor: BORDER_COLOR, backgroundColor: SECONDARY_BG }]}>
-                    <Text style={styles.recipeName}>{recipe.name}</Text>
-                    <Text style={styles.recipeDesc}>{recipe.desc}</Text>
+                <TouchableOpacity key={index} style={[styles.recipeItem, { borderColor: colors.border, backgroundColor: colors.muted }]}>
+                    <Text style={[styles.recipeName, { color: colors.foreground }]}>{recipe.name}</Text>
+                    <Text style={[styles.recipeDesc, { color: colors.mutedForeground }]}>{recipe.desc}</Text>
                 </TouchableOpacity>
             ))}
         </DetailCard>
@@ -135,7 +130,7 @@ const RecipesSection = () => {
 };
 
 // --- Modal 1: Story Details ---
-const StoryModal = ({ isVisible, onClose, ekadashi }) => {
+const StoryModal = ({ isVisible, onClose, ekadashi, colors }) => {
     const ekadashiName = ekadashi?.name || ekadashi?.ekadashi_name || "Ekadashi";
     const vrataKatha = ekadashi?.vrataKatha || "Long ago, in the celestial realm, there lived a demon named Mura who tormented the demigods and sages. Unable to defeat him through conventional means, Lord Vishnu engaged in a fierce battle that lasted for thousands of years. During this cosmic struggle, a divine maiden emerged from the Lord's body, radiating immense spiritual power. This celestial being, born from the Lord's transcendental energy, defeated the demon Mura with ease. Pleased with her service, Lord Vishnu granted her a boon. She requested that those who fast on her appearance day would be blessed with spiritual advancement and liberation from material bondage. The Lord named her Ekadashi, as she appeared on the eleventh day of the lunar month. He declared that observing Ekadashi with devotion, fasting, and spiritual practices would grant devotees immense spiritual benefit, purification of consciousness, and progress on the path of devotion.";
     const significance = ekadashi?.significance || "Ekadashi represents the transcendence of material consciousness and the awakening of spiritual awareness. By observing this sacred day, devotees align themselves with higher spiritual vibrations, purify their hearts, and develop deeper love and devotion for the Supreme Lord. The practice of fasting on Ekadashi is not merely about restricting food intake; it is a powerful spiritual discipline intended to reduce bodily demands and increase concentration on transcendental sound and service.";
@@ -147,22 +142,22 @@ const StoryModal = ({ isVisible, onClose, ekadashi }) => {
             visible={isVisible}
             onRequestClose={onClose}
         >
-            <SafeAreaView style={styles.modalOverlay}>
-                <View style={styles.storyModalContainer}>
-                    <View style={styles.modalHeader}>
-                        <AppIcon name="book-open" size={20} color={DarkBlue} />
-                        <Text style={styles.modalTitle}>{ekadashiName} - Complete Story</Text>
+            <SafeAreaView style={[styles.modalOverlay, { backgroundColor: colors.isDark ? 'rgba(0,0,0,0.7)' : 'rgba(0, 0, 0, 0.5)' }]}>
+                <View style={[styles.storyModalContainer, { backgroundColor: colors.card }]}>
+                    <View style={[styles.modalHeader, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
+                        <AppIcon name="book-open" size={20} color={colors.primary} />
+                        <Text style={[styles.modalTitle, { color: colors.foreground }]}>{ekadashiName} - Complete Story</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                            <AppIcon name="x" size={24} color={Grey} />
+                            <AppIcon name="x" size={24} color={colors.grey} />
                         </TouchableOpacity>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.storyModalContent}>
-                        <Text style={[styles.modalContentHeading, { color: DarkBlue }]}>The Sacred Legend</Text>
-                        <Text style={[styles.modalContentText, { color: LightBlue }]}>
+                        <Text style={[styles.modalContentHeading, { color: colors.foreground }]}>The Sacred Legend</Text>
+                        <Text style={[styles.modalContentText, { color: colors.mutedForeground }]}>
                             {vrataKatha}
                         </Text>
-                        <Text style={[styles.modalContentHeading, { color: DarkBlue }]}>Spiritual Significance</Text>
-                        <Text style={[styles.modalContentText, { color: LightBlue }]}>
+                        <Text style={[styles.modalContentHeading, { color: colors.foreground }]}>Spiritual Significance</Text>
+                        <Text style={[styles.modalContentText, { color: colors.mutedForeground }]}>
                             {significance}
                         </Text>
                     </ScrollView>
@@ -173,12 +168,10 @@ const StoryModal = ({ isVisible, onClose, ekadashi }) => {
 };
 
 // --- Modal 2: Bhajan Player ---
-const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => {
+const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange, colors }) => {
     const allBhajans = getAllBhajans();
     const currentBhajan = typeof selectedBhajan === 'object' ? selectedBhajan : allBhajans.find(b => b.name === selectedBhajan) || allBhajans[0];
 
-    // Construct SoundCloud Embed URL
-    // Using visual=true for the large artwork player as shown in the screenshot
     const soundCloudEmbedUrl = currentBhajan?.url
         ? `https://w.soundcloud.com/player/?url=${encodeURIComponent(currentBhajan.url)}&auto_play=true&visual=true&show_artwork=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`
         : null;
@@ -196,22 +189,20 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
             visible={isVisible}
             onRequestClose={onClose}
         >
-            <View style={styles.modalOverlay}>
-                <View style={styles.bhajanModalContainer}>
-                    <View style={styles.bhajanHandle} />
+            <View style={[styles.modalOverlay, { backgroundColor: colors.isDark ? 'rgba(0,0,0,0.7)' : 'rgba(0, 0, 0, 0.5)' }]}>
+                <View style={[styles.bhajanModalContainer, { backgroundColor: colors.card }]}>
+                    <View style={[styles.bhajanHandle, { backgroundColor: colors.border }]} />
 
-                    {/* Header */}
-                    <View style={styles.modalHeader}>
-                        <AppIcon name="music" size={24} color={DarkBlue} style={{ marginRight: 8 }} />
-                        <Text style={[styles.modalTitle, { flex: 1 }]} numberOfLines={1}>
+                    <View style={[styles.modalHeader, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
+                        <AppIcon name="music" size={24} color={colors.primary} style={{ marginRight: 8 }} />
+                        <Text style={[styles.modalTitle, { flex: 1, color: colors.foreground }]} numberOfLines={1}>
                             {currentBhajan?.name || 'Bhajan'}
                         </Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                            <AppIcon name="x" size={24} color={Grey} />
+                            <AppIcon name="x" size={24} color={colors.grey} />
                         </TouchableOpacity>
                     </View>
 
-                    {/* Player Area - WebView */}
                     <View style={styles.webviewContainer}>
                         {soundCloudEmbedUrl ? (
                             <WebView
@@ -222,30 +213,31 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
                                 mediaPlaybackRequiresUserAction={false}
                             />
                         ) : (
-                            <View style={styles.errorContainer}>
-                                <Text style={styles.errorText}>Audio not available</Text>
+                            <View style={[styles.errorContainer, { backgroundColor: colors.muted }]}>
+                                <Text style={[styles.errorText, { color: colors.grey }]}>Audio not available</Text>
                             </View>
                         )}
                     </View>
 
-                    <Text style={styles.devotionalText}>
+                    <Text style={[styles.devotionalText, { color: colors.mutedForeground }]}>
                         Playing devotional music for your spiritual journey
                     </Text>
 
-                    {/* Footer - Other Bhajans */}
                     <View style={styles.bhajanListFooter}>
                         {allBhajans.map((bhajan) => (
                             <TouchableOpacity
                                 key={bhajan.id}
                                 style={[
                                     styles.footerBhajanButton,
-                                    currentBhajan?.id === bhajan.id && styles.activeFooterBhajanButton
+                                    { borderColor: colors.grey },
+                                    currentBhajan?.id === bhajan.id && { borderColor: colors.primary, backgroundColor: colors.primary }
                                 ]}
                                 onPress={() => handleBhajanSelect(bhajan)}
                             >
                                 <Text
                                     style={[
                                         styles.footerBhajanText,
+                                        { color: colors.foreground },
                                         currentBhajan?.id === bhajan.id && styles.activeFooterBhajanText
                                     ]}
                                     numberOfLines={1}
@@ -264,13 +256,13 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange }) => 
 
 // --- Main Component: CalendarDayDetails ---
 const CalendarDayDetails = ({ navigation, route }) => {
+    const { colors, isDark } = useTheme();
     const [isStoryModalVisible, setStoryModalVisible] = useState(false);
     const [isBhajanModalVisible, setBhajanModalVisible] = useState(false);
     const [activeBhajan, setActiveBhajan] = useState(getAllBhajans()[0]);
     const [ekadashi, setEkadashi] = useState(null);
     const [panchangData, setPanchangData] = useState(null);
 
-    // Get ekadashi from route params or fetch from list
     const ekadashiFromRoute = route?.params?.ekadashi;
     const ekadashiDate = route?.params?.date ? moment(route.params.date) : moment();
     const currentYear = moment().year();
@@ -280,7 +272,6 @@ const CalendarDayDetails = ({ navigation, route }) => {
         if (ekadashiFromRoute) {
             setEkadashi(ekadashiFromRoute);
         } else if (ekadashiList && ekadashiList.length > 0) {
-            // Find ekadashi for the date
             const foundEkadashi = ekadashiList.find(e => {
                 const eDate = moment(e.date || e.ekadashi_date);
                 return eDate.isSame(ekadashiDate, 'day');
@@ -291,7 +282,6 @@ const CalendarDayDetails = ({ navigation, route }) => {
         }
     }, [ekadashiFromRoute, ekadashiList, ekadashiDate]);
 
-    // Fetch panchang data for the date
     useEffect(() => {
         const fetchPanchang = async () => {
             try {
@@ -314,47 +304,45 @@ const CalendarDayDetails = ({ navigation, route }) => {
         setActiveBhajan(bhajan);
     };
 
-    // Format date for display
     const formattedDate = ekadashiDate.format('dddd D MMMM');
     const ekadashiName = ekadashi?.name || ekadashi?.ekadashi_name || "Ekadashi";
 
-    // Navigation Header
     const Header = () => (
-        <View style={[styles.header, { borderBottomColor: BORDER_COLOR }]}>
+        <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation?.goBack()}>
-                <AppIcon name="arrow-left" size={24} color={DarkBlue} />
+                <AppIcon name="arrow-left" size={24} color={colors.foreground} />
             </TouchableOpacity>
             <View>
-                <Text style={styles.mainTitle}>{ekadashiName}</Text>
-                <Text style={styles.subtitle}>{formattedDate}</Text>
+                <Text style={[styles.mainTitle, { color: colors.foreground }]}>{ekadashiName}</Text>
+                <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{formattedDate}</Text>
             </View>
         </View>
     );
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.card }]}>
             <Header />
-            <ScrollView style={[styles.container, { backgroundColor: SECONDARY_BG }]} contentContainerStyle={styles.contentContainer}>
-                <StorySection onReadStory={() => setStoryModalVisible(true)} ekadashi={ekadashi} />
-                <VrataRulesSection ekadashi={ekadashi} />
-                <TimingsSection panchangData={panchangData} />
-                <BhajansSection onBhajanPress={handleBhajanPress} bhajans={getAllBhajans().slice(0, 3)} />
-                <RecipesSection />
-                {/* Spacer for bottom padding */}
+            <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.contentContainer}>
+                <StorySection onReadStory={() => setStoryModalVisible(true)} ekadashi={ekadashi} colors={colors} />
+                <VrataRulesSection ekadashi={ekadashi} colors={colors} />
+                <TimingsSection panchangData={panchangData} colors={colors} />
+                <BhajansSection onBhajanPress={handleBhajanPress} bhajans={getAllBhajans().slice(0, 3)} colors={colors} />
+                <RecipesSection colors={colors} />
                 <View style={{ height: 40 }} />
             </ScrollView>
 
-            {/* --- Modals --- */}
             <StoryModal
                 isVisible={isStoryModalVisible}
                 onClose={() => setStoryModalVisible(false)}
                 ekadashi={ekadashi}
+                colors={colors}
             />
             <BhajanModal
                 isVisible={isBhajanModalVisible}
                 onClose={() => setBhajanModalVisible(false)}
                 selectedBhajan={activeBhajan}
                 onBhajanChange={handleBhajanChange}
+                colors={colors}
             />
         </SafeAreaView>
     );
@@ -364,7 +352,6 @@ const CalendarDayDetails = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: 'white',
     },
     container: {
         flex: 1,
@@ -373,14 +360,12 @@ const styles = StyleSheet.create({
         padding: 16,
         paddingTop: 0,
     },
-    // --- Header Styles ---
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 12,
         paddingHorizontal: 16,
         borderBottomWidth: 1,
-        backgroundColor: 'white',
     },
     backButton: {
         paddingRight: 15,
@@ -388,15 +373,11 @@ const styles = StyleSheet.create({
     mainTitle: {
         fontSize: 18,
         fontWeight: '600',
-        color: DarkBlue,
     },
     subtitle: {
         fontSize: 14,
-        color: LightBlue,
     },
-    // --- Card Styles ---
     cardContainer: {
-        backgroundColor: 'white',
         borderRadius: 12,
         padding: 18,
         marginVertical: 10,
@@ -417,16 +398,13 @@ const styles = StyleSheet.create({
     cardTitle: {
         fontSize: 20,
         fontWeight: '700',
-        color: DarkBlue,
     },
     cardContent: {
         paddingTop: 5,
     },
-    // --- Story Section Styles ---
     bodyText: {
         fontSize: 15,
         lineHeight: 22,
-        color: LightBlue,
         marginBottom: 15,
     },
     readButton: {
@@ -435,14 +413,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: PRIMARY_COLOR,
     },
     readButtonText: {
-        color: PRIMARY_COLOR,
         fontWeight: '600',
         fontSize: 14,
     },
-    // --- Vrata Rules Styles (Updated to match the image: white circle with border) ---
     ruleItem: {
         flexDirection: 'row',
         alignItems: 'flex-start',
@@ -453,24 +428,19 @@ const styles = StyleSheet.create({
         height: 20,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: Grey || '#A0A0A0', // Use Grey from constants or fallback
-        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
         marginTop: 2,
     },
     ruleNumberText: {
-        color: DarkBlue,
         fontSize: 12,
         fontWeight: '700',
     },
     ruleText: {
         flex: 1,
         fontSize: 15,
-        color: LightBlue,
     },
-    // --- Timings & Bhajans (styles remain mostly the same) ---
     timingRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -482,7 +452,6 @@ const styles = StyleSheet.create({
     timingLabel: {
         fontSize: 15,
         fontWeight: '500',
-        color: DarkBlue,
         marginBottom: 4,
     },
     timingValue: {
@@ -506,14 +475,11 @@ const styles = StyleSheet.create({
     bhajanText: {
         fontSize: 15,
         fontWeight: '500',
-        color: DarkBlue,
     },
     bhajanArtist: {
         fontSize: 12,
-        color: LightBlue,
         marginTop: 2,
     },
-    // --- Recipes Styles (styles remain mostly the same) ---
     recipeItem: {
         paddingVertical: 12,
         paddingHorizontal: 15,
@@ -524,44 +490,34 @@ const styles = StyleSheet.create({
     recipeName: {
         fontSize: 16,
         fontWeight: '600',
-        color: DarkBlue,
     },
     recipeDesc: {
         fontSize: 13,
-        color: LightBlue,
         marginTop: 2,
     },
-    // --- Modal Styles ---
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'flex-end', // For Bhajan Modal
+        justifyContent: 'flex-end',
     },
-    // Story Modal specific
     storyModalContainer: {
         flex: 1,
-        backgroundColor: 'white',
         borderRadius: 12,
         margin: 10,
-        marginTop: Platform.OS === 'ios' ? 50 : 20, // Keep modal away from status bar
+        marginTop: Platform.OS === 'ios' ? 50 : 20,
         overflow: 'hidden',
     },
     storyModalContent: {
         padding: 20,
     },
-    // Shared Modal Header
     modalHeader: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: BORDER_COLOR,
-        backgroundColor: 'white',
     },
     modalTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: DarkBlue,
         marginLeft: 8,
         flex: 1,
     },
@@ -579,9 +535,7 @@ const styles = StyleSheet.create({
         lineHeight: 22,
         marginBottom: 10,
     },
-    // Bhajan Modal specific
     bhajanModalContainer: {
-        backgroundColor: 'white',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingHorizontal: 16,
@@ -592,13 +546,12 @@ const styles = StyleSheet.create({
     bhajanHandle: {
         width: 40,
         height: 5,
-        backgroundColor: BORDER_COLOR,
         borderRadius: 5,
         alignSelf: 'center',
         marginVertical: 8,
     },
     webviewContainer: {
-        height: 200, // Adjust height as needed for the visual player
+        height: 200,
         backgroundColor: '#000',
         borderRadius: 10,
         overflow: 'hidden',
@@ -612,15 +565,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: SECONDARY_BG,
     },
     errorText: {
-        color: Grey,
         fontSize: 14,
     },
     devotionalText: {
         fontSize: 14,
-        color: LightBlue,
         textAlign: 'center',
         marginVertical: 15,
     },
@@ -634,15 +584,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: Grey || '#A0A0A0',
         margin: 5,
     },
-    activeFooterBhajanButton: {
-        borderColor: PRIMARY_COLOR,
-        backgroundColor: PRIMARY_COLOR,
-    },
+    activeFooterBhajanButton: {},
     footerBhajanText: {
-        color: DarkBlue,
         fontWeight: '500',
         fontSize: 14,
     },

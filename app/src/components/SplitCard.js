@@ -1,20 +1,19 @@
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-// 1. Import TouchableOpacity
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { DarkBlue, LightBlue } from '../constants/Colors'
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
-// 2. Add 'onPress' to the list of props
 const SplitCard = ({ icon, iconColor, iconBackground, list, title, subTitle, onPress }) => {
+    const { colors } = useTheme();
+
     return (
-        // 3. Change the root <View> to <TouchableOpacity> and pass the onPress prop
-        <TouchableOpacity style={styles.container} onPress={onPress}>
+        <TouchableOpacity style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={onPress}>
             {list ? (<View style={[styles.iconBackground, { backgroundColor: iconBackground }]}>
                 <MaterialCommunityIcons name={list} size={24} color={iconColor} />
             </View>) : <View style={[styles.iconBackground, { backgroundColor: iconBackground }]}>
                 <Ionicons name={icon} size={24} color={iconColor} />
             </View>}
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subtitle}>{subTitle}</Text>
+            <Text style={[styles.title, { color: colors.foreground }]}>{title}</Text>
+            <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{subTitle}</Text>
         </TouchableOpacity>
     )
 }
@@ -25,13 +24,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         borderWidth: 0.5,
-        borderColor: '#ccc',
         elevation: 2,
         borderRadius: 7,
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
         margin: 10
     },
     iconBackground: {
@@ -44,11 +41,9 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: DarkBlue,
         marginVertical: 5
     },
     subtitle: {
         fontSize: 14,
-        color: LightBlue,
     }
 })

@@ -2,12 +2,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 import { useNextEkadashi } from "../hooks/useEkadashi";
 import { getTodayEkadashi } from "../services/api";
 
-// --- Next Ekadashi Card Component ---
-
 const NextEkadashiCard = () => {
+  const { colors, isDark } = useTheme();
   const { nextEkadashi, loading, error } = useNextEkadashi();
   const [todayEkadashi, setTodayEkadashi] = useState(null);
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -20,7 +20,6 @@ const NextEkadashiCard = () => {
     fetchTodayEkadashi();
   }, []);
 
-  // Countdown timer effect
   useEffect(() => {
     const displayEkadashi = todayEkadashi || nextEkadashi;
     if (!displayEkadashi || todayEkadashi) return;
@@ -34,8 +33,6 @@ const NextEkadashiCard = () => {
 
       if (diff <= 0) {
         setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        // Refresh to check if it's today
-        fetchTodayEkadashi();
         return;
       }
 
@@ -56,31 +53,29 @@ const NextEkadashiCard = () => {
 
   const handleBeginObservance = () => {
     console.log("Begin Observance Pressed!");
-    // Navigation logic here
   };
 
   const handleViewDetails = () => {
     console.log("View Details Pressed!");
-    // Navigation logic here
   };
 
-  // Determine which Ekadashi to display
   const displayEkadashi = todayEkadashi || nextEkadashi;
   const isToday = todayEkadashi !== null;
 
-  // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = moment(dateString);
     return date.format('ddd, MMM D');
   };
 
+  const styles = getStyles(colors, isDark);
+
   if (loading) {
     return (
       <View style={styles.nextCardContainer}>
         <View style={styles.nextCardWrapper}>
           <View style={[styles.nextCardContent, { alignItems: 'center', justifyContent: 'center', padding: 40 }]}>
-            <ActivityIndicator size="large" color="#1C2C56" />
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         </View>
       </View>
@@ -102,13 +97,11 @@ const NextEkadashiCard = () => {
   const ekadashiName = displayEkadashi.name || displayEkadashi.ekadashi_name || (isToday ? "Today's Ekadashi" : "Next Ekadashi");
   const ekadashiDate = displayEkadashi.date || displayEkadashi.ekadashi_date;
 
-  // Render "Today is Ekadashi!" card
   if (isToday) {
     return (
       <View style={styles.todayOuterContainer}>
         <View style={styles.todayCardWrapper}>
           <View style={styles.todayCardContent}>
-            {/* "Today is Ekadashi!" Gradient Badge */}
             <LinearGradient
               colors={['#EF4444', '#F59E0B']}
               start={{ x: 0, y: 0 }}
@@ -118,15 +111,12 @@ const NextEkadashiCard = () => {
               <Text style={styles.todayBadgeText}>Today is Ekadashi!</Text>
             </LinearGradient>
 
-            {/* Moon Icon in Yellow Circle */}
             <View style={styles.moonIconContainer}>
               <Text style={styles.moonIcon}>🌙</Text>
             </View>
 
-            {/* Ekadashi Name */}
             <Text style={styles.todayEkadashiName}>{ekadashiName}</Text>
 
-            {/* Begin Observance Button with Gradient */}
             <TouchableOpacity onPress={handleBeginObservance} activeOpacity={0.8}>
               <LinearGradient
                 colors={['#F59E0B', '#F97316']}
@@ -143,15 +133,12 @@ const NextEkadashiCard = () => {
     );
   }
 
-  // Render "Next Ekadashi" card with countdown
   return (
     <View style={styles.nextCardContainer}>
       <View style={styles.nextCardWrapper}>
         <View style={styles.nextCardContent}>
-          {/* Header */}
           <Text style={styles.nextHeaderText}>NEXT EKADASHI</Text>
 
-          {/* Ekadashi Name and Date Row */}
           <View style={styles.nameAndDateRow}>
             <View style={styles.nameSection}>
               <Text style={styles.moonIconSmall}>🌙</Text>
@@ -160,7 +147,6 @@ const NextEkadashiCard = () => {
             <Text style={styles.dateText}>{formatDate(ekadashiDate)}</Text>
           </View>
 
-          {/* Countdown Timer */}
           <View style={styles.countdownContainer}>
             <View style={styles.countdownBox}>
               <Text style={styles.countdownNumber}>{countdown.days}</Text>
@@ -180,7 +166,6 @@ const NextEkadashiCard = () => {
             </View>
           </View>
 
-          {/* View Details Button */}
           <TouchableOpacity style={styles.viewDetailsButton} onPress={handleViewDetails}>
             <Text style={styles.viewDetailsButtonText}>View Details</Text>
           </TouchableOpacity>
@@ -190,10 +175,9 @@ const NextEkadashiCard = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  // Today's Ekadashi Card Styles
+const getStyles = (colors, isDark) => StyleSheet.create({
   todayOuterContainer: {
-    backgroundColor: "#E8EFF7",
+    backgroundColor: colors.lightBlueBg,
     borderRadius: 24,
     margin: 16,
     marginTop: 20,
@@ -205,10 +189,10 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   todayCardWrapper: {
-    backgroundColor: "#FEF9E7",
+    backgroundColor: isDark ? colors.card : "#FEF9E7",
     borderRadius: 20,
     borderWidth: 3,
-    borderColor: "#F9E79F",
+    borderColor: isDark ? colors.secondary : "#F9E79F",
     overflow: "visible",
   },
   todayCardContent: {
@@ -235,10 +219,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   moonIconContainer: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: isDark ? colors.muted : "#FEF3C7",
     borderRadius: 60,
     borderWidth: 3,
-    borderColor: "#FDE68A",
+    borderColor: isDark ? colors.secondary : "#FDE68A",
     width: 70,
     height: 70,
     alignItems: "center",
@@ -251,7 +235,7 @@ const styles = StyleSheet.create({
   todayEkadashiName: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#7C2D12",
+    color: isDark ? colors.foreground : "#7C2D12",
     textAlign: "center",
     marginBottom: 20,
   },
@@ -273,9 +257,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  // Next Ekadashi Card Styles
   nextCardContainer: {
-    backgroundColor: "#E8EFF7",
+    backgroundColor: colors.lightBlueBg,
     borderRadius: 24,
     margin: 16,
     marginTop: 20,
@@ -287,18 +270,18 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   nextCardWrapper: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.card,
     borderRadius: 22,
     overflow: "hidden",
   },
   nextCardContent: {
     padding: 24,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.card,
   },
   nextHeaderText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#6B7AB8",
+    color: colors.mutedForeground,
     letterSpacing: 1.5,
     marginBottom: 20,
   },
@@ -320,13 +303,13 @@ const styles = StyleSheet.create({
   nextEkadashiName: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#1C2C56",
+    color: colors.foreground,
     flex: 1,
   },
   dateText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C2C56",
+    color: colors.foreground,
   },
   countdownContainer: {
     flexDirection: "row",
@@ -336,7 +319,7 @@ const styles = StyleSheet.create({
   },
   countdownBox: {
     flex: 1,
-    backgroundColor: "#EEF2F6",
+    backgroundColor: colors.muted,
     borderRadius: 16,
     paddingVertical: 20,
     paddingHorizontal: 8,
@@ -346,16 +329,16 @@ const styles = StyleSheet.create({
   countdownNumber: {
     fontSize: 32,
     fontWeight: "700",
-    color: "#1C2C56",
+    color: colors.foreground,
     marginBottom: 4,
   },
   countdownLabel: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#6B7AB8",
+    color: colors.mutedForeground,
   },
   viewDetailsButton: {
-    backgroundColor: "#1C2C56",
+    backgroundColor: colors.primary,
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: "center",
@@ -371,10 +354,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  // Common Styles
   errorText: {
     fontSize: 14,
-    color: "#dc3545",
+    color: colors.destructive,
     textAlign: "center",
     padding: 20,
   },
