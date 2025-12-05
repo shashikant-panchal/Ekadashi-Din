@@ -1,6 +1,6 @@
 import axios from "axios";
 import moment from "moment";
-import { EKADASHI_CALENDAR_2025 } from "../data/ekadashiData";
+import { ekadashiData2025 } from "../data/ekadashiData";
 
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpb2NpZ3JncHdkY2FhanJ4dnJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxODE0NDMsImV4cCI6MjA3MTc1NzQ0M30.3wL7Z4bUNkmAVPUE43gW97Bpq2bqYLW1i-KOaZQb3ko";
@@ -70,11 +70,11 @@ export const getEkadashiList = async (year) => {
 
 const getEkadashiListFromStaticData = (year) => {
   if (year === 2025) {
-    return EKADASHI_CALENDAR_2025.map((ekadashi) => ({
+    return ekadashiData2025.map((ekadashi) => ({
       name: ekadashi.name,
       ekadashi_name: ekadashi.name,
-      date: ekadashi.date.format("YYYY-MM-DD"),
-      ekadashi_date: ekadashi.date.format("YYYY-MM-DD"),
+      date: moment(ekadashi.date).format("YYYY-MM-DD"),
+      ekadashi_date: moment(ekadashi.date).format("YYYY-MM-DD"),
       paksha: ekadashi.paksha,
       month: ekadashi.month,
       significance: ekadashi.significance,
