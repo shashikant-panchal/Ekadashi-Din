@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
+    Alert,
     Platform,
     ScrollView,
     StyleSheet,
     Text,
+    ToastAndroid,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
@@ -14,7 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 import { AppYellow, DarkBlue, LightBlue, LIGHTBLUEBG } from '../constants/Colors';
-import { bhagavadGitaChapters } from '../data/bhagavadGitaData';
+import { bhagavadGitaChapters, getTodaysVerse } from '../data/bhagavadGitaData';
 import * as ReadingService from '../services/readingProgress';
 
 // Reusable component for the Chapter List Item
@@ -51,13 +53,16 @@ const DailyReading = ({ navigation }) => {
     const loadReadingData = async () => {
         if (!user?.id) {
             setLoading(false);
+            // Still get today's verse even without user login
+            const verse = getTodaysVerse();
+            setTodaysVerse(verse);
             return;
         }
 
         try {
             setLoading(true);
-            // Use the service's getTodaysVerse function for consistency
-            const verse = ReadingService.getTodaysVerse();
+            // Use getTodaysVerse from bhagavadGitaData which has full content
+            const verse = getTodaysVerse();
             setTodaysVerse(verse);
 
             // Fetch reading progress from Supabase
@@ -73,7 +78,7 @@ const DailyReading = ({ navigation }) => {
         } catch (error) {
             console.error('Error loading reading data:', error);
             // Use default values on error
-            const verse = ReadingService.getTodaysVerse();
+            const verse = getTodaysVerse();
             setTodaysVerse(verse);
         } finally {
             setLoading(false);
@@ -87,18 +92,35 @@ const DailyReading = ({ navigation }) => {
     const totalChapters = bhagavadGitaChapters.length;
     const studyProgress = totalChapters > 0 ? stats.chaptersCompleted / totalChapters : 0;
 
+    const showToast = (message) => {
+        if (Platform.OS === 'android') {
+            ToastAndroid.show(message, ToastAndroid.SHORT);
+        } else {
+            Alert.alert('Daily Reading', message);
+        }
+    };
+
     const handleMarkAsRead = async () => {
         if (!user?.id || !verse) {
             console.warn('No user logged in or no verse selected');
+            showToast('Please log in to track your progress');
             return;
         }
 
         try {
-            await ReadingService.markVerseComplete(user.id, verse.chapter, verse.verse);
-            // Refresh data after marking as read
-            await loadReadingData();
+            const result = await ReadingService.markVerseComplete(user.id, verse.chapter, verse.verse);
+
+            // Check if verse was already marked as read (result would be an update, not new)
+            if (result?.already_read) {
+                showToast("You've already read this verse today! 🙏");
+            } else {
+                showToast('Verse marked as read! Hare Krishna! 🙏');
+                // Refresh data after marking as read
+                await loadReadingData();
+            }
         } catch (error) {
             console.error('Error marking verse as read:', error);
+            showToast('Error saving progress. Please try again.');
         }
     };
 

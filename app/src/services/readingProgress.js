@@ -156,7 +156,10 @@ export const markVerseComplete = async (userId, chapter, verse, readingDuration 
             .eq('verse_number', verse)
             .maybeSingle();
 
-        if (existing) {
+        if (existing && existing.completed_verse) {
+            // Already marked as read today - return with already_read flag
+            return { ...existing, already_read: true };
+        } else if (existing) {
             // Update existing record
             const { data, error } = await supabase
                 .from('reading_progress')
@@ -170,7 +173,7 @@ export const markVerseComplete = async (userId, chapter, verse, readingDuration 
                 .single();
 
             if (error) throw error;
-            return data;
+            return { ...data, already_read: false };
         } else {
             // Create new record
             const { data, error } = await supabase
@@ -188,7 +191,7 @@ export const markVerseComplete = async (userId, chapter, verse, readingDuration 
                 .single();
 
             if (error) throw error;
-            return data;
+            return { ...data, already_read: false };
         }
     } catch (error) {
         console.error('Error marking verse complete:', error);
