@@ -15,7 +15,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 import { DarkBlue, LIGHTBLUEBG } from "../constants/Colors";
-import { clearError, resetRegistrationSuccess, signIn, signUp } from "../redux/userSlice";
+import { clearError, resetRegistrationSuccess, signIn, signInWithGoogle, signUp } from "../redux/userSlice";
 
 const { width } = Dimensions.get("window");
 
@@ -75,6 +75,9 @@ export default function Login() {
     dispatch(signUp({ email, password, displayName }));
   };
 
+  const handleGoogleSignIn = () => {
+    dispatch(signInWithGoogle());
+  };
 
   const renderSignIn = () => (
     <>
@@ -150,7 +153,7 @@ export default function Login() {
         <Text style={styles.orText}>OR CONTINUE WITH</Text>
         <View style={styles.dividerLine} />
       </View>
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity onPress={handleGoogleSignIn} style={styles.googleButton}>
         <Image
           source={{
             uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
@@ -243,7 +246,7 @@ export default function Login() {
         <Text style={styles.orText}>OR CONTINUE WITH</Text>
         <View style={styles.dividerLine} />
       </View>
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity onPress={handleGoogleSignIn} style={styles.googleButton}>
         <Image
           source={{
             uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
