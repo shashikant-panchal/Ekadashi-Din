@@ -122,7 +122,6 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: relativeWidth(6),
-    fontWeight: "700",
   },
   profileSubtitle: {
     fontSize: relativeWidth(3.8),
@@ -146,12 +145,10 @@ const styles = StyleSheet.create({
   },
   statCount: {
     fontSize: relativeWidth(10),
-    fontWeight: "700",
     marginTop: relativeHeight(1),
   },
   statLabel: {
     fontSize: relativeWidth(4),
-    fontWeight: "500",
     marginTop: relativeHeight(0.5),
   },
   challengeCard: {
@@ -176,11 +173,9 @@ const styles = StyleSheet.create({
   challengeIcon: {
     fontSize: relativeWidth(5),
     color: "#fff",
-    fontWeight: "bold",
   },
   challengeTitle: {
     fontSize: relativeWidth(5),
-    fontWeight: "700",
   },
   challengeDescription: {
     fontSize: relativeWidth(3.7),
@@ -198,7 +193,6 @@ const styles = StyleSheet.create({
   challengeButtonText: {
     color: "#FFF",
     fontSize: 16,
-    fontWeight: "700",
     textTransform: "uppercase",
     backgroundColor: "transparent",
   },
@@ -219,7 +213,6 @@ const styles = StyleSheet.create({
   },
   activityTitle: {
     fontSize: relativeWidth(5),
-    fontWeight: "600",
     marginLeft: relativeWidth(2),
   },
   noActivityText: {

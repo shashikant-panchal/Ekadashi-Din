@@ -28,7 +28,7 @@ export default function Login() {
 
   const dispatch = useDispatch();
   const { loading, error, registrationSuccess } = useSelector((state) => state.user);
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, typography } = useTheme();
 
   useEffect(() => {
     if (error) {
@@ -80,7 +80,7 @@ export default function Login() {
     dispatch(signInWithGoogle());
   };
 
-  const styles = getStyles(colors);
+  const styles = getStyles(colors, typography);
 
   const renderSignIn = () => (
     <>
@@ -320,7 +320,7 @@ export default function Login() {
   );
 }
 
-const getStyles = (colors) => StyleSheet.create({
+const getStyles = (colors, typography) => StyleSheet.create({
   safeArea: {
     flex: 1,
   },
@@ -344,7 +344,6 @@ const getStyles = (colors) => StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: "bold",
     color: colors.foreground,
     marginBottom: 10,
   },
@@ -383,16 +382,13 @@ const getStyles = (colors) => StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: colors.mutedForeground,
-    fontWeight: "500",
   },
   activeTabText: {
     fontSize: 16,
-    fontWeight: "bold",
     color: colors.primary,
   },
   formTitle: {
     fontSize: 22,
-    fontWeight: "bold",
     color: colors.foreground,
     textAlign: "center",
     marginBottom: 5,
@@ -408,7 +404,6 @@ const getStyles = (colors) => StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: "600",
     color: colors.foreground,
     marginBottom: 8,
   },
@@ -429,6 +424,7 @@ const getStyles = (colors) => StyleSheet.create({
     height: 50,
     fontSize: 16,
     color: colors.foreground,
+    fontFamily: typography?.family?.sans,
   },
   passwordOptions: {
     flexDirection: "row",
@@ -456,7 +452,6 @@ const getStyles = (colors) => StyleSheet.create({
   forgotPassword: {
     fontSize: 14,
     color: colors.primary,
-    fontWeight: "600",
   },
   signInButton: {
     backgroundColor: colors.primary,
@@ -469,7 +464,6 @@ const getStyles = (colors) => StyleSheet.create({
   },
   signInButtonText: {
     fontSize: 16,
-    fontWeight: "bold",
     color: "#fff",
   },
   dividerContainer: {
@@ -487,7 +481,6 @@ const getStyles = (colors) => StyleSheet.create({
     color: colors.mutedForeground,
     marginHorizontal: 10,
     fontSize: 12,
-    fontWeight: "600",
   },
   googleButton: {
     flexDirection: "row",
@@ -507,7 +500,6 @@ const getStyles = (colors) => StyleSheet.create({
   },
   googleButtonText: {
     fontSize: 16,
-    fontWeight: "600",
     color: colors.foreground,
   },
   privacyText: {
@@ -518,6 +510,5 @@ const getStyles = (colors) => StyleSheet.create({
   },
   privacyLink: {
     color: colors.primary,
-    fontWeight: "600",
   },
 });

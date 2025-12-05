@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Dimensions, Modal, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { useSelector } from 'react-redux';
 import { ThemedText } from '../components/ThemedText';
 import { useTheme } from '../context/ThemeContext';
 import { getAllBhajans } from '../data/bhajansData';
@@ -460,7 +461,6 @@ const styles = StyleSheet.create({
     },
     timingValue: {
         fontSize: 16,
-        fontWeight: 'bold',
     },
     bhajanButton: {
         flexDirection: 'row',

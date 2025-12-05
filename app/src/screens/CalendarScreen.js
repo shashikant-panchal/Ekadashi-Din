@@ -342,7 +342,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: relativeWidth(5.5),
-    fontWeight: "600",
   },
   ekadashiSummaryCard: {
     flexDirection: "row",
@@ -354,7 +353,6 @@ const styles = StyleSheet.create({
   },
   summaryTitle: {
     fontSize: relativeWidth(4.5),
-    fontWeight: "600",
   },
   summarySubtitle: {
     fontSize: relativeWidth(3.5),
@@ -378,7 +376,6 @@ const styles = StyleSheet.create({
     width: `${100 / 7}%`,
     textAlign: "center",
     fontSize: relativeWidth(3.8),
-    fontWeight: "500",
   },
   datesRow: {
     flexDirection: "row",
@@ -394,7 +391,6 @@ const styles = StyleSheet.create({
   },
   dateCellText: {
     fontSize: relativeWidth(4),
-    fontWeight: "400",
   },
   ekadashiIcon: {
     position: "absolute",
@@ -419,7 +415,6 @@ const styles = StyleSheet.create({
   },
   observancesTitle: {
     fontSize: relativeWidth(4.5),
-    fontWeight: "600",
   },
   observanceItem: {
     flexDirection: "row",
@@ -443,7 +438,6 @@ const styles = StyleSheet.create({
   },
   observanceTitleText: {
     fontSize: relativeWidth(4),
-    fontWeight: "500",
   },
   observanceDateText: {
     fontSize: relativeWidth(3.5),
@@ -456,7 +450,6 @@ const styles = StyleSheet.create({
   },
   phaseBadgeText: {
     fontSize: relativeWidth(3.2),
-    fontWeight: "500",
   },
   legendContainer: {
     justifyContent: "flex-start",
@@ -465,7 +458,6 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: relativeWidth(3.5),
-    fontWeight: "500",
     marginRight: relativeWidth(4),
   },
   legendItem: {

@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     },
     actionTitle: {
         fontSize: 16,
-        fontWeight: 'bold',
         marginBottom: 4,
     },
     actionSubtitle: {

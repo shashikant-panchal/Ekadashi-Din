@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: dw * 0.045,
-        fontWeight: '600',
         marginLeft: dw * 0.015,
     },
     row: {
@@ -233,7 +232,6 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: dw * 0.032,
-        fontWeight: '600',
         textAlign: 'flex-start',
     },
     subLabel: {
@@ -243,7 +241,6 @@ const styles = StyleSheet.create({
     value: {
         fontSize: dw * 0.036,
         padding: 4,
-        fontWeight: '600',
         marginTop: dh * 0.003,
         textAlign: 'center',
     },

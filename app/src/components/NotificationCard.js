@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 16,
-        fontWeight: 'bold',
     },
     unreadDot: {
         width: 10,
@@ -100,7 +99,6 @@ const styles = StyleSheet.create({
     },
     tagText: {
         fontSize: 11,
-        fontWeight: '500',
     },
 });
 

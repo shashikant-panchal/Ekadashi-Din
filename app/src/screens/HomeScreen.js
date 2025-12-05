@@ -117,12 +117,10 @@ const getStyles = (colors) => StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "700",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    fontWeight: "500",
   },
   notificationButton: {
     borderRadius: 16,
@@ -163,7 +161,6 @@ const getStyles = (colors) => StyleSheet.create({
   mantraText: {
     fontSize: 15,
     textAlign: "center",
-    fontWeight: "600",
     lineHeight: 24,
   },
   cardsRow: {

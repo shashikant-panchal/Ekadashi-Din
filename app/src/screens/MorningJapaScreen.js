@@ -441,7 +441,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         marginLeft: 10,
-        fontWeight: 'normal',
     },
     bottomActionButtonText: {
         fontSize: 16,
