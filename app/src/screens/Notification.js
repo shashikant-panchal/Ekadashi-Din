@@ -8,6 +8,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NotificationCard from '../components/NotificationCard';
 import { dw } from '../constants/Dimensions';
+import { useTheme } from '../context/ThemeContext';
 
 const notificationsData = [
     {
@@ -31,9 +32,7 @@ const notificationsData = [
         time: '5 hours ago',
         tag: 'wisdom',
         unread: true,
-        descriptionStyle: { color: '#007bff' },
     },
-
     {
         id: 3,
         icon: 'target',
@@ -70,11 +69,13 @@ const notificationsData = [
 ];
 
 const NotificationScreen = () => {
+    const { colors, isDark } = useTheme();
+
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
-                <TouchableOpacity style={styles.markAsReadButton}>
-                    <Text style={styles.markAsReadText}>Mark all as read</Text>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.card }]}>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
+                <TouchableOpacity style={[styles.markAsReadButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                    <Text style={[styles.markAsReadText, { color: colors.foreground }]}>Mark all as read</Text>
                 </TouchableOpacity>
                 <ScrollView style={styles.scrollView}>
                     {notificationsData.map(item => (
@@ -89,7 +90,9 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#ffffff',
+    },
+    container: {
+        flex: 1,
     },
     markAsReadButton: {
         paddingVertical: 10,
@@ -98,13 +101,10 @@ const styles = StyleSheet.create({
         marginVertical: 12,
         width: dw / 3,
         borderWidth: 1,
-        borderColor: '#ddd',
         borderRadius: 10,
         alignItems: 'center',
-        backgroundColor: '#fff',
     },
     markAsReadText: {
-        color: '#555',
         fontSize: 14,
         fontWeight: '500',
     },

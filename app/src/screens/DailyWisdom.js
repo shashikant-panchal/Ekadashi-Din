@@ -13,15 +13,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "react-native-vector-icons/Feather";
 import DailyWisdomActionCard from "../components/DailyWisdomActionCard";
 import DailyWisdomReflectionCard from "../components/DailyWisdomReflectionCard";
-import {
-  AppYellow,
-  DarkBlue,
-  LightBlue,
-  LIGHTBLUEBG,
-} from "../constants/Colors";
+import { useTheme } from "../context/ThemeContext";
 import { dailyWisdoms, getTimeBasedWisdom, getTodaysWisdom } from "../data/dailyWisdomData";
 
 const DailyWisdom = ({ navigation }) => {
+  const { colors, isDark } = useTheme();
   const [currentWisdom, setCurrentWisdom] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [timeOfDay, setTimeOfDay] = useState("morning");
@@ -29,7 +25,6 @@ const DailyWisdom = ({ navigation }) => {
   const [reflectionText, setReflectionText] = useState("");
 
   useEffect(() => {
-    // Determine time of day
     const hour = new Date().getHours();
     let currentTimeOfDay = "morning";
     if (hour < 12) {
@@ -41,7 +36,6 @@ const DailyWisdom = ({ navigation }) => {
     }
     setTimeOfDay(currentTimeOfDay);
 
-    // Get today's wisdom to show initially (consistent with web)
     const todaysWisdom = getTodaysWisdom();
     const todayIndex = dailyWisdoms.findIndex(
       w => w.sanskrit === todaysWisdom.sanskrit
@@ -51,13 +45,11 @@ const DailyWisdom = ({ navigation }) => {
       setWisdom(todaysWisdom);
     }
 
-    // Get time-based reflection using current time
     const reflection = getTimeBasedWisdom(currentTimeOfDay);
     setReflectionText(reflection);
   }, []);
 
   const nextWisdom = () => {
-    // Cycle through the dailyWisdoms array
     const nextIndex = (currentWisdom + 1) % dailyWisdoms.length;
     setCurrentWisdom(nextIndex);
     setWisdom(dailyWisdoms[nextIndex]);
@@ -74,52 +66,51 @@ const DailyWisdom = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <TouchableOpacity
           style={styles.header}
           onPress={() => navigation.goBack()}
         >
-          <Feather name="arrow-left" size={24} color="#333" />
+          <Feather name="arrow-left" size={24} color={colors.mutedForeground} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Daily Wisdom</Text>
+        <Text style={[styles.headerTitle, { color: colors.foreground }]}>Daily Wisdom</Text>
         <View style={styles.placeholderRight} />
-        <Text style={styles.headerSubtitle}>
+        <Text style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>
           Spiritual teachings for your journey
         </Text>
         <DailyWisdomReflectionCard
           reflectionText={reflectionText}
           timeOfDay={timeOfDay}
         />
-        <View style={styles.mantraCard}>
+        <View style={[styles.mantraCard, { backgroundColor: colors.card }]}>
           <View style={styles.mantraHeader}>
-            <View style={styles.mantraIconContainer}>
+            <View style={[styles.mantraIconContainer, { backgroundColor: colors.card }]}>
               <Entypo
-                style={{ backgroundColor: "#fff" }}
                 name="quote"
                 size={20}
-                color={"grey"}
+                color={colors.mutedForeground}
               />
             </View>
-            <Text style={styles.mantraTag}>
+            <Text style={[styles.mantraTag, { color: colors.mutedForeground }]}>
               {displayWisdom.type?.toUpperCase() || "MANTRA"}
             </Text>
-            <View style={styles.bhagavadGitaTag}>
-              <Text style={styles.bhagavadGitaText}>
+            <View style={[styles.bhagavadGitaTag, { backgroundColor: colors.lightBlueBg }]}>
+              <Text style={[styles.bhagavadGitaText, { color: colors.primary }]}>
                 {displayWisdom.verse || "Bhagavad Gita 7.7"}
               </Text>
             </View>
           </View>
-          <View style={styles.mainMantraContainer}>
-            <Text style={styles.sanskritMantra}>{displayWisdom.sanskrit}</Text>
-            <Text style={styles.englishMantra}>
+          <View style={[styles.mainMantraContainer, { backgroundColor: colors.lightBlueBg }]}>
+            <Text style={[styles.sanskritMantra, { color: colors.foreground }]}>{displayWisdom.sanskrit}</Text>
+            <Text style={[styles.englishMantra, { color: colors.mutedForeground }]}>
               {displayWisdom.transliteration}
             </Text>
           </View>
 
-          <Text style={styles.mantraDescription}>{displayWisdom.english}</Text>
+          <Text style={[styles.mantraDescription, { color: colors.foreground }]}>{displayWisdom.english}</Text>
 
-          <View style={styles.mantraFooter}>
+          <View style={[styles.mantraFooter, { borderTopColor: colors.border }]}>
             <View style={styles.mantraActions}>
               <TouchableOpacity
                 style={styles.actionButton}
@@ -128,44 +119,41 @@ const DailyWisdom = ({ navigation }) => {
                 <Feather
                   name="heart"
                   size={18}
-                  color={isLiked ? "#FF6B6B" : LightBlue}
-                  fill={isLiked ? "#FF6B6B" : "none"}
+                  color={isLiked ? "#FF6B6B" : colors.mutedForeground}
                 />
-                <Text style={styles.actionText}>
+                <Text style={[styles.actionText, { color: colors.mutedForeground }]}>
                   {isLiked ? "Loved" : "Love"}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButton}>
-                <Feather name="share-2" size={18} color={LightBlue} />
-                <Text style={styles.actionText}>Share</Text>
+                <Feather name="share-2" size={18} color={colors.mutedForeground} />
+                <Text style={[styles.actionText, { color: colors.mutedForeground }]}>Share</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.nextButton} onPress={nextWisdom}>
+            <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.primary }]} onPress={nextWisdom}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
           </View>
         </View>
-        {/* Action Cards Container */}
         <View style={styles.actionCardsContainer}>
           <DailyWisdomActionCard
             iconName="sunny-outline"
-            iconColor={AppYellow} // Orange
-            iconBgColor="#FEFCEA" // Light Orange
+            iconColor={colors.secondary}
+            iconBgColor={isDark ? colors.muted : "#FEFCEA"}
             title="Morning Japa"
             subtitle="16 rounds of chanting"
             onPress={() => navigation.navigate("MorningJapa")}
           />
           <DailyWisdomActionCard
             iconName="book-outline"
-            iconColor={DarkBlue} // Blue
-            iconBgColor="#E7EBF5" // Light Blue
+            iconColor={colors.primary}
+            iconBgColor={colors.lightBlueBg}
             title="Daily Reading"
             subtitle="Bhagavad Gita study"
             onPress={() => navigation.navigate("DailyReading")}
           />
         </View>
-        {/* Bottom Card */}
-        <View style={styles.bottomCard}>
+        <View style={[styles.bottomCard, { backgroundColor: colors.primary }]}>
           <Ionicons
             name="heart"
             size={32}
@@ -187,49 +175,38 @@ const DailyWisdom = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8f9fa", // Light grey background
   },
   scrollViewContent: {
-    paddingBottom: 20, // Add some padding at the bottom
+    paddingBottom: 20,
   },
-  // Header styles
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: Platform.OS === "android" ? 10 : 0, // Adjust for Android status bar
-  },
-  backButton: {
-    padding: 8, // Make touchable area larger
+    paddingTop: Platform.OS === "android" ? 10 : 0,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: DarkBlue,
-    flex: 1, // Allow title to take available space
+    flex: 1,
     textAlign: "center",
-    marginLeft: -40, // Adjust to visually center due to back button
+    marginLeft: -40,
   },
   placeholderRight: {
-    width: 40, // Match back button width to keep title centered
+    width: 40,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: LightBlue,
     textAlign: "center",
     marginBottom: 16,
   },
-
   mainMantraContainer: {
-    backgroundColor: LIGHTBLUEBG,
     borderRadius: 7,
     padding: 10,
     alignItems: "flex-start",
   },
-  // Mantra Card Styles
   mantraCard: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
@@ -249,7 +226,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    // backgroundColor: '#e0e0e0',
     justifyContent: "center",
     alignItems: "center",
     marginRight: 8,
@@ -257,24 +233,20 @@ const styles = StyleSheet.create({
   mantraTag: {
     fontSize: 12,
     fontWeight: "500",
-    color: LightBlue,
-    marginRight: "auto", // Pushes Bhagavad Gita tag to the right
+    marginRight: "auto",
   },
   bhagavadGitaTag: {
-    backgroundColor: LIGHTBLUEBG, // Light blue background
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
   bhagavadGitaText: {
     fontSize: 11,
-    color: DarkBlue, // Blue text
     fontWeight: "500",
   },
   sanskritMantra: {
     fontSize: 20,
     fontWeight: "bold",
-    color: DarkBlue,
     textAlign: "center",
     marginBottom: 8,
     lineHeight: 30,
@@ -282,13 +254,10 @@ const styles = StyleSheet.create({
   englishMantra: {
     fontSize: 16,
     fontStyle: "italic",
-    color: LightBlue,
-    // textAlign: 'center',
     marginBottom: 16,
   },
   mantraDescription: {
     fontSize: 14,
-    color: DarkBlue,
     marginVertical: 15,
     marginHorizontal: 10,
     lineHeight: 20,
@@ -298,7 +267,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
     paddingTop: 12,
   },
   mantraActions: {
@@ -311,11 +279,9 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 14,
-    color: LightBlue,
     marginLeft: 6,
   },
   nextButton: {
-    backgroundColor: DarkBlue, // Blue button
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 20,
@@ -325,16 +291,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-
   actionCardsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 8,
     marginBottom: 16,
   },
-
   bottomCard: {
-    backgroundColor: DarkBlue,
     borderRadius: 12,
     padding: 20,
     marginHorizontal: 16,
@@ -353,7 +316,7 @@ const styles = StyleSheet.create({
   },
   bottomCardDescription: {
     fontSize: 15,
-    color: "#fff", // Light grey
+    color: "#fff",
     textAlign: "center",
     lineHeight: 25,
   },

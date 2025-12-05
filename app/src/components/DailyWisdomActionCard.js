@@ -1,26 +1,27 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { DarkBlue, LightBlue } from '../constants/Colors';
+import { useTheme } from '../context/ThemeContext';
 
 const DailyWisdomActionCard = ({ iconName, iconColor, iconBgColor, title, subtitle, onPress }) => {
+    const { colors } = useTheme();
+
     return (
-        <TouchableOpacity onPress={onPress} activeOpacity={1} style={styles.actionCard}>
+        <TouchableOpacity onPress={onPress} activeOpacity={1} style={[styles.actionCard, { backgroundColor: colors.card }]}>
             <View style={[styles.actionIconContainer, { backgroundColor: iconBgColor }]}>
                 <Ionicons name={iconName} size={24} color={iconColor} />
             </View>
-            <Text style={styles.actionTitle}>{title}</Text>
-            <Text style={styles.actionSubtitle}>{subtitle}</Text>
+            <Text style={[styles.actionTitle, { color: colors.foreground }]}>{title}</Text>
+            <Text style={[styles.actionSubtitle, { color: colors.mutedForeground }]}>{subtitle}</Text>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
     actionCard: {
-        backgroundColor: '#fff',
         borderRadius: 12,
         padding: 16,
-        marginHorizontal: 8, // Half of the main screen's margin to get 16px between cards
-        flex: 1, // Allows cards to share space horizontally
+        marginHorizontal: 8,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#000',
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 2,
-        minHeight: 120, // To ensure they have a consistent height
+        minHeight: 120,
     },
     actionIconContainer: {
         width: 48,
@@ -41,12 +42,10 @@ const styles = StyleSheet.create({
     actionTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: DarkBlue,
         marginBottom: 4,
     },
     actionSubtitle: {
         fontSize: 12,
-        color: LightBlue,
         textAlign: 'center',
     },
 });

@@ -12,71 +12,21 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  AppYellow,
-  DarkBlue,
-  GRADIENT_END,
-  GRADIENT_START,
-  LightBlue,
-} from "../constants/Colors";
+import { useTheme } from "../context/ThemeContext";
 import { useEkadashiList, useNextEkadashi } from "../hooks/useEkadashi";
 
-// --- Dimension Utilities ---
 const WINDOW_WIDTH = Dimensions.get("window").width;
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const relativeWidth = (percentage) => WINDOW_WIDTH * (percentage / 100);
 const relativeHeight = (percentage) => WINDOW_HEIGHT * (percentage / 100);
-// ----------------------------------------
-
-// --- Component for a single Month Card ---
-const MonthCard = ({ month, ekadashis, isUpcoming, onPress }) => {
-  const cardStyle = isUpcoming ? styles.monthCardUpcoming : styles.monthCard;
-  const textStyle = isUpcoming ? styles.monthTextUpcoming : styles.monthText;
-
-  return (
-    <TouchableOpacity style={cardStyle} onPress={onPress}>
-      <Text style={textStyle}>{month}</Text>
-      <View style={styles.ekadashiCountContainer}>
-        <Feather name="clock" size={relativeWidth(3.5)} color="#6c757d" />
-        <Text style={styles.ekadashiCountText}>{ekadashis} Ekadashis</Text>
-      </View>
-      {isUpcoming && (
-        <View style={styles.upcomingBadge}>
-          <Text style={styles.upcomingBadgeText}>Upcoming</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-};
-
-// --- Component for the Next Ekadashi Card ---
-const NextEkadashiCard = ({ title, date, details, navigation }) => (
-  <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails')}>
-    <LinearGradient
-      colors={[GRADIENT_START, GRADIENT_END]}
-      start={{ x: 0, y: 0 }} // Top-left
-      end={{ x: 1, y: 1 }} // Bottom-right
-      style={styles.nextEkadashiCard}
-    >
-      <View style={styles.moonPlaceholder}>
-        <Ionicons name="moon" size={relativeWidth(10)} color="#FFC107" />
-      </View>
-      <View style={styles.nextEkadashiTextContainer}>
-        <Text style={styles.nextEkadashiTitle}>{title}</Text>
-        <Text style={styles.nextEkadashiDate}>{date}</Text>
-        <Text style={styles.nextEkadashiDetails}>{details}</Text>
-      </View>
-    </LinearGradient>
-  </TouchableWithoutFeedback>
-);
 
 const EkadashiScreen = ({ navigation }) => {
+  const { colors, isDark } = useTheme();
   const currentYear = moment().year();
   const { ekadashiList, loading: listLoading, error: listError } = useEkadashiList(currentYear);
   const { nextEkadashi, loading: nextLoading } = useNextEkadashi();
 
   const handleMonthPress = (month, index) => {
-    // Create a moment object for the selected month in the current year
     const selectedMonth = moment().month(index).year(currentYear);
     navigation.navigate('CalendarMonth', {
       month: selectedMonth.format('YYYY-MM'),
@@ -84,7 +34,6 @@ const EkadashiScreen = ({ navigation }) => {
     });
   };
 
-  // Group ekadashis by month
   const getEkadashisByMonth = () => {
     if (!ekadashiList || ekadashiList.length === 0) return {};
 
@@ -122,18 +71,15 @@ const EkadashiScreen = ({ navigation }) => {
     });
   };
 
-  // Calculate totals
   const totalEkadashis = ekadashiList ? ekadashiList.length : 0;
   const today = moment();
-  // Exclude today's Ekadashi from remaining count
   const remainingEkadashis = ekadashiList
     ? ekadashiList.filter(e => {
       const date = moment(e.date || e.ekadashi_date);
-      return date.isAfter(today, 'day'); // Only count future Ekadashis, exclude today
+      return date.isAfter(today, 'day');
     }).length
     : 0;
 
-  // Format next ekadashi data
   const getNextEkadashiData = () => {
     if (!nextEkadashi) return null;
 
@@ -142,7 +88,6 @@ const EkadashiScreen = ({ navigation }) => {
     const day = date.format('D');
     const year = date.format('YYYY');
 
-    // Get Hindu month name if available, otherwise use English month
     const hinduMonth = nextEkadashi.month || month;
 
     return {
@@ -155,50 +100,91 @@ const EkadashiScreen = ({ navigation }) => {
   const monthData = getMonthData();
   const nextEkadashiData = getNextEkadashiData();
 
+  const MonthCard = ({ month, ekadashis, isUpcoming, onPress }) => {
+    const cardStyle = isUpcoming
+      ? [styles.monthCardUpcoming, { backgroundColor: colors.lightBlueBg, borderColor: isDark ? colors.border : '#B3CFFC' }]
+      : [styles.monthCard, { backgroundColor: colors.card, borderColor: colors.border }];
+    const textStyle = isUpcoming
+      ? [styles.monthTextUpcoming, { color: colors.foreground }]
+      : [styles.monthText, { color: colors.foreground }];
+
+    return (
+      <TouchableOpacity style={cardStyle} onPress={onPress}>
+        <Text style={textStyle}>{month}</Text>
+        <View style={styles.ekadashiCountContainer}>
+          <Feather name="clock" size={relativeWidth(3.5)} color={colors.mutedForeground} />
+          <Text style={[styles.ekadashiCountText, { color: colors.mutedForeground }]}>{ekadashis} Ekadashis</Text>
+        </View>
+        {isUpcoming && (
+          <View style={[styles.upcomingBadge, { backgroundColor: colors.card, borderColor: isDark ? colors.border : '#B3CFFC' }]}>
+            <Text style={[styles.upcomingBadgeText, { color: colors.foreground }]}>Upcoming</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
+  const NextEkadashiCard = ({ title, date, details }) => (
+    <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails')}>
+      <LinearGradient
+        colors={isDark ? [colors.card, colors.muted] : [colors.gradientStart, colors.gradientEnd]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.nextEkadashiCard, { borderColor: colors.border }]}
+      >
+        <View style={[styles.moonPlaceholder, { backgroundColor: colors.lightBlueBg }]}>
+          <Ionicons name="moon" size={relativeWidth(10)} color={colors.secondary} />
+        </View>
+        <View style={styles.nextEkadashiTextContainer}>
+          <Text style={[styles.nextEkadashiTitle, { color: colors.foreground }]}>{title}</Text>
+          <Text style={[styles.nextEkadashiDate, { color: colors.mutedForeground }]}>{date}</Text>
+          <Text style={[styles.nextEkadashiDetails, { color: colors.foreground }]}>{details}</Text>
+        </View>
+      </LinearGradient>
+    </TouchableWithoutFeedback>
+  );
+
   if (listLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={DarkBlue} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
       >
-        {/* --- Title Header --- */}
         <View style={styles.screenHeader}>
-          <Text style={styles.mainTitle}>Ekadashi Calendar {currentYear}</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.mainTitle, { color: colors.foreground }]}>Ekadashi Calendar {currentYear}</Text>
+          <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
             Complete spiritual calendar for the year
           </Text>
-          <View style={styles.subtitleUnderline} />
+          <View style={[styles.subtitleUnderline, { backgroundColor: colors.primary }]} />
         </View>
 
-        {/* --- Summary Cards --- */}
         <View style={styles.summaryContainer}>
-          <View style={styles.summaryCardTotal}>
-            <Text style={styles.summaryCount}>{totalEkadashis}</Text>
-            <Text style={styles.summaryLabel}>TOTAL EKADASHIS</Text>
+          <View style={[styles.summaryCardTotal, { backgroundColor: colors.lightBlueBg }]}>
+            <Text style={[styles.summaryCount, { color: colors.foreground }]}>{totalEkadashis}</Text>
+            <Text style={[styles.summaryLabel, { color: colors.foreground }]}>TOTAL EKADASHIS</Text>
           </View>
-          <View style={styles.summaryCardRemaining}>
+          <View style={[styles.summaryCardRemaining, { backgroundColor: isDark ? colors.muted : '#FFFBEA', borderColor: isDark ? colors.secondary : '#FEE085' }]}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Feather name="star" size={relativeWidth(5)} color={AppYellow} />
-              <Text style={styles.summaryCountRemaining}>{remainingEkadashis}</Text>
+              <Feather name="star" size={relativeWidth(5)} color={colors.secondary} />
+              <Text style={[styles.summaryCountRemaining, { color: colors.secondary }]}>{remainingEkadashis}</Text>
             </View>
-            <Text style={[styles.summaryLabel, { color: AppYellow }]}>
+            <Text style={[styles.summaryLabel, { color: colors.secondary }]}>
               REMAINING
             </Text>
           </View>
         </View>
 
-        {/* --- Browse by Month Section --- */}
-        <Text style={styles.sectionTitle}>Browse by Month</Text>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Browse by Month</Text>
 
         <View style={styles.monthGrid}>
           {monthData.map((item, index) => (
@@ -212,12 +198,10 @@ const EkadashiScreen = ({ navigation }) => {
           ))}
         </View>
 
-        {/* --- Next Ekadashi Section --- */}
         {nextEkadashiData && (
           <>
-            <Text style={styles.sectionTitle}>Next Ekadashi</Text>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Next Ekadashi</Text>
             <NextEkadashiCard
-              navigation={navigation}
               title={nextEkadashiData.title}
               date={nextEkadashiData.date}
               details={nextEkadashiData.details}
@@ -227,7 +211,7 @@ const EkadashiScreen = ({ navigation }) => {
 
         {listError && (
           <View style={{ padding: 20, alignItems: 'center' }}>
-            <Text style={{ color: '#dc3545', fontSize: 14 }}>{listError}</Text>
+            <Text style={{ color: colors.destructive, fontSize: 14 }}>{listError}</Text>
           </View>
         )}
       </ScrollView>
@@ -235,18 +219,14 @@ const EkadashiScreen = ({ navigation }) => {
   );
 };
 
-// --- Stylesheet ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
   },
   scrollViewContent: {
     paddingHorizontal: relativeWidth(4),
     paddingBottom: relativeHeight(5),
   },
-
-  // --- Header/Title Styles ---
   screenHeader: {
     alignItems: "center",
     paddingVertical: relativeHeight(3),
@@ -254,21 +234,16 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: relativeWidth(6),
     fontWeight: "700",
-    color: DarkBlue, // Dark blue text
   },
   subtitle: {
     fontSize: relativeWidth(3.5),
-    color: LightBlue,
     marginTop: relativeHeight(0.5),
   },
   subtitleUnderline: {
     width: relativeWidth(15),
     height: relativeHeight(0.3),
-    backgroundColor: "#2C3E50",
     marginTop: relativeHeight(1),
   },
-
-  // --- Summary Cards ---
   summaryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -276,7 +251,6 @@ const styles = StyleSheet.create({
   },
   summaryCardTotal: {
     width: "48%",
-    backgroundColor: "#E9ECF0", // Light gray/blue
     borderRadius: relativeWidth(3),
     padding: relativeWidth(4),
     alignItems: "center",
@@ -284,37 +258,29 @@ const styles = StyleSheet.create({
   },
   summaryCardRemaining: {
     width: "48%",
-    backgroundColor: "#FFFBEA", // Light yellow
     borderRadius: relativeWidth(3),
     padding: relativeWidth(4),
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#FEE085",
   },
   summaryCount: {
     fontSize: relativeWidth(8),
     fontWeight: "700",
-    color: DarkBlue,
   },
   summaryCountRemaining: {
     fontSize: relativeWidth(5),
     fontWeight: "700",
-    color: AppYellow,
     marginTop: relativeHeight(0.5),
   },
   summaryLabel: {
     fontSize: relativeWidth(3),
     fontWeight: "500",
-    color: DarkBlue,
     marginTop: relativeHeight(0.5),
   },
-
-  // --- Browse by Month Grid ---
   sectionTitle: {
     fontSize: relativeWidth(5),
     fontWeight: "600",
-    color: "#212529",
     marginBottom: relativeHeight(1.5),
   },
   monthGrid: {
@@ -324,33 +290,27 @@ const styles = StyleSheet.create({
     marginBottom: relativeHeight(3),
   },
   monthCard: {
-    width: "48%", // Allows two columns with a small gap
-    backgroundColor: "#fff",
+    width: "48%",
     borderRadius: relativeWidth(2),
     padding: relativeWidth(3),
     marginBottom: relativeHeight(1.5),
     borderWidth: 1,
-    borderColor: "#eee",
   },
   monthCardUpcoming: {
     width: "48%",
-    backgroundColor: "#E6F0FF", // Light blue for upcoming
     borderRadius: relativeWidth(2),
     padding: relativeWidth(3),
     marginBottom: relativeHeight(1.5),
     borderWidth: 1,
-    borderColor: "#B3CFFC",
     position: "relative",
   },
   monthText: {
     fontSize: relativeWidth(4.2),
     fontWeight: "600",
-    color: "#212529",
   },
   monthTextUpcoming: {
     fontSize: relativeWidth(4.2),
     fontWeight: "600",
-    color: "#2C3E50",
   },
   ekadashiCountContainer: {
     flexDirection: "row",
@@ -359,40 +319,31 @@ const styles = StyleSheet.create({
   },
   ekadashiCountText: {
     fontSize: relativeWidth(3.5),
-    color: "#6c757d",
     marginLeft: relativeWidth(1.5),
   },
   upcomingBadge: {
     position: "absolute",
     top: relativeWidth(3),
     right: relativeWidth(3),
-    backgroundColor: "#fff",
     borderRadius: relativeWidth(1),
     paddingHorizontal: relativeWidth(2),
     paddingVertical: relativeHeight(0.3),
     borderWidth: 1,
-    borderColor: "#B3CFFC",
   },
   upcomingBadgeText: {
     fontSize: relativeWidth(2.8),
     fontWeight: "600",
-    color: "#2C3E50",
   },
-
-  // --- Next Ekadashi Card ---
   nextEkadashiCard: {
     flexDirection: "row",
-    backgroundColor: "#fff",
     borderRadius: relativeWidth(3),
     padding: relativeWidth(4),
     borderWidth: 1,
-    borderColor: "#eee",
   },
   moonPlaceholder: {
     width: relativeWidth(15),
     height: relativeWidth(15),
     borderRadius: relativeWidth(7.5),
-    backgroundColor: "#E9ECF0",
     justifyContent: "center",
     alignItems: "center",
     marginRight: relativeWidth(4),
@@ -404,16 +355,13 @@ const styles = StyleSheet.create({
   nextEkadashiTitle: {
     fontSize: relativeWidth(4.5),
     fontWeight: "600",
-    color: DarkBlue,
   },
   nextEkadashiDate: {
     fontSize: relativeWidth(3.5),
-    color: LightBlue,
     marginVertical: relativeHeight(0.3),
   },
   nextEkadashiDetails: {
     fontSize: relativeWidth(3.5),
-    color: "black",
   },
 });
 

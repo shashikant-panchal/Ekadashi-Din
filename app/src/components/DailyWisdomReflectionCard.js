@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { DarkBlue } from "../constants/Colors";
 import { dh, dw } from "../constants/Dimensions";
+import { useTheme } from "../context/ThemeContext";
 
 const DailyWisdomReflectionCard = ({
   reflectionText,
   timeOfDay = "evening",
 }) => {
+  const { colors, isDark } = useTheme();
   const isMorning = timeOfDay === "morning";
   const title = isMorning ? "Morning Inspiration" : "Evening Reflection";
   const iconName = isMorning ? "sunny-outline" : "moon-outline";
@@ -15,13 +16,13 @@ const DailyWisdomReflectionCard = ({
     : "Evening is the perfect time to reflect on Krishna presence in every moment";
 
   return (
-    <View style={styles.reflectionCard}>
-      <View style={styles.reflectionIconContainer}>
-        <Ionicons name={iconName} size={24} color={DarkBlue} />
+    <View style={[styles.reflectionCard, { backgroundColor: colors.card }]}>
+      <View style={[styles.reflectionIconContainer, { backgroundColor: colors.lightBlueBg }]}>
+        <Ionicons name={iconName} size={24} color={colors.primary} />
       </View>
       <View style={styles.reflectionContent}>
-        <Text style={styles.reflectionTitle}>{title}</Text>
-        <Text style={styles.reflectionDescription}>
+        <Text style={[styles.reflectionTitle, { color: colors.foreground }]}>{title}</Text>
+        <Text style={[styles.reflectionDescription, { color: colors.foreground }]}>
           {reflectionText || defaultText}
         </Text>
       </View>
@@ -31,7 +32,6 @@ const DailyWisdomReflectionCard = ({
 
 const styles = StyleSheet.create({
   reflectionCard: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     height: dh / 20,
     alignSelf: "flex-start",
     borderRadius: 10,
-    backgroundColor: "#f0f0f0",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
@@ -61,12 +60,10 @@ const styles = StyleSheet.create({
   reflectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: DarkBlue,
     marginBottom: 4,
   },
   reflectionDescription: {
     fontSize: 14,
-    color: DarkBlue,
     lineHeight: 20,
   },
 });
