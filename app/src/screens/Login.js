@@ -6,7 +6,6 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View
@@ -14,6 +13,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
+import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
 import { clearError, resetRegistrationSuccess, signIn, signInWithGoogle, signUp } from "../redux/userSlice";
 
@@ -84,12 +84,12 @@ export default function Login() {
 
   const renderSignIn = () => (
     <>
-      <Text style={styles.formTitle}>Welcome Back</Text>
-      <Text style={styles.formSubtitle}>
+      <ThemedText type="subtitle" style={styles.formTitle}>Welcome Back</ThemedText>
+      <ThemedText style={styles.formSubtitle}>
         Sign in to continue your spiritual journey
-      </Text>
+      </ThemedText>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Email</Text>
+        <ThemedText type="defaultSemiBold" style={styles.inputLabel}>Email</ThemedText>
         <View style={styles.inputWrapper}>
           <Feather name="mail" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
@@ -103,7 +103,7 @@ export default function Login() {
         </View>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Password</Text>
+        <ThemedText type="defaultSemiBold" style={styles.inputLabel}>Password</ThemedText>
         <View style={styles.inputWrapper}>
           <Feather name="lock" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
@@ -129,10 +129,10 @@ export default function Login() {
         <View style={styles.checkboxContainer}>
           <TouchableOpacity style={[styles.checkbox, { borderColor: colors.border }]}>
           </TouchableOpacity>
-          <Text style={styles.checkboxLabel}>Remember me</Text>
+          <ThemedText type="small" style={styles.checkboxLabel}>Remember me</ThemedText>
         </View>
         <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
+          <ThemedText type="small" style={styles.forgotPassword}>Forgot password?</ThemedText>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
@@ -140,7 +140,7 @@ export default function Login() {
           <ActivityIndicator color="#fff" />
         ) : (
           <>
-            <Text style={styles.signInButtonText}>Sign In</Text>
+            <ThemedText type="defaultSemiBold" style={styles.signInButtonText}>Sign In</ThemedText>
             <Feather
               name="arrow-right"
               size={20}
@@ -152,7 +152,7 @@ export default function Login() {
       </TouchableOpacity>
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />
-        <Text style={styles.orText}>OR CONTINUE WITH</Text>
+        <ThemedText type="caption" style={styles.orText}>OR CONTINUE WITH</ThemedText>
         <View style={styles.dividerLine} />
       </View>
       <TouchableOpacity onPress={handleGoogleSignIn} style={styles.googleButton}>
@@ -162,25 +162,25 @@ export default function Login() {
           }}
           style={styles.googleIcon}
         />
-        <Text style={styles.googleButtonText}>Continue with Google</Text>
+        <ThemedText type="defaultSemiBold" style={styles.googleButtonText}>Continue with Google</ThemedText>
       </TouchableOpacity>
       <TouchableOpacity>
-        <Text style={styles.privacyText}>
+        <ThemedText type="caption" style={styles.privacyText}>
           By continuing, you agree to our{" "}
-          <Text style={styles.privacyLink}>Privacy Policy</Text>
-        </Text>
+          <ThemedText type="caption" style={styles.privacyLink}>Privacy Policy</ThemedText>
+        </ThemedText>
       </TouchableOpacity>
     </>
   );
 
   const renderSignUp = () => (
     <>
-      <Text style={styles.formTitle}>Create Account</Text>
-      <Text style={styles.formSubtitle}>
+      <ThemedText type="subtitle" style={styles.formTitle}>Create Account</ThemedText>
+      <ThemedText style={styles.formSubtitle}>
         Start your spiritual journey with us
-      </Text>
+      </ThemedText>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Display Name</Text>
+        <ThemedText type="defaultSemiBold" style={styles.inputLabel}>Display Name</ThemedText>
         <View style={styles.inputWrapper}>
           <TextInput
             style={styles.textInput}
@@ -192,7 +192,7 @@ export default function Login() {
         </View>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Email</Text>
+        <ThemedText type="defaultSemiBold" style={styles.inputLabel}>Email</ThemedText>
         <View style={styles.inputWrapper}>
           <Feather name="mail" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
@@ -206,7 +206,7 @@ export default function Login() {
         </View>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Password</Text>
+        <ThemedText type="defaultSemiBold" style={styles.inputLabel}>Password</ThemedText>
         <View style={styles.inputWrapper}>
           <Feather name="lock" size={18} color={colors.mutedForeground} style={styles.icon} />
           <TextInput
@@ -239,13 +239,13 @@ export default function Login() {
               color="#fff"
               style={{ marginRight: 10 }}
             />
-            <Text style={styles.signInButtonText}>Create Account</Text>
+            <ThemedText type="defaultSemiBold" style={styles.signInButtonText}>Create Account</ThemedText>
           </>
         )}
       </TouchableOpacity>
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />
-        <Text style={styles.orText}>OR CONTINUE WITH</Text>
+        <ThemedText type="caption" style={styles.orText}>OR CONTINUE WITH</ThemedText>
         <View style={styles.dividerLine} />
       </View>
       <TouchableOpacity onPress={handleGoogleSignIn} style={styles.googleButton}>
@@ -255,13 +255,13 @@ export default function Login() {
           }}
           style={styles.googleIcon}
         />
-        <Text style={styles.googleButtonText}>Continue with Google</Text>
+        <ThemedText type="defaultSemiBold" style={styles.googleButtonText}>Continue with Google</ThemedText>
       </TouchableOpacity>
       <TouchableOpacity>
-        <Text style={styles.privacyText}>
+        <ThemedText type="caption" style={styles.privacyText}>
           By continuing, you agree to our{" "}
-          <Text style={styles.privacyLink}>Privacy Policy</Text>
-        </Text>
+          <ThemedText type="caption" style={styles.privacyLink}>Privacy Policy</ThemedText>
+        </ThemedText>
       </TouchableOpacity>
     </>
   );
@@ -277,17 +277,17 @@ export default function Login() {
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.title}>Ekadashi Din</Text>
-          <Text style={styles.subtitle}>
+          <ThemedText type="title" style={styles.title}>Ekadashi Din</ThemedText>
+          <ThemedText style={styles.subtitle}>
             Your spiritual companion for Ekadashi observance and daily practice.
-          </Text>
+          </ThemedText>
           <View style={styles.card}>
             <View style={styles.tabContainer}>
               <TouchableOpacity
                 onPress={() => setActiveTab("signIn")}
                 style={[styles.tab, activeTab === "signIn" && styles.activeTab]}
               >
-                <Text
+                <ThemedText
                   style={
                     activeTab === "signIn"
                       ? styles.activeTabText
@@ -295,13 +295,13 @@ export default function Login() {
                   }
                 >
                   Sign In
-                </Text>
+                </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setActiveTab("signUp")}
                 style={[styles.tab, activeTab === "signUp" && styles.activeTab]}
               >
-                <Text
+                <ThemedText
                   style={
                     activeTab === "signUp"
                       ? styles.activeTabText
@@ -309,7 +309,7 @@ export default function Login() {
                   }
                 >
                   Sign Up
-                </Text>
+                </ThemedText>
               </TouchableOpacity>
             </View>
             {activeTab === "signIn" ? renderSignIn() : renderSignUp()}

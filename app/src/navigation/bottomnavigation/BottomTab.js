@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
+import { ThemedText } from "../../components/ThemedText";
 import { useTheme } from "../../context/ThemeContext";
 import SettingsScreen from "../../screens/SettingsScreen";
 import CalendarStack from "../stacknavigation/CalendarStack";
@@ -72,9 +73,9 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           const TabContent = () => (
             <>
               <Feather name={iconName} size={24} color={iconColor} />
-              <Text style={[styles.tabLabel, { color: textColor }]}>
+              <ThemedText style={[styles.tabLabel, { color: textColor }]}>
                 {String(label)}
-              </Text>
+              </ThemedText>
             </>
           );
 

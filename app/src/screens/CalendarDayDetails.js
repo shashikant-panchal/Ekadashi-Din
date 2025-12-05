@@ -1,9 +1,10 @@
 import { Feather } from '@expo/vector-icons';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { Dimensions, Modal, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Modal, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { ThemedText } from '../components/ThemedText';
 import { useTheme } from '../context/ThemeContext';
 import { getAllBhajans } from '../data/bhajansData';
 import { useEkadashiList } from '../hooks/useEkadashi';
@@ -20,7 +21,7 @@ const DetailCard = ({ iconName, title, children, colors }) => (
     <View style={[styles.cardContainer, { backgroundColor: colors.card }]}>
         <View style={styles.cardHeader}>
             <AppIcon name={iconName} style={styles.cardIcon} color={colors.primary} />
-            <Text style={[styles.cardTitle, { color: colors.foreground }]}>{title}</Text>
+            <ThemedText type="heading" style={[styles.cardTitle, { color: colors.foreground }]}>{title}</ThemedText>
         </View>
         <View style={styles.cardContent}>{children}</View>
     </View>
@@ -29,11 +30,11 @@ const DetailCard = ({ iconName, title, children, colors }) => (
 // --- Section 1: Story & Significance ---
 const StorySection = ({ onReadStory, ekadashi, colors }) => (
     <DetailCard iconName="book-open" title="Story & Significance" colors={colors}>
-        <Text style={[styles.bodyText, { color: colors.mutedForeground }]}>
+        <ThemedText style={[styles.bodyText, { color: colors.mutedForeground }]}>
             {ekadashi?.significance || ekadashi?.vrataKatha || "Observing Ekadashi with devotion helps overcome life's obstacles and brings inner peace. This sacred day is particularly beneficial for those seeking spiritual growth and material prosperity."}
-        </Text>
+        </ThemedText>
         <TouchableOpacity style={[styles.readButton, { borderColor: colors.primary }]} onPress={onReadStory}>
-            <Text style={[styles.readButtonText, { color: colors.primary }]}>Read Full Story</Text>
+            <ThemedText type="defaultSemiBold" style={[styles.readButtonText, { color: colors.primary }]}>Read Full Story</ThemedText>
         </TouchableOpacity>
     </DetailCard>
 );
@@ -54,9 +55,9 @@ const VrataRulesSection = ({ ekadashi, colors }) => {
             {rules.map((rule, index) => (
                 <View key={index} style={styles.ruleItem}>
                     <View style={[styles.ruleNumberCircle, { borderColor: colors.grey, backgroundColor: colors.card }]}>
-                        <Text style={[styles.ruleNumberText, { color: colors.foreground }]}>{index + 1}</Text>
+                        <ThemedText type="small" style={[styles.ruleNumberText, { color: colors.foreground }]}>{index + 1}</ThemedText>
                     </View>
-                    <Text style={[styles.ruleText, { color: colors.mutedForeground }]}>{rule}</Text>
+                    <ThemedText style={[styles.ruleText, { color: colors.mutedForeground }]}>{rule}</ThemedText>
                 </View>
             ))}
         </DetailCard>
@@ -72,12 +73,12 @@ const TimingsSection = ({ panchangData, colors }) => {
         <DetailCard iconName="clock" title="Important Timings" colors={colors}>
             <View style={styles.timingRow}>
                 <View style={styles.timingItem}>
-                    <Text style={[styles.timingLabel, { color: colors.foreground }]}>Fasting Begins</Text>
-                    <Text style={[styles.timingValue, { color: colors.primary }]}>{sunrise}</Text>
+                    <ThemedText type="defaultSemiBold" style={[styles.timingLabel, { color: colors.foreground }]}>Fasting Begins</ThemedText>
+                    <ThemedText style={[styles.timingValue, { color: colors.primary }]}>{sunrise}</ThemedText>
                 </View>
                 <View style={styles.timingItem}>
-                    <Text style={[styles.timingLabel, { color: colors.foreground }]}>Parana Window</Text>
-                    <Text style={[styles.timingValue, { color: colors.primary }]}>{sunrise} - {sunset}</Text>
+                    <ThemedText type="defaultSemiBold" style={[styles.timingLabel, { color: colors.foreground }]}>Parana Window</ThemedText>
+                    <ThemedText style={[styles.timingValue, { color: colors.primary }]}>{sunrise} - {sunset}</ThemedText>
                 </View>
             </View>
         </DetailCard>
@@ -98,9 +99,9 @@ const BhajansSection = ({ onBhajanPress, bhajans, colors }) => {
                 >
                     <AppIcon name="music" style={styles.bhajanIcon} color={colors.primary} size={18} />
                     <View style={styles.bhajanTextContainer}>
-                        <Text style={[styles.bhajanText, { color: colors.foreground }]}>{bhajan.name}</Text>
+                        <ThemedText type="defaultSemiBold" style={[styles.bhajanText, { color: colors.foreground }]}>{bhajan.name}</ThemedText>
                         {bhajan.artist && (
-                            <Text style={[styles.bhajanArtist, { color: colors.mutedForeground }]}>{bhajan.artist}</Text>
+                            <ThemedText type="caption" style={[styles.bhajanArtist, { color: colors.mutedForeground }]}>{bhajan.artist}</ThemedText>
                         )}
                     </View>
                 </TouchableOpacity>
@@ -121,8 +122,8 @@ const RecipesSection = ({ colors }) => {
         <DetailCard iconName="feather" title="Sattvic Recipes" colors={colors}>
             {recipes.map((recipe, index) => (
                 <TouchableOpacity key={index} style={[styles.recipeItem, { borderColor: colors.border, backgroundColor: colors.muted }]}>
-                    <Text style={[styles.recipeName, { color: colors.foreground }]}>{recipe.name}</Text>
-                    <Text style={[styles.recipeDesc, { color: colors.mutedForeground }]}>{recipe.desc}</Text>
+                    <ThemedText type="defaultSemiBold" style={[styles.recipeName, { color: colors.foreground }]}>{recipe.name}</ThemedText>
+                    <ThemedText type="small" style={[styles.recipeDesc, { color: colors.mutedForeground }]}>{recipe.desc}</ThemedText>
                 </TouchableOpacity>
             ))}
         </DetailCard>
@@ -146,20 +147,20 @@ const StoryModal = ({ isVisible, onClose, ekadashi, colors }) => {
                 <View style={[styles.storyModalContainer, { backgroundColor: colors.card }]}>
                     <View style={[styles.modalHeader, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
                         <AppIcon name="book-open" size={20} color={colors.primary} />
-                        <Text style={[styles.modalTitle, { color: colors.foreground }]}>{ekadashiName} - Complete Story</Text>
+                        <ThemedText type="subtitle" style={[styles.modalTitle, { color: colors.foreground }]}>{ekadashiName} - Complete Story</ThemedText>
                         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                             <AppIcon name="x" size={24} color={colors.grey} />
                         </TouchableOpacity>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.storyModalContent}>
-                        <Text style={[styles.modalContentHeading, { color: colors.foreground }]}>The Sacred Legend</Text>
-                        <Text style={[styles.modalContentText, { color: colors.mutedForeground }]}>
+                        <ThemedText type="subtitle" style={[styles.modalContentHeading, { color: colors.foreground }]}>The Sacred Legend</ThemedText>
+                        <ThemedText style={[styles.modalContentText, { color: colors.mutedForeground }]}>
                             {vrataKatha}
-                        </Text>
-                        <Text style={[styles.modalContentHeading, { color: colors.foreground }]}>Spiritual Significance</Text>
-                        <Text style={[styles.modalContentText, { color: colors.mutedForeground }]}>
+                        </ThemedText>
+                        <ThemedText type="subtitle" style={[styles.modalContentHeading, { color: colors.foreground }]}>Spiritual Significance</ThemedText>
+                        <ThemedText style={[styles.modalContentText, { color: colors.mutedForeground }]}>
                             {significance}
-                        </Text>
+                        </ThemedText>
                     </ScrollView>
                 </View>
             </SafeAreaView>
@@ -195,9 +196,9 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange, color
 
                     <View style={[styles.modalHeader, { borderBottomColor: colors.border, backgroundColor: colors.card }]}>
                         <AppIcon name="music" size={24} color={colors.primary} style={{ marginRight: 8 }} />
-                        <Text style={[styles.modalTitle, { flex: 1, color: colors.foreground }]} numberOfLines={1}>
+                        <ThemedText type="subtitle" style={[styles.modalTitle, { flex: 1, color: colors.foreground }]} numberOfLines={1}>
                             {currentBhajan?.name || 'Bhajan'}
-                        </Text>
+                        </ThemedText>
                         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                             <AppIcon name="x" size={24} color={colors.grey} />
                         </TouchableOpacity>
@@ -214,14 +215,14 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange, color
                             />
                         ) : (
                             <View style={[styles.errorContainer, { backgroundColor: colors.muted }]}>
-                                <Text style={[styles.errorText, { color: colors.grey }]}>Audio not available</Text>
+                                <ThemedText style={[styles.errorText, { color: colors.grey }]}>Audio not available</ThemedText>
                             </View>
                         )}
                     </View>
 
-                    <Text style={[styles.devotionalText, { color: colors.mutedForeground }]}>
+                    <ThemedText style={[styles.devotionalText, { color: colors.mutedForeground }]}>
                         Playing devotional music for your spiritual journey
-                    </Text>
+                    </ThemedText>
 
                     <View style={styles.bhajanListFooter}>
                         {allBhajans.map((bhajan) => (
@@ -234,7 +235,8 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange, color
                                 ]}
                                 onPress={() => handleBhajanSelect(bhajan)}
                             >
-                                <Text
+                                <ThemedText
+                                    type="small"
                                     style={[
                                         styles.footerBhajanText,
                                         { color: colors.foreground },
@@ -243,7 +245,7 @@ const BhajanModal = ({ isVisible, onClose, selectedBhajan, onBhajanChange, color
                                     numberOfLines={1}
                                 >
                                     {bhajan.name}
-                                </Text>
+                                </ThemedText>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -320,8 +322,8 @@ const CalendarDayDetails = ({ navigation, route }) => {
                 <AppIcon name="arrow-left" size={24} color={colors.foreground} />
             </TouchableOpacity>
             <View>
-                <Text style={[styles.mainTitle, { color: colors.foreground }]}>{ekadashiName}</Text>
-                <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{formattedDate}</Text>
+                <ThemedText type="subtitle" style={[styles.mainTitle, { color: colors.foreground }]}>{ekadashiName}</ThemedText>
+                <ThemedText type="small" style={[styles.subtitle, { color: colors.mutedForeground }]}>{formattedDate}</ThemedText>
             </View>
         </View>
     );
@@ -379,7 +381,6 @@ const styles = StyleSheet.create({
     },
     mainTitle: {
         fontSize: 18,
-        fontWeight: '600',
     },
     subtitle: {
         fontSize: 14,
@@ -404,7 +405,6 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 20,
-        fontWeight: '700',
     },
     cardContent: {
         paddingTop: 5,
@@ -422,7 +422,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     readButtonText: {
-        fontWeight: '600',
         fontSize: 14,
     },
     ruleItem: {
@@ -442,7 +441,6 @@ const styles = StyleSheet.create({
     },
     ruleNumberText: {
         fontSize: 12,
-        fontWeight: '700',
     },
     ruleText: {
         flex: 1,
@@ -458,7 +456,6 @@ const styles = StyleSheet.create({
     },
     timingLabel: {
         fontSize: 15,
-        fontWeight: '500',
         marginBottom: 4,
     },
     timingValue: {
@@ -481,7 +478,6 @@ const styles = StyleSheet.create({
     },
     bhajanText: {
         fontSize: 15,
-        fontWeight: '500',
     },
     bhajanArtist: {
         fontSize: 12,
@@ -496,7 +492,6 @@ const styles = StyleSheet.create({
     },
     recipeName: {
         fontSize: 16,
-        fontWeight: '600',
     },
     recipeDesc: {
         fontSize: 13,
@@ -524,7 +519,6 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: 16,
-        fontWeight: '600',
         marginLeft: 8,
         flex: 1,
     },
@@ -533,7 +527,6 @@ const styles = StyleSheet.create({
     },
     modalContentHeading: {
         fontSize: 18,
-        fontWeight: '700',
         marginBottom: 10,
         marginTop: 15,
     },
@@ -595,7 +588,6 @@ const styles = StyleSheet.create({
     },
     activeFooterBhajanButton: {},
     footerBhajanText: {
-        fontWeight: '500',
         fontSize: 14,
     },
     activeFooterBhajanText: {

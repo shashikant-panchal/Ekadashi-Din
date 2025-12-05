@@ -1,9 +1,10 @@
 import { FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import moment from 'moment'
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { dh, dw } from '../constants/Dimensions'
 import { useTheme } from '../context/ThemeContext'
 import { usePanchang } from '../hooks/usePanchang'
+import { ThemedText } from './ThemedText'
 
 const PanchangCard = () => {
     const { colors, isDark } = useTheme();
@@ -17,7 +18,7 @@ const PanchangCard = () => {
         <View style={styles.header}>
             <View style={styles.headerLeft}>
                 <Ionicons name="moon-outline" size={dw * 0.05} color={colors.foreground} />
-                <Text style={[styles.headerTitle, { color: colors.foreground }]}>Today's Panchang</Text>
+                <ThemedText type="defaultSemiBold" style={[styles.headerTitle, { color: colors.foreground }]}>Today's Panchang</ThemedText>
             </View>
             <TouchableOpacity onPress={handleRefresh}>
                 <Ionicons name="refresh-outline" size={dw * 0.05} color={colors.foreground} />
@@ -108,7 +109,7 @@ const PanchangCard = () => {
             <View style={[styles.card, { backgroundColor: colors.card }]}>
                 {renderHeader()}
                 <View style={{ padding: 20, alignItems: 'center' }}>
-                    <Text style={{ color: colors.destructive, fontSize: 14 }}>{error || "Failed to load Panchang data"}</Text>
+                    <ThemedText style={{ color: colors.destructive, fontSize: 14 }}>{error || "Failed to load Panchang data"}</ThemedText>
                 </View>
             </View>
         );
@@ -116,8 +117,8 @@ const PanchangCard = () => {
 
     const renderInfoCard = (label, value, bgColor, align = 'flex-start') => (
         <View style={[styles.smallCard, { backgroundColor: isDark ? colors.muted : bgColor, alignItems: align }]}>
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>{label}</Text>
-            <Text style={[styles.value, { color: colors.foreground }]}>{value}</Text>
+            <ThemedText type="defaultSemiBold" style={[styles.label, { color: colors.mutedForeground }]}>{label}</ThemedText>
+            <ThemedText type="defaultSemiBold" style={[styles.value, { color: colors.foreground }]}>{value}</ThemedText>
         </View>
     )
 
@@ -129,16 +130,16 @@ const PanchangCard = () => {
                 {iconType === 'ion' && <Ionicons name={icon} size={dw * 0.05} color={isDark ? colors.primary : iconColor} />}
             </View>
             <View style={styles.iconTextContainer}>
-                <Text style={[styles.subLabel, { color: colors.mutedForeground }]}>{label}</Text>
-                <Text style={[styles.value, { color: colors.foreground }]}>{value}</Text>
+                <ThemedText style={[styles.subLabel, { color: colors.mutedForeground }]}>{label}</ThemedText>
+                <ThemedText type="defaultSemiBold" style={[styles.value, { color: colors.foreground }]}>{value}</ThemedText>
             </View>
         </View>
     )
 
     const renderBottomCard = (label, value, bgColor) => (
         <View style={[styles.bottomCard, { backgroundColor: isDark ? colors.muted : bgColor }]}>
-            <Text style={[styles.subLabel, { color: colors.mutedForeground }]}>{label}</Text>
-            <Text style={[styles.value, { color: colors.foreground }]} numberOfLines={2}>{value}</Text>
+            <ThemedText style={[styles.subLabel, { color: colors.mutedForeground }]}>{label}</ThemedText>
+            <ThemedText type="defaultSemiBold" style={[styles.value, { color: colors.foreground }]} numberOfLines={2}>{value}</ThemedText>
         </View>
     )
 
@@ -161,8 +162,8 @@ const PanchangCard = () => {
                     <Ionicons name="moon" size={dw * 0.05} color={colors.primary} />
                 </View>
                 <View style={styles.iconTextContainer}>
-                    <Text style={[styles.subLabel, { color: colors.mutedForeground }]}>Moonrise</Text>
-                    <Text style={[styles.value, { color: colors.foreground }]}>{getMoonrise()}</Text>
+                    <ThemedText style={[styles.subLabel, { color: colors.mutedForeground }]}>Moonrise</ThemedText>
+                    <ThemedText type="defaultSemiBold" style={[styles.value, { color: colors.foreground }]}>{getMoonrise()}</ThemedText>
                 </View>
             </View>
 

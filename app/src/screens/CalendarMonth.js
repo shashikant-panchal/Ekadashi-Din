@@ -1,8 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedText } from '../components/ThemedText';
 import { useTheme } from '../context/ThemeContext';
 import { useEkadashiList } from '../hooks/useEkadashi';
 
@@ -34,11 +35,11 @@ const CalendarMonth = ({ navigation, route }) => {
     const Header = () => (
         <View style={[styles.headerContainer, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Text style={[styles.backButtonText, { color: colors.primary }]}>{BackIcon} Back</Text>
+                <ThemedText type="link" style={[styles.backButtonText, { color: colors.primary }]}>{BackIcon} Back</ThemedText>
             </TouchableOpacity>
             <View style={styles.titleContainer}>
-                <Text style={[styles.title, { color: colors.foreground }]}>{monthName}</Text>
-                <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Ekadashi days this month</Text>
+                <ThemedText type="heading" style={[styles.title, { color: colors.foreground }]}>{monthName}</ThemedText>
+                <ThemedText style={[styles.subtitle, { color: colors.mutedForeground }]}>Ekadashi days this month</ThemedText>
             </View>
         </View>
     );
@@ -50,7 +51,7 @@ const CalendarMonth = ({ navigation, route }) => {
             : { backgroundColor: isDark ? colors.muted : '#fef3c7', borderColor: isDark ? colors.border : '#fcd34d' };
         return (
             <View style={[styles.pill, pillStyle]}>
-                <Text style={[styles.pillText, { color: colors.foreground }]}>{paksha}</Text>
+                <ThemedText type="small" style={[styles.pillText, { color: colors.foreground }]}>{paksha}</ThemedText>
             </View>
         );
     };
@@ -73,20 +74,20 @@ const CalendarMonth = ({ navigation, route }) => {
                     <View style={[styles.card, styles.pastCard, { backgroundColor: colors.muted, borderColor: colors.border }]}>
                         <View style={styles.cardContent}>
                             <View style={[styles.moonIconWrapper, { backgroundColor: colors.border }]}>
-                                <Text style={styles.moonIcon}>{MoonIcon}</Text>
+                                <ThemedText style={styles.moonIcon}>{MoonIcon}</ThemedText>
                             </View>
                             <View style={styles.textContainer}>
-                                <Text style={[styles.cardTitle, { color: colors.mutedForeground }]}>{item.name || item.ekadashi_name || item.title}</Text>
+                                <ThemedText type="subtitle" style={[styles.cardTitle, { color: colors.mutedForeground }]}>{item.name || item.ekadashi_name || item.title}</ThemedText>
                                 <View style={styles.dateRow}>
-                                    <Text style={[styles.dateText, { color: colors.mutedForeground }]}>
-                                        <Text style={styles.icon}>{CalendarIcon}</Text> {formattedDate}
-                                    </Text>
+                                    <ThemedText type="small" style={[styles.dateText, { color: colors.mutedForeground }]}>
+                                        <ThemedText style={styles.icon}>{CalendarIcon}</ThemedText> {formattedDate}
+                                    </ThemedText>
                                     {pakshaDisplay && <PakshaPill paksha={pakshaDisplay} />}
                                 </View>
-                                <Text style={[styles.description, { color: colors.mutedForeground }]}>{item.significance || item.description || ''}</Text>
+                                <ThemedText style={[styles.description, { color: colors.mutedForeground }]}>{item.significance || item.description || ''}</ThemedText>
                             </View>
                             <View style={styles.arrowContainer}>
-                                <Text style={[styles.arrowIcon, { color: colors.mutedForeground }]}>{ForwardIcon}</Text>
+                                <ThemedText style={[styles.arrowIcon, { color: colors.mutedForeground }]}>{ForwardIcon}</ThemedText>
                             </View>
                         </View>
                     </View>
@@ -99,20 +100,20 @@ const CalendarMonth = ({ navigation, route }) => {
                     >
                         <View style={styles.cardContent}>
                             <View style={[styles.moonIconWrapper, { backgroundColor: colors.lightBlueBg }]}>
-                                <Text style={styles.moonIcon}>{MoonIcon}</Text>
+                                <ThemedText style={styles.moonIcon}>{MoonIcon}</ThemedText>
                             </View>
                             <View style={styles.textContainer}>
-                                <Text style={[styles.cardTitle, { color: colors.foreground }]}>{item.name || item.ekadashi_name || item.title}</Text>
+                                <ThemedText type="subtitle" style={[styles.cardTitle, { color: colors.foreground }]}>{item.name || item.ekadashi_name || item.title}</ThemedText>
                                 <View style={styles.dateRow}>
-                                    <Text style={[styles.dateText, { color: colors.mutedForeground }]}>
-                                        <Text style={styles.icon}>{CalendarIcon}</Text> {formattedDate}
-                                    </Text>
+                                    <ThemedText type="small" style={[styles.dateText, { color: colors.mutedForeground }]}>
+                                        <ThemedText style={styles.icon}>{CalendarIcon}</ThemedText> {formattedDate}
+                                    </ThemedText>
                                     {pakshaDisplay && <PakshaPill paksha={pakshaDisplay} />}
                                 </View>
-                                <Text style={[styles.description, { color: colors.mutedForeground }]}>{item.significance || item.description || ''}</Text>
+                                <ThemedText style={[styles.description, { color: colors.mutedForeground }]}>{item.significance || item.description || ''}</ThemedText>
                             </View>
                             <View style={styles.arrowContainer}>
-                                <Text style={[styles.arrowIcon, { color: colors.mutedForeground }]}>{ForwardIcon}</Text>
+                                <ThemedText style={[styles.arrowIcon, { color: colors.mutedForeground }]}>{ForwardIcon}</ThemedText>
                             </View>
                         </View>
                     </LinearGradient>
@@ -131,7 +132,7 @@ const CalendarMonth = ({ navigation, route }) => {
                     </View>
                 ) : error ? (
                     <View style={{ padding: 20, alignItems: 'center' }}>
-                        <Text style={{ color: colors.destructive, fontSize: 14 }}>{error}</Text>
+                        <ThemedText style={{ color: colors.destructive, fontSize: 14 }}>{error}</ThemedText>
                     </View>
                 ) : monthEkadashis.length > 0 ? (
                     <View style={styles.listContainer}>
@@ -141,7 +142,7 @@ const CalendarMonth = ({ navigation, route }) => {
                     </View>
                 ) : (
                     <View style={{ padding: 20, alignItems: 'center' }}>
-                        <Text style={{ color: colors.mutedForeground, fontSize: 14 }}>No Ekadashis this month</Text>
+                        <ThemedText style={{ color: colors.mutedForeground, fontSize: 14 }}>No Ekadashis this month</ThemedText>
                     </View>
                 )}
             </ScrollView>
@@ -177,18 +178,15 @@ const styles = StyleSheet.create({
     },
     backButtonText: {
         fontSize: 14,
-        fontWeight: '500',
     },
     titleContainer: {
         marginTop: 5,
     },
     title: {
         fontSize: 24,
-        fontWeight: '700',
     },
     subtitle: {
         fontSize: 14,
-        fontWeight: '400',
     },
     card: {
         borderRadius: 12,
@@ -225,7 +223,6 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 16,
-        fontWeight: '600',
         marginBottom: 5,
     },
     dateRow: {
@@ -235,7 +232,6 @@ const styles = StyleSheet.create({
     },
     dateText: {
         fontSize: 12,
-        fontWeight: '500',
         marginRight: 10,
     },
     icon: {
@@ -249,7 +245,6 @@ const styles = StyleSheet.create({
     },
     pillText: {
         fontSize: 10,
-        fontWeight: '700',
     },
     description: {
         fontSize: 13,

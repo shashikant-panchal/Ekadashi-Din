@@ -6,11 +6,11 @@ import {
     Dimensions,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedText } from '../components/ThemedText';
 import { useTheme } from '../context/ThemeContext';
 import { allQuestions } from '../data/ChallengeData';
 
@@ -104,53 +104,53 @@ const Challenge = ({ navigation }) => {
                     <View style={[styles.resultCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
 
                         <View style={styles.resultHeader}>
-                            <Text style={[styles.resultTitle, { color: percentage >= 70 ? colors.primary : colors.foreground }]}>
+                            <ThemedText type="heading" style={[styles.resultTitle, { color: percentage >= 70 ? colors.primary : colors.foreground }]}>
                                 {percentage >= 70 ? 'VICTORY' : 'COMPLETED'}
-                            </Text>
+                            </ThemedText>
                         </View>
 
                         <View style={styles.scoreDisplayContainer}>
                             <View style={styles.scoreItem}>
-                                <Text style={[styles.scoreValue, { color: colors.foreground }]}>{score}</Text>
+                                <ThemedText type="heading" style={[styles.scoreValue, { color: colors.foreground }]}>{score}</ThemedText>
                                 <View style={styles.scoreLabelRow}>
                                     <Feather name="check-circle" size={16} color="#16A34A" />
-                                    <Text style={styles.scoreLabelText}>Correct</Text>
+                                    <ThemedText style={styles.scoreLabelText}>Correct</ThemedText>
                                 </View>
                             </View>
-                            <Text style={styles.scoreSeparator}>-</Text>
+                            <ThemedText style={styles.scoreSeparator}>-</ThemedText>
                             <View style={styles.scoreItem}>
-                                <Text style={[styles.scoreValue, { color: colors.foreground }]}>{questions.length - score}</Text>
+                                <ThemedText type="heading" style={[styles.scoreValue, { color: colors.foreground }]}>{questions.length - score}</ThemedText>
                                 <View style={styles.scoreLabelRow}>
                                     <Feather name="x-circle" size={16} color="#DC2626" />
-                                    <Text style={styles.scoreLabelText}>Wrong</Text>
+                                    <ThemedText style={styles.scoreLabelText}>Wrong</ThemedText>
                                 </View>
                             </View>
                         </View>
 
                         <View style={styles.statsRow}>
                             <View style={[styles.statBox, { backgroundColor: colors.muted }]}>
-                                <Text style={styles.statLabel}>Accuracy</Text>
+                                <ThemedText style={styles.statLabel}>Accuracy</ThemedText>
                                 <View style={styles.statValueRow}>
                                     <FontAwesome name="trophy" size={20} color={colors.primary} />
-                                    <Text style={[styles.statValue, { color: colors.foreground }]}>{percentage.toFixed(0)}%</Text>
+                                    <ThemedText type="defaultSemiBold" style={[styles.statValue, { color: colors.foreground }]}>{percentage.toFixed(0)}%</ThemedText>
                                 </View>
                             </View>
                             <View style={[styles.statBox, { backgroundColor: colors.muted }]}>
-                                <Text style={styles.statLabel}>Total Score</Text>
+                                <ThemedText style={styles.statLabel}>Total Score</ThemedText>
                                 <View style={styles.statValueRow}>
                                     <Ionicons name="sparkles" size={20} color={colors.primary} />
-                                    <Text style={[styles.statValue, { color: colors.foreground }]}>{score}/{questions.length}</Text>
+                                    <ThemedText type="defaultSemiBold" style={[styles.statValue, { color: colors.foreground }]}>{score}/{questions.length}</ThemedText>
                                 </View>
                             </View>
                         </View>
 
                         <View style={[styles.messageBox, { backgroundColor: colors.lightBlueBg }]}>
-                            <Text style={[styles.messageText, { color: colors.mutedForeground }]}>"{scoreInfo.message}"</Text>
+                            <ThemedText style={[styles.messageText, { color: colors.mutedForeground }]}>"{scoreInfo.message}"</ThemedText>
                         </View>
 
                         <View style={styles.actionButtonsContainer}>
                             <TouchableOpacity style={[styles.outlineButton, { borderColor: colors.border }]} onPress={resetQuiz}>
-                                <Text style={[styles.outlineButtonText, { color: colors.foreground }]}>Try Again</Text>
+                                <ThemedText style={[styles.outlineButtonText, { color: colors.foreground }]}>Try Again</ThemedText>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.filledButton} onPress={() => navigation.goBack()}>
                                 <LinearGradient
@@ -159,7 +159,7 @@ const Challenge = ({ navigation }) => {
                                     end={{ x: 1, y: 0.5 }}
                                     style={styles.gradientButton}
                                 >
-                                    <Text style={styles.filledButtonText}>Finish</Text>
+                                    <ThemedText style={styles.filledButtonText}>Finish</ThemedText>
                                 </LinearGradient>
                             </TouchableOpacity>
                         </View>
@@ -179,9 +179,9 @@ const Challenge = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={24} color={colors.foreground} />
                 </TouchableOpacity>
                 <View style={styles.headerTitleContainer}>
-                    <Text style={[styles.headerTitle, { color: colors.mutedForeground }]}>Question</Text>
+                    <ThemedText style={[styles.headerTitle, { color: colors.mutedForeground }]}>Question</ThemedText>
                     <View style={[styles.questionBadge, { backgroundColor: colors.muted }]}>
-                        <Text style={[styles.questionBadgeText, { color: colors.foreground }]}>{currentQuestionIndex + 1}/{questions.length}</Text>
+                        <ThemedText type="small" style={[styles.questionBadgeText, { color: colors.foreground }]}>{currentQuestionIndex + 1}/{questions.length}</ThemedText>
                     </View>
                 </View>
             </View>
@@ -190,7 +190,7 @@ const Challenge = ({ navigation }) => {
                 <View style={[styles.progressBarBackground, { backgroundColor: colors.border }]}>
                     <View style={[styles.progressBarFill, { width: `${progress}%`, backgroundColor: colors.primary }]} />
                 </View>
-                <Text style={[styles.progressText, { color: colors.mutedForeground }]}>{Math.round(progress)}% complete</Text>
+                <ThemedText type="small" style={[styles.progressText, { color: colors.mutedForeground }]}>{Math.round(progress)}% complete</ThemedText>
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -198,14 +198,14 @@ const Challenge = ({ navigation }) => {
 
                     <View style={styles.tagsRow}>
                         <View style={[styles.tag, { backgroundColor: colors.muted }]}>
-                            <Text style={[styles.tagText, { color: colors.foreground }]}>{currentQuestion.category}</Text>
+                            <ThemedText type="caption" style={[styles.tagText, { color: colors.foreground }]}>{currentQuestion.category}</ThemedText>
                         </View>
                         <View style={[styles.tagOutline, { borderColor: colors.border }]}>
-                            <Text style={[styles.tagText, { color: colors.foreground }]}>{currentQuestion.difficulty}</Text>
+                            <ThemedText type="caption" style={[styles.tagText, { color: colors.foreground }]}>{currentQuestion.difficulty}</ThemedText>
                         </View>
                     </View>
 
-                    <Text style={[styles.questionText, { color: colors.foreground }]}>{currentQuestion.question}</Text>
+                    <ThemedText type="heading" style={[styles.questionText, { color: colors.foreground }]}>{currentQuestion.question}</ThemedText>
 
                     <View style={styles.optionsContainer}>
                         {currentQuestion.options.map((option, index) => {
@@ -242,7 +242,7 @@ const Challenge = ({ navigation }) => {
                                     ]}
                                 >
                                     <View style={styles.optionContent}>
-                                        <Text style={[styles.optionText, { color: textColor }]}>{option}</Text>
+                                        <ThemedText style={[styles.optionText, { color: textColor }]}>{option}</ThemedText>
                                         {showExplanation && isCorrect && <Feather name="check-circle" size={20} color="#22c55e" />}
                                         {showExplanation && isWrong && <Feather name="x-circle" size={20} color="#ef4444" />}
                                     </View>
@@ -256,16 +256,16 @@ const Challenge = ({ navigation }) => {
                             <View style={[styles.explanationBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : '#eff6ff', borderColor: isDark ? 'rgba(59, 130, 246, 0.2)' : '#bfdbfe' }]}>
                                 <View style={styles.explanationHeader}>
                                     <Ionicons name="bulb-outline" size={20} color={colors.primary} />
-                                    <Text style={[styles.explanationTitle, { color: colors.primary }]}>EXPLANATION</Text>
+                                    <ThemedText type="small" style={[styles.explanationTitle, { color: colors.primary }]}>EXPLANATION</ThemedText>
                                 </View>
-                                <Text style={[styles.explanationText, { color: colors.foreground }]}>{currentQuestion.explanation}</Text>
+                                <ThemedText style={[styles.explanationText, { color: colors.foreground }]}>{currentQuestion.explanation}</ThemedText>
                             </View>
 
                             {currentQuestion.verse && (
                                 <View style={[styles.verseBox, { backgroundColor: colors.muted, borderColor: colors.border }]}>
                                     <View style={styles.verseHeader}>
                                         <FontAwesome name="star-o" size={18} color={colors.mutedForeground} />
-                                        <Text style={[styles.verseText, { color: colors.mutedForeground }]}>{currentQuestion.verse}</Text>
+                                        <ThemedText style={[styles.verseText, { color: colors.mutedForeground }]}>{currentQuestion.verse}</ThemedText>
                                     </View>
                                 </View>
                             )}
@@ -284,9 +284,9 @@ const Challenge = ({ navigation }) => {
                             end={{ x: 1, y: 0.5 }}
                             style={styles.gradientButton}
                         >
-                            <Text style={styles.nextButtonText}>
+                            <ThemedText style={styles.nextButtonText}>
                                 {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Complete Challenge"}
-                            </Text>
+                            </ThemedText>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
@@ -326,7 +326,6 @@ const styles = StyleSheet.create({
     },
     questionBadgeText: {
         fontSize: 12,
-        fontWeight: '600',
     },
     progressContainer: {
         padding: 16,
@@ -375,11 +374,9 @@ const styles = StyleSheet.create({
     },
     tagText: {
         fontSize: 12,
-        fontWeight: '600',
     },
     questionText: {
         fontSize: 20,
-        fontWeight: '700',
         marginBottom: 24,
         lineHeight: 28,
     },
@@ -399,7 +396,6 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontSize: 15,
-        fontWeight: '500',
         flex: 1,
     },
     explanationContainer: {
@@ -419,7 +415,6 @@ const styles = StyleSheet.create({
     },
     explanationTitle: {
         fontSize: 12,
-        fontWeight: '700',
         letterSpacing: 0.5,
     },
     explanationText: {
@@ -457,7 +452,6 @@ const styles = StyleSheet.create({
     nextButtonText: {
         color: '#FFFFFF',
         fontSize: 16,
-        fontWeight: '700',
     },
 
     // Results Screen Styles
@@ -477,7 +471,6 @@ const styles = StyleSheet.create({
     },
     resultTitle: {
         fontSize: 32,
-        fontWeight: '800',
         letterSpacing: 1,
     },
     scoreDisplayContainer: {
@@ -492,7 +485,6 @@ const styles = StyleSheet.create({
     },
     scoreValue: {
         fontSize: 48,
-        fontWeight: '700',
     },
     scoreLabelRow: {
         flexDirection: 'row',
@@ -505,7 +497,6 @@ const styles = StyleSheet.create({
     },
     scoreSeparator: {
         fontSize: 32,
-        fontWeight: '300',
         color: '#94A3B8', // slate-400
     },
     statsRow: {
@@ -523,7 +514,6 @@ const styles = StyleSheet.create({
     },
     statLabel: {
         fontSize: 12,
-        fontWeight: '600',
         color: '#64748B',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
@@ -535,7 +525,6 @@ const styles = StyleSheet.create({
     },
     statValue: {
         fontSize: 20,
-        fontWeight: '700',
     },
     messageBox: {
         padding: 24,
@@ -565,7 +554,6 @@ const styles = StyleSheet.create({
     },
     outlineButtonText: {
         fontSize: 14,
-        fontWeight: '600',
     },
     filledButton: {
         flex: 1,
@@ -575,7 +563,6 @@ const styles = StyleSheet.create({
     filledButtonText: {
         color: '#FFFFFF',
         fontSize: 14,
-        fontWeight: '600',
     },
 });
 

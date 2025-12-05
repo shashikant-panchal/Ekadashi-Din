@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { dh, dw } from "../constants/Dimensions";
 import { useTheme } from "../context/ThemeContext";
+import { ThemedText } from "./ThemedText";
 
 const DailyWisdomReflectionCard = ({
   reflectionText,
@@ -21,10 +22,10 @@ const DailyWisdomReflectionCard = ({
         <Ionicons name={iconName} size={24} color={colors.primary} />
       </View>
       <View style={styles.reflectionContent}>
-        <Text style={[styles.reflectionTitle, { color: colors.foreground }]}>{title}</Text>
-        <Text style={[styles.reflectionDescription, { color: colors.foreground }]}>
+        <ThemedText type="defaultSemiBold" style={[styles.reflectionTitle, { color: colors.foreground }]}>{title}</ThemedText>
+        <ThemedText style={[styles.reflectionDescription, { color: colors.foreground }]}>
           {reflectionText || defaultText}
-        </Text>
+        </ThemedText>
       </View>
     </View>
   );
@@ -59,7 +60,6 @@ const styles = StyleSheet.create({
   },
   reflectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
     marginBottom: 4,
   },
   reflectionDescription: {

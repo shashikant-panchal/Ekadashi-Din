@@ -15,12 +15,12 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
+import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
 import { detectLocation, setAutoDetect } from "../redux/locationSlice";
 import { saveTheme, toggleTheme } from "../redux/themeSlice";
@@ -67,7 +67,7 @@ const LanguageModal = ({
       ) : (
         <View style={modalStyles.checkIconPlaceholder} />
       )}
-      <Text style={[modalStyles.listItemText, { color: colors.foreground }]}>{item.native}</Text>
+      <ThemedText style={[modalStyles.listItemText, { color: colors.foreground }]}>{item.native}</ThemedText>
     </TouchableOpacity>
   );
 
@@ -136,31 +136,31 @@ const SettingsScreen = () => {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         {/* Header */}
-        <Text style={styles.header}>{t('settings.title')}</Text>
-        <Text style={styles.subHeader}>{t('settings.subtitle')}</Text>
+        <ThemedText type="heading" style={styles.header}>{t('settings.title')}</ThemedText>
+        <ThemedText type="small" style={styles.subHeader}>{t('settings.subtitle')}</ThemedText>
         <View style={styles.divider} />
 
         {/* LOCATION */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Ionicons name="location-outline" size={18} color={colors.primary} />
-            <Text style={styles.sectionTitle}>{t('settings.location.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.location.title')}</ThemedText>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.location.current')}</Text>
-              <Text style={styles.subLabel}>{loading ? t('settings.location.detecting') : (city ? `${city}, ${country}` : t('settings.location.detected').replace('detected', 'Not detected'))}</Text>
+              <ThemedText style={styles.label}>{t('settings.location.current')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{loading ? t('settings.location.detecting') : (city ? `${city}, ${country}` : t('settings.location.detected').replace('detected', 'Not detected'))}</ThemedText>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
-              <Text style={styles.smallBtnText}>{t('common.change')}</Text>
+              <ThemedText type="small" style={styles.smallBtnText}>{t('common.change')}</ThemedText>
             </TouchableOpacity>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.location.autoDetect')}</Text>
-              <Text style={styles.subLabel}>{t('settings.location.autoDetectDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.location.autoDetect')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.location.autoDetectDesc')}</ThemedText>
             </View>
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
@@ -180,7 +180,7 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <FontAwesome5 name="language" size={16} color={colors.primary} />
-            <Text style={styles.sectionTitle}>{t('settings.language.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.language.title')}</ThemedText>
           </View>
 
           <View
@@ -196,8 +196,8 @@ const SettingsScreen = () => {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Feather name="globe" size={20} color={colors.foreground} />
               <View style={{ marginHorizontal: 10 }}>
-                <Text style={styles.label}>{t('settings.language.appLanguage')}</Text>
-                <Text style={styles.subLabel}>{selectedLanguage}</Text>
+                <ThemedText style={styles.label}>{t('settings.language.appLanguage')}</ThemedText>
+                <ThemedText type="small" style={styles.subLabel}>{selectedLanguage}</ThemedText>
               </View>
             </View>
 
@@ -205,7 +205,7 @@ const SettingsScreen = () => {
               style={styles.dropdownTrigger}
               onPress={() => setLanguageModalVisible(true)}
             >
-              <Text style={styles.dropdownText}>{selectedLanguage}</Text>
+              <ThemedText type="small" style={styles.dropdownText}>{selectedLanguage}</ThemedText>
               <MaterialIcons
                 name="keyboard-arrow-down"
                 size={22}
@@ -229,13 +229,13 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Ionicons name="notifications-outline" size={18} color={colors.primary} />
-            <Text style={styles.sectionTitle}>{t('settings.notifications.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.notifications.title')}</ThemedText>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.notifications.ekadashiReminders')}</Text>
-              <Text style={styles.subLabel}>{t('settings.notifications.ekadashiRemindersDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.notifications.ekadashiReminders')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.notifications.ekadashiRemindersDesc')}</ThemedText>
             </View>
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
@@ -247,8 +247,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.notifications.morningReminders')}</Text>
-              <Text style={styles.subLabel}>{t('settings.notifications.morningRemindersDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.notifications.morningReminders')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.notifications.morningRemindersDesc')}</ThemedText>
             </View>
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
@@ -260,8 +260,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.notifications.paranaReminders')}</Text>
-              <Text style={styles.subLabel}>{t('settings.notifications.paranaRemindersDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.notifications.paranaReminders')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.notifications.paranaRemindersDesc')}</ThemedText>
             </View>
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
@@ -273,12 +273,12 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.notifications.notificationTime')}</Text>
-              <Text style={styles.subLabel}>{t('settings.notifications.dailyReminderTime')}</Text>
+              <ThemedText style={styles.label}>{t('settings.notifications.notificationTime')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.notifications.dailyReminderTime')}</ThemedText>
             </View>
             <TouchableOpacity style={styles.timeBtn}>
               <Ionicons name="time-outline" size={16} color={colors.primary} />
-              <Text style={styles.timeText}>06:00 AM</Text>
+              <ThemedText type="small" style={styles.timeText}>06:00 AM</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -287,13 +287,13 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Feather name="eye" size={18} color={colors.primary} />
-            <Text style={styles.sectionTitle}>{t('settings.display.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.display.title')}</ThemedText>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.display.darkMode')}</Text>
-              <Text style={styles.subLabel}>{t('settings.display.darkModeDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.display.darkMode')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.display.darkModeDesc')}</ThemedText>
             </View>
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
@@ -305,8 +305,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.display.largeText')}</Text>
-              <Text style={styles.subLabel}>{t('settings.display.largeTextDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.display.largeText')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.display.largeTextDesc')}</ThemedText>
             </View>
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
@@ -321,26 +321,26 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Ionicons name="calendar-outline" size={18} color={colors.secondary} />
-            <Text style={styles.sectionTitle}>{t('settings.calendar.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.calendar.title')}</ThemedText>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.calendar.syncGoogle')}</Text>
-              <Text style={styles.subLabel}>{t('settings.calendar.syncGoogleDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.calendar.syncGoogle')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.calendar.syncGoogleDesc')}</ThemedText>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
-              <Text style={styles.smallBtnText}>{t('common.connect')}</Text>
+              <ThemedText type="small" style={styles.smallBtnText}>{t('common.connect')}</ThemedText>
             </TouchableOpacity>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>{t('settings.calendar.exportICal')}</Text>
-              <Text style={styles.subLabel}>{t('settings.calendar.exportICalDesc')}</Text>
+              <ThemedText style={styles.label}>{t('settings.calendar.exportICal')}</ThemedText>
+              <ThemedText type="small" style={styles.subLabel}>{t('settings.calendar.exportICalDesc')}</ThemedText>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
-              <Text style={styles.smallBtnText}>{t('common.export')}</Text>
+              <ThemedText type="small" style={styles.smallBtnText}>{t('common.export')}</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -349,23 +349,23 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Feather name="info" size={18} color={colors.primary} />
-            <Text style={styles.sectionTitle}>{t('settings.appInfo.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.appInfo.title')}</ThemedText>
           </View>
 
           <View style={styles.rowBetween}>
-            <Text style={styles.label}>{t('settings.appInfo.version')}</Text>
-            <Text style={[styles.subLabel, { color: colors.primary }]}>1.0.0</Text>
+            <ThemedText style={styles.label}>{t('settings.appInfo.version')}</ThemedText>
+            <ThemedText type="small" style={[styles.subLabel, { color: colors.primary }]}>1.0.0</ThemedText>
           </View>
 
           <View style={styles.rowBetween}>
-            <Text style={styles.label}>{t('settings.appInfo.lastUpdated')}</Text>
-            <Text style={[styles.subLabel, { color: colors.primary }]}>
+            <ThemedText style={styles.label}>{t('settings.appInfo.lastUpdated')}</ThemedText>
+            <ThemedText type="small" style={[styles.subLabel, { color: colors.primary }]}>
               Jan 25, 2025
-            </Text>
+            </ThemedText>
           </View>
 
           <TouchableOpacity style={styles.updateBtn}>
-            <Text style={styles.updateText}>{t('settings.appInfo.checkUpdates')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.updateText}>{t('settings.appInfo.checkUpdates')}</ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -373,22 +373,22 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Entypo name="heart-outlined" size={20} color={colors.secondary} />
-            <Text style={styles.sectionTitle}>{t('settings.support.title')}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.support.title')}</ThemedText>
           </View>
 
           <TouchableOpacity style={styles.coffeeBtn}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <SimpleLineIcons name="cup" size={17} color={colors.foreground} />
-              <Text style={styles.coffeeText}>{t('settings.support.coffeeDesigner')}</Text>
+              <ThemedText type="small" style={styles.coffeeText}>{t('settings.support.coffeeDesigner')}</ThemedText>
             </View>
             <View style={styles.thankTag}>
-              <Text style={styles.thankText}>☕ {t('settings.support.thankYou')}</Text>
+              <ThemedText type="caption" style={styles.thankText}>☕ {t('settings.support.thankYou')}</ThemedText>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutBtn} onPress={() => dispatch(signOut())}>
             <Ionicons name="log-out-outline" size={18} color="#fff" />
-            <Text style={styles.logoutText}>{t('settings.support.logout')}</Text>
+            <ThemedText style={styles.logoutText}>{t('settings.support.logout')}</ThemedText>
           </TouchableOpacity>
         </View>
       </ScrollView>

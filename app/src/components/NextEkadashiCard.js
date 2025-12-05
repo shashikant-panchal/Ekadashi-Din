@@ -1,10 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 import { useNextEkadashi } from "../hooks/useEkadashi";
 import { getTodayEkadashi } from "../services/api";
+import { ThemedText } from "./ThemedText";
 
 const NextEkadashiCard = () => {
   const { colors, isDark } = useTheme();
@@ -87,7 +88,7 @@ const NextEkadashiCard = () => {
       <View style={styles.nextCardContainer}>
         <View style={styles.nextCardWrapper}>
           <View style={styles.nextCardContent}>
-            <Text style={styles.errorText}>{error || "No upcoming Ekadashi found"}</Text>
+            <ThemedText style={styles.errorText}>{error || "No upcoming Ekadashi found"}</ThemedText>
           </View>
         </View>
       </View>
@@ -108,14 +109,14 @@ const NextEkadashiCard = () => {
               end={{ x: 1, y: 0 }}
               style={styles.todayBadge}
             >
-              <Text style={styles.todayBadgeText}>Today is Ekadashi!</Text>
+              <ThemedText type="defaultSemiBold" style={styles.todayBadgeText}>Today is Ekadashi!</ThemedText>
             </LinearGradient>
 
             <View style={styles.moonIconContainer}>
-              <Text style={styles.moonIcon}>🌙</Text>
+              <ThemedText style={styles.moonIcon}>🌙</ThemedText>
             </View>
 
-            <Text style={styles.todayEkadashiName}>{ekadashiName}</Text>
+            <ThemedText type="heading" style={styles.todayEkadashiName}>{ekadashiName}</ThemedText>
 
             <TouchableOpacity onPress={handleBeginObservance} activeOpacity={0.8}>
               <LinearGradient
@@ -124,7 +125,7 @@ const NextEkadashiCard = () => {
                 end={{ x: 1, y: 0 }}
                 style={styles.observanceButton}
               >
-                <Text style={styles.observanceButtonText}>Begin Observance</Text>
+                <ThemedText type="defaultSemiBold" style={styles.observanceButtonText}>Begin Observance</ThemedText>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -137,37 +138,37 @@ const NextEkadashiCard = () => {
     <View style={styles.nextCardContainer}>
       <View style={styles.nextCardWrapper}>
         <View style={styles.nextCardContent}>
-          <Text style={styles.nextHeaderText}>NEXT EKADASHI</Text>
+          <ThemedText type="small" style={styles.nextHeaderText}>NEXT EKADASHI</ThemedText>
 
           <View style={styles.nameAndDateRow}>
             <View style={styles.nameSection}>
-              <Text style={styles.moonIconSmall}>🌙</Text>
-              <Text style={styles.nextEkadashiName}>{ekadashiName}</Text>
+              <ThemedText style={styles.moonIconSmall}>🌙</ThemedText>
+              <ThemedText type="heading" style={styles.nextEkadashiName}>{ekadashiName}</ThemedText>
             </View>
-            <Text style={styles.dateText}>{formatDate(ekadashiDate)}</Text>
+            <ThemedText type="defaultSemiBold" style={styles.dateText}>{formatDate(ekadashiDate)}</ThemedText>
           </View>
 
           <View style={styles.countdownContainer}>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>{countdown.days}</Text>
-              <Text style={styles.countdownLabel}>Days</Text>
+              <ThemedText type="title" style={styles.countdownNumber}>{countdown.days}</ThemedText>
+              <ThemedText type="caption" style={styles.countdownLabel}>Days</ThemedText>
             </View>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>{countdown.hours}</Text>
-              <Text style={styles.countdownLabel}>Hours</Text>
+              <ThemedText type="title" style={styles.countdownNumber}>{countdown.hours}</ThemedText>
+              <ThemedText type="caption" style={styles.countdownLabel}>Hours</ThemedText>
             </View>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>{countdown.minutes}</Text>
-              <Text style={styles.countdownLabel}>Minutes</Text>
+              <ThemedText type="title" style={styles.countdownNumber}>{countdown.minutes}</ThemedText>
+              <ThemedText type="caption" style={styles.countdownLabel}>Minutes</ThemedText>
             </View>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>{countdown.seconds}</Text>
-              <Text style={styles.countdownLabel}>Seconds</Text>
+              <ThemedText type="title" style={styles.countdownNumber}>{countdown.seconds}</ThemedText>
+              <ThemedText type="caption" style={styles.countdownLabel}>Seconds</ThemedText>
             </View>
           </View>
 
           <TouchableOpacity style={styles.viewDetailsButton} onPress={handleViewDetails}>
-            <Text style={styles.viewDetailsButtonText}>View Details</Text>
+            <ThemedText type="defaultSemiBold" style={styles.viewDetailsButtonText}>View Details</ThemedText>
           </TouchableOpacity>
         </View>
       </View>
@@ -216,7 +217,6 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   todayBadgeText: {
     color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "700",
   },
   moonIconContainer: {
     backgroundColor: isDark ? colors.muted : "#FEF3C7",
@@ -234,7 +234,6 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   },
   todayEkadashiName: {
     fontSize: 20,
-    fontWeight: "700",
     color: isDark ? colors.foreground : "#7C2D12",
     textAlign: "center",
     marginBottom: 20,
@@ -254,7 +253,6 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   observanceButtonText: {
     color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: "700",
   },
 
   nextCardContainer: {
@@ -280,7 +278,6 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   },
   nextHeaderText: {
     fontSize: 14,
-    fontWeight: "600",
     color: colors.mutedForeground,
     letterSpacing: 1.5,
     marginBottom: 20,
@@ -302,13 +299,11 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   },
   nextEkadashiName: {
     fontSize: 20,
-    fontWeight: "700",
     color: colors.foreground,
     flex: 1,
   },
   dateText: {
     fontSize: 16,
-    fontWeight: "600",
     color: colors.foreground,
   },
   countdownContainer: {
@@ -328,13 +323,11 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   },
   countdownNumber: {
     fontSize: 32,
-    fontWeight: "700",
     color: colors.foreground,
     marginBottom: 4,
   },
   countdownLabel: {
     fontSize: 12,
-    fontWeight: "600",
     color: colors.mutedForeground,
   },
   viewDetailsButton: {
@@ -351,7 +344,6 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   viewDetailsButtonText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "700",
   },
 
   errorText: {

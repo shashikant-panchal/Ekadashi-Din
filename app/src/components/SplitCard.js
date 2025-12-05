@@ -1,6 +1,7 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import { ThemedText } from './ThemedText';
 
 const SplitCard = ({ icon, iconColor, iconBackground, list, title, subTitle, onPress }) => {
     const { colors } = useTheme();
@@ -12,8 +13,8 @@ const SplitCard = ({ icon, iconColor, iconBackground, list, title, subTitle, onP
             </View>) : <View style={[styles.iconBackground, { backgroundColor: iconBackground }]}>
                 <Ionicons name={icon} size={24} color={iconColor} />
             </View>}
-            <Text style={[styles.title, { color: colors.foreground }]}>{title}</Text>
-            <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>{subTitle}</Text>
+            <ThemedText type="defaultSemiBold" style={[styles.title, { color: colors.foreground }]}>{title}</ThemedText>
+            <ThemedText type="small" style={[styles.subtitle, { color: colors.mutedForeground }]}>{subTitle}</ThemedText>
         </TouchableOpacity>
     )
 }

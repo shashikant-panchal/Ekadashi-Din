@@ -1,12 +1,12 @@
 import {
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NotificationCard from '../components/NotificationCard';
+import { ThemedText } from '../components/ThemedText';
 import { dw } from '../constants/Dimensions';
 import { useTheme } from '../context/ThemeContext';
 
@@ -75,7 +75,7 @@ const NotificationScreen = () => {
         <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.card }]}>
             <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <TouchableOpacity style={[styles.markAsReadButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <Text style={[styles.markAsReadText, { color: colors.foreground }]}>Mark all as read</Text>
+                    <ThemedText type="small" style={[styles.markAsReadText, { color: colors.foreground }]}>Mark all as read</ThemedText>
                 </TouchableOpacity>
                 <ScrollView style={styles.scrollView}>
                     {notificationsData.map(item => (

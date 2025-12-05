@@ -4,11 +4,11 @@ import {
   Dimensions,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
@@ -33,20 +33,20 @@ const ProfileScreen = ({ navigation }) => {
               color={colors.foreground}
             />
           </View>
-          <Text style={[styles.username, { color: colors.foreground }]}>Devotee</Text>
-          <Text style={[styles.profileSubtitle, { color: colors.mutedForeground }]}>Spiritual Journey Profile</Text>
+          <ThemedText type="subtitle" style={[styles.username, { color: colors.foreground }]}>Devotee</ThemedText>
+          <ThemedText type="small" style={[styles.profileSubtitle, { color: colors.mutedForeground }]}>Spiritual Journey Profile</ThemedText>
         </View>
 
         <View style={styles.statsContainer}>
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Feather name="calendar" size={relativeWidth(8)} color={colors.primary} />
-            <Text style={[styles.statCount, { color: colors.foreground }]}>0</Text>
-            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Ekadashis</Text>
+            <ThemedText type="title" style={[styles.statCount, { color: colors.foreground }]}>0</ThemedText>
+            <ThemedText type="defaultSemiBold" style={[styles.statLabel, { color: colors.mutedForeground }]}>Ekadashis</ThemedText>
           </View>
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Feather name="clock" size={relativeWidth(8)} color={colors.secondary} />
-            <Text style={[styles.statCount, { color: colors.foreground }]}>0</Text>
-            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Day Streak</Text>
+            <ThemedText type="title" style={[styles.statCount, { color: colors.foreground }]}>0</ThemedText>
+            <ThemedText type="defaultSemiBold" style={[styles.statLabel, { color: colors.mutedForeground }]}>Day Streak</ThemedText>
           </View>
         </View>
 
@@ -64,18 +64,18 @@ const ProfileScreen = ({ navigation }) => {
               style={styles.challengeIconBackground}
             >
               <View>
-                <Text style={styles.challengeIcon}>ॐ</Text>
+                <ThemedText style={styles.challengeIcon}>ॐ</ThemedText>
               </View>
             </LinearGradient>
 
-            <Text style={[styles.challengeTitle, { color: colors.foreground }]}>
+            <ThemedText type="heading" style={[styles.challengeTitle, { color: colors.foreground }]}>
               Spiritual Wisdom Challenge
-            </Text>
+            </ThemedText>
           </View>
-          <Text style={[styles.challengeDescription, { color: colors.mutedForeground }]}>
+          <ThemedText style={[styles.challengeDescription, { color: colors.mutedForeground }]}>
             Explore the profound wisdom of the Bhagavad Gita and Mahabharata
             through engaging questions that inspire spiritual growth.
-          </Text>
+          </ThemedText>
           <TouchableOpacity onPress={() => navigation.navigate('Challenge')}>
             <LinearGradient
               colors={["#A556F6", "#437FF6"]}
@@ -83,7 +83,7 @@ const ProfileScreen = ({ navigation }) => {
               end={{ x: 1, y: 0.5 }}
               style={styles.challengeButtonGradient}
             >
-              <Text style={styles.challengeButtonText}>Begin Challenge</Text>
+              <ThemedText type="defaultSemiBold" style={styles.challengeButtonText}>Begin Challenge</ThemedText>
             </LinearGradient>
           </TouchableOpacity>
         </LinearGradient>
@@ -91,9 +91,9 @@ const ProfileScreen = ({ navigation }) => {
         <View style={[styles.recentActivityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.activityHeader}>
             <Feather name="calendar" size={relativeWidth(5)} color={colors.foreground} />
-            <Text style={[styles.activityTitle, { color: colors.foreground }]}>Recent Activity</Text>
+            <ThemedText type="heading" style={[styles.activityTitle, { color: colors.foreground }]}>Recent Activity</ThemedText>
           </View>
-          <Text style={[styles.noActivityText, { color: colors.mutedForeground }]}>No recent activity</Text>
+          <ThemedText style={[styles.noActivityText, { color: colors.mutedForeground }]}>No recent activity</ThemedText>
         </View>
       </ScrollView>
     </SafeAreaView>

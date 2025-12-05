@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '../context/ThemeContext';
+import { ThemedText } from './ThemedText';
 
 const NotificationCard = ({
     icon,
@@ -22,15 +23,15 @@ const NotificationCard = ({
             </View>
             <View style={styles.contentContainer}>
                 <View style={styles.titleRow}>
-                    <Text style={[styles.title, { color: colors.foreground }]}>{title}</Text>
+                    <ThemedText type="defaultSemiBold" style={[styles.title, { color: colors.foreground }]}>{title}</ThemedText>
                     {unread && <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />}
                 </View>
-                <Text style={[styles.description, { color: colors.mutedForeground }, descriptionStyle]}>{description}</Text>
+                <ThemedText type="small" style={[styles.description, { color: colors.mutedForeground }, descriptionStyle]}>{description}</ThemedText>
                 <View style={styles.footerRow}>
-                    <Text style={[styles.time, { color: colors.mutedForeground }]}>{time}</Text>
+                    <ThemedText type="caption" style={[styles.time, { color: colors.mutedForeground }]}>{time}</ThemedText>
                     {tag && (
                         <View style={[styles.tag, { backgroundColor: colors.muted }]}>
-                            <Text style={[styles.tagText, { color: colors.mutedForeground }]}>{tag}</Text>
+                            <ThemedText type="caption" style={[styles.tagText, { color: colors.mutedForeground }]}>{tag}</ThemedText>
                         </View>
                     )}
                 </View>

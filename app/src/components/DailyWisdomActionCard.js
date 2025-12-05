@@ -1,6 +1,7 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext';
+import { ThemedText } from './ThemedText';
 
 const DailyWisdomActionCard = ({ iconName, iconColor, iconBgColor, title, subtitle, onPress }) => {
     const { colors } = useTheme();
@@ -10,8 +11,8 @@ const DailyWisdomActionCard = ({ iconName, iconColor, iconBgColor, title, subtit
             <View style={[styles.actionIconContainer, { backgroundColor: iconBgColor }]}>
                 <Ionicons name={iconName} size={24} color={iconColor} />
             </View>
-            <Text style={[styles.actionTitle, { color: colors.foreground }]}>{title}</Text>
-            <Text style={[styles.actionSubtitle, { color: colors.mutedForeground }]}>{subtitle}</Text>
+            <ThemedText type="defaultSemiBold" style={[styles.actionTitle, { color: colors.foreground }]}>{title}</ThemedText>
+            <ThemedText type="caption" style={[styles.actionSubtitle, { color: colors.mutedForeground }]}>{subtitle}</ThemedText>
         </TouchableOpacity>
     );
 };

@@ -6,7 +6,6 @@ import {
     Platform,
     ScrollView,
     StyleSheet,
-    Text,
     ToastAndroid,
     TouchableOpacity,
     View
@@ -17,6 +16,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
+import { ThemedText } from '../components/ThemedText';
 import { useTheme } from '../context/ThemeContext';
 import { bhagavadGitaChapters, getTodaysVerse } from '../data/bhagavadGitaData';
 import { fetchChapterVerses } from '../services/gitaApi';
@@ -78,14 +78,14 @@ const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress, 
     <View >
         <View style={[chapterStyles.itemContainer, { backgroundColor: colors.lightBlueBg }]}>
             <View style={[chapterStyles.numberContainer, { backgroundColor: colors.card }]}>
-                <Text style={[chapterStyles.numberText, { color: colors.foreground }]}>{chapterNumber}</Text>
+                <ThemedText style={[chapterStyles.numberText, { color: colors.foreground }]}>{chapterNumber}</ThemedText>
             </View>
             <View style={chapterStyles.textContainer}>
-                <Text style={[chapterStyles.titleText, { color: colors.foreground }]}>{`Chapter ${chapterNumber}: ${title}`}</Text>
-                <Text style={[chapterStyles.progressText, { color: colors.mutedForeground }]}>{`${progress}/${verseCount} verses`}</Text>
+                <ThemedText type="defaultSemiBold" style={[chapterStyles.titleText, { color: colors.foreground }]}>{`Chapter ${chapterNumber}: ${title}`}</ThemedText>
+                <ThemedText style={[chapterStyles.progressText, { color: colors.mutedForeground }]}>{`${progress}/${verseCount} verses`}</ThemedText>
             </View>
             <TouchableOpacity style={[chapterStyles.continueButton, { backgroundColor: colors.card, borderColor: colors.border }]} onPress={onPress}>
-                <Text style={[chapterStyles.buttonText, { color: colors.foreground }]}>Continue</Text>
+                <ThemedText style={[chapterStyles.buttonText, { color: colors.foreground }]}>Continue</ThemedText>
             </TouchableOpacity>
         </View>
     </View>
@@ -263,7 +263,7 @@ const DailyReading = ({ navigation }) => {
             <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={colors.primary} />
-                    <Text style={[styles.loadingText, { color: colors.mutedForeground }]}>Loading reading progress...</Text>
+                    <ThemedText style={[styles.loadingText, { color: colors.mutedForeground }]}>Loading reading progress...</ThemedText>
                 </View>
             </SafeAreaView>
         );
@@ -277,12 +277,10 @@ const DailyReading = ({ navigation }) => {
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                         <Feather name="arrow-left" size={24} color={colors.mutedForeground} />
-                        <Text style={{
+                        <ThemedText type="link" style={{
                             paddingHorizontal: 10,
                             color: colors.mutedForeground,
-                            fontSize: 14,
-                            fontWeight: '700'
-                        }}>Back</Text>
+                        }}>Back</ThemedText>
                     </TouchableOpacity>
 
                 </View>
@@ -291,16 +289,16 @@ const DailyReading = ({ navigation }) => {
                     <View style={[styles.headerIconBg, { backgroundColor: colors.lightBlueBg }]}>
                         <Ionicons name="book-outline" size={32} color={colors.primary} />
                     </View>
-                    <Text style={[styles.headerTitle, { color: colors.foreground }]}>Daily Reading</Text>
-                    <Text style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>Bhagavad Gita study</Text>
+                    <ThemedText type="heading" style={[styles.headerTitle, { color: colors.foreground }]}>Daily Reading</ThemedText>
+                    <ThemedText style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>Bhagavad Gita study</ThemedText>
                 </View>
                 <View style={styles.placeholderRight} />
 
                 {/* Study Progress Card */}
                 <View style={[styles.progressCard, { backgroundColor: colors.card }]}>
                     <View style={styles.progressHeader}>
-                        <Text style={[styles.progressTitle, { color: colors.foreground }]}>Study Progress</Text>
-                        <Text style={[styles.progressCounter, { color: colors.mutedForeground }]}>{stats.chaptersCompleted}/{totalChapters} chapters</Text>
+                        <ThemedText type="subtitle" style={[styles.progressTitle, { color: colors.foreground }]}>Study Progress</ThemedText>
+                        <ThemedText style={[styles.progressCounter, { color: colors.mutedForeground }]}>{stats.chaptersCompleted}/{totalChapters} chapters</ThemedText>
                     </View>
 
                     <View style={[styles.progressBarContainer, { backgroundColor: colors.muted }]}>
@@ -309,13 +307,13 @@ const DailyReading = ({ navigation }) => {
 
                     <View style={styles.progressStats}>
                         <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: colors.foreground }]}>{stats.chaptersCompleted}</Text>
-                            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Completed</Text>
+                            <ThemedText type="heading" style={[styles.statValue, { color: colors.foreground }]}>{stats.chaptersCompleted}</ThemedText>
+                            <ThemedText style={[styles.statLabel, { color: colors.mutedForeground }]}>Completed</ThemedText>
                         </View>
                         <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                         <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: colors.foreground }]}>{stats.currentStreak}</Text>
-                            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Days streak</Text>
+                            <ThemedText type="heading" style={[styles.statValue, { color: colors.foreground }]}>{stats.currentStreak}</ThemedText>
+                            <ThemedText style={[styles.statLabel, { color: colors.mutedForeground }]}>Days streak</ThemedText>
                         </View>
                     </View>
                 </View>
@@ -324,30 +322,30 @@ const DailyReading = ({ navigation }) => {
                 <View style={[styles.verseCard, { backgroundColor: colors.card }]}>
                     <View style={styles.verseHeader}>
                         <Feather name="book-open" size={20} color={colors.foreground} />
-                        <Text style={[styles.verseTitle, { color: colors.foreground }]}>Today's Verse</Text>
+                        <ThemedText type="subtitle" style={[styles.verseTitle, { color: colors.foreground }]}>Today's Verse</ThemedText>
                     </View>
-                    <Text style={[styles.verseChapter, { color: colors.mutedForeground }]}>Chapter {verse.chapter}, Verse {verse.verse}</Text>
+                    <ThemedText style={[styles.verseChapter, { color: colors.mutedForeground }]}>Chapter {verse.chapter}, Verse {verse.verse}</ThemedText>
 
                     <View style={[styles.verseContent, { backgroundColor: colors.lightBlueBg }]}>
-                        <Text style={[styles.sanskritText, { color: colors.foreground }]}>{sanskritVerse}</Text>
-                        <Text style={[styles.transliterationText, { color: colors.primary }]}>{transliteration}</Text>
+                        <ThemedText type="devanagari" style={[styles.sanskritText, { color: colors.foreground }]}>{sanskritVerse}</ThemedText>
+                        <ThemedText style={[styles.transliterationText, { color: colors.primary }]}>{transliteration}</ThemedText>
                     </View>
 
-                    <Text style={[styles.englishMeaningText, { color: colors.foreground }]}>{englishMeaning}</Text>
+                    <ThemedText style={[styles.englishMeaningText, { color: colors.foreground }]}>{englishMeaning}</ThemedText>
 
-                    <Text style={[styles.significanceText, { color: colors.mutedForeground }]}>
-                        <Text style={{ fontWeight: 'bold' }}>Significance:</Text>
+                    <ThemedText style={[styles.significanceText, { color: colors.mutedForeground }]}>
+                        <ThemedText type="defaultSemiBold">Significance:</ThemedText>
                         {significance.replace("Significance: ", "")}
-                    </Text>
+                    </ThemedText>
 
                     <TouchableOpacity style={[styles.markAsReadButton, { backgroundColor: colors.primary }]} onPress={handleMarkAsRead} disabled={loading}>
-                        <Text style={styles.markAsReadButtonText}>Mark as Read</Text>
+                        <ThemedText type="defaultSemiBold" style={styles.markAsReadButtonText}>Mark as Read</ThemedText>
                     </TouchableOpacity>
                 </View>
 
                 {/* Bhagavad Gita Chapters Section */}
                 <View style={[styles.chapterSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <Text style={[styles.chapterSectionTitle, { color: colors.foreground }]}>Bhagavad Gita Chapters</Text>
+                    <ThemedText type="subtitle" style={[styles.chapterSectionTitle, { color: colors.foreground }]}>Bhagavad Gita Chapters</ThemedText>
 
 
                     {(chapterProgress.length > 0 ? chapterProgress : bhagavadGitaChapters.map((ch, i) => ({
@@ -374,13 +372,13 @@ const DailyReading = ({ navigation }) => {
                 <View style={styles.footerMetricsContainer}>
                     <View style={[styles.footerMetricCard, { backgroundColor: colors.card }]}>
                         <MaterialCommunityIcons name="clock-outline" size={32} color={colors.secondary} />
-                        <Text style={[styles.footerMetricValue, { color: colors.foreground }]}>{stats.averageReadingTime}</Text>
-                        <Text style={[styles.footerMetricLabel, { color: colors.mutedForeground }]}>Avg minutes</Text>
+                        <ThemedText type="heading" style={[styles.footerMetricValue, { color: colors.foreground }]}>{stats.averageReadingTime}</ThemedText>
+                        <ThemedText style={[styles.footerMetricLabel, { color: colors.mutedForeground }]}>Avg minutes</ThemedText>
                     </View>
                     <View style={[styles.footerMetricCard, { backgroundColor: colors.card }]}>
                         <Ionicons name="book-outline" size={32} color={colors.primary} />
-                        <Text style={[styles.footerMetricValue, { color: colors.foreground }]}>{stats.totalVersesRead}</Text>
-                        <Text style={[styles.footerMetricLabel, { color: colors.mutedForeground }]}>Verses read</Text>
+                        <ThemedText type="heading" style={[styles.footerMetricValue, { color: colors.foreground }]}>{stats.totalVersesRead}</ThemedText>
+                        <ThemedText style={[styles.footerMetricLabel, { color: colors.mutedForeground }]}>Verses read</ThemedText>
                     </View>
                 </View>
 
@@ -400,10 +398,10 @@ const DailyReading = ({ navigation }) => {
                             <AntDesign name="close" size={24} color={colors.mutedForeground} />
                         </TouchableOpacity>
                         <View style={mStyles.headerCenter}>
-                            <Text style={[mStyles.chapterTitle, { color: colors.foreground }]}>Chapter {selectedChapter?.id || selectedChapter?.chapter}</Text>
-                            <Text style={[mStyles.chapterSubtitle, { color: colors.mutedForeground }]}>{chapterEnglishName}</Text>
+                            <ThemedText type="subtitle" style={[mStyles.chapterTitle, { color: colors.foreground }]}>Chapter {selectedChapter?.id || selectedChapter?.chapter}</ThemedText>
+                            <ThemedText style={[mStyles.chapterSubtitle, { color: colors.mutedForeground }]}>{chapterEnglishName}</ThemedText>
                         </View>
-                        <Text style={[mStyles.verseCounter, { color: colors.mutedForeground }]}>{currentVerseIndex + 1} / {totalVerseCount}</Text>
+                        <ThemedText style={[mStyles.verseCounter, { color: colors.mutedForeground }]}>{currentVerseIndex + 1} / {totalVerseCount}</ThemedText>
                     </View>
 
                     {/* Verse Content */}
@@ -411,13 +409,13 @@ const DailyReading = ({ navigation }) => {
                         {modalLoading ? (
                             <View style={mStyles.loadingContainer}>
                                 <ActivityIndicator size="large" color={colors.primary} />
-                                <Text style={[mStyles.loadingText, { color: colors.mutedForeground }]}>Loading verses...</Text>
+                                <ThemedText style={[mStyles.loadingText, { color: colors.mutedForeground }]}>Loading verses...</ThemedText>
                             </View>
                         ) : currentModalVerse && (
                             <>
                                 {/* Sanskrit Banner */}
                                 <View style={[mStyles.sanskritBanner, { backgroundColor: colors.primary }]}>
-                                    <Text style={mStyles.sanskritBannerText}>{currentModalVerse.sanskrit}</Text>
+                                    <ThemedText type="devanagari" style={mStyles.sanskritBannerText}>{currentModalVerse.sanskrit}</ThemedText>
                                 </View>
 
                                 {/* Verse Card */}
@@ -425,27 +423,27 @@ const DailyReading = ({ navigation }) => {
                                     <View style={mStyles.verseHeader}>
                                         <View style={mStyles.verseLabelContainer}>
                                             <Feather name="book-open" size={18} color={colors.primary} />
-                                            <Text style={[mStyles.verseLabel, { color: colors.foreground }]}>Verse {currentModalVerse.verse}</Text>
+                                            <ThemedText type="defaultSemiBold" style={[mStyles.verseLabel, { color: colors.foreground }]}>Verse {currentModalVerse.verse}</ThemedText>
                                         </View>
                                         <TouchableOpacity style={[mStyles.readBadge, { backgroundColor: colors.lightBlueBg }]} onPress={handleModalMarkAsRead}>
                                             <AntDesign name="check" size={14} color={colors.primary} />
-                                            <Text style={[mStyles.readBadgeText, { color: colors.primary }]}>Read</Text>
+                                            <ThemedText style={[mStyles.readBadgeText, { color: colors.primary }]}>Read</ThemedText>
                                         </TouchableOpacity>
                                     </View>
 
                                     <View style={[mStyles.verseContent, { backgroundColor: colors.lightBlueBg }]}>
-                                        <Text style={[mStyles.verseSanskrit, { color: colors.foreground }]}>{currentModalVerse.sanskrit}</Text>
-                                        <Text style={[mStyles.verseTransliteration, { color: colors.mutedForeground }]}>{currentModalVerse.transliteration}</Text>
+                                        <ThemedText type="devanagari" style={[mStyles.verseSanskrit, { color: colors.foreground }]}>{currentModalVerse.sanskrit}</ThemedText>
+                                        <ThemedText style={[mStyles.verseTransliteration, { color: colors.mutedForeground }]}>{currentModalVerse.transliteration}</ThemedText>
                                     </View>
 
                                     <View style={mStyles.translationSection}>
-                                        <Text style={[mStyles.translationLabel, { color: colors.foreground }]}>Translation</Text>
-                                        <Text style={[mStyles.translationText, { color: colors.mutedForeground }]}>{currentModalVerse.translation}</Text>
+                                        <ThemedText type="defaultSemiBold" style={[mStyles.translationLabel, { color: colors.foreground }]}>Translation</ThemedText>
+                                        <ThemedText style={[mStyles.translationText, { color: colors.mutedForeground }]}>{currentModalVerse.translation}</ThemedText>
                                     </View>
 
                                     <View style={[mStyles.significanceSection, { borderTopColor: colors.border }]}>
-                                        <Text style={[mStyles.significanceLabel, { color: colors.foreground }]}>Significance</Text>
-                                        <Text style={[mStyles.significanceText, { color: colors.mutedForeground }]}>{currentModalVerse.significance}</Text>
+                                        <ThemedText type="defaultSemiBold" style={[mStyles.significanceLabel, { color: colors.foreground }]}>Significance</ThemedText>
+                                        <ThemedText style={[mStyles.significanceText, { color: colors.mutedForeground }]}>{currentModalVerse.significance}</ThemedText>
                                     </View>
                                 </View>
                             </>
@@ -460,7 +458,7 @@ const DailyReading = ({ navigation }) => {
                             disabled={currentVerseIndex === 0}
                         >
                             <AntDesign name="left" size={16} color={currentVerseIndex === 0 ? colors.mutedForeground : colors.foreground} />
-                            <Text style={[mStyles.navButtonText, { color: currentVerseIndex === 0 ? colors.mutedForeground : colors.foreground }]}>Previous</Text>
+                            <ThemedText style={[mStyles.navButtonText, { color: currentVerseIndex === 0 ? colors.mutedForeground : colors.foreground }]}>Previous</ThemedText>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -468,13 +466,13 @@ const DailyReading = ({ navigation }) => {
                             onPress={handleNextVerse}
                             disabled={currentVerseIndex >= chapterVerses.length - 1}
                         >
-                            <Text style={mStyles.nextButtonText}>Next</Text>
+                            <ThemedText type="defaultSemiBold" style={mStyles.nextButtonText}>Next</ThemedText>
                             <AntDesign name="right" size={16} color="#fff" />
                         </TouchableOpacity>
 
                         <TouchableOpacity style={mStyles.markReadButton} onPress={handleModalMarkAsRead}>
                             <AntDesign name="check" size={16} color={colors.primary} />
-                            <Text style={[mStyles.markReadText, { color: colors.primary }]}>Read</Text>
+                            <ThemedText style={[mStyles.markReadText, { color: colors.primary }]}>Read</ThemedText>
                         </TouchableOpacity>
                     </View>
                 </SafeAreaView>

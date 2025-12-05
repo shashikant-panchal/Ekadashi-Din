@@ -6,13 +6,13 @@ import {
     ProgressBarAndroid,
     ScrollView,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import { useSelector } from 'react-redux';
+import { ThemedText } from '../components/ThemedText';
 import { useTheme } from '../context/ThemeContext';
 import { mantrasList } from '../data/bhajansData';
 import * as JapaService from '../services/japaSessions';
@@ -145,7 +145,7 @@ const MorningJapaScreen = ({ navigation }) => {
             <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={colors.primary} />
-                    <Text style={[styles.loadingText, { color: colors.mutedForeground }]}>Loading session...</Text>
+                    <ThemedText style={[styles.loadingText, { color: colors.mutedForeground }]}>Loading session...</ThemedText>
                 </View>
             </SafeAreaView>
         );
@@ -157,21 +157,21 @@ const MorningJapaScreen = ({ navigation }) => {
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                         <Feather name="arrow-left" size={24} color={colors.mutedForeground} />
-                        <Text style={[styles.backText, { color: colors.mutedForeground }]}>Back</Text>
+                        <ThemedText type="link" style={[styles.backText, { color: colors.mutedForeground }]}>Back</ThemedText>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.headerTitleContainer}>
                     <View style={[styles.headerIconBg, { backgroundColor: isDark ? colors.muted : '#FFFBE6' }]}>
                         <SimpleLineIcons name="fire" size={28} color={colors.secondary} />
                     </View>
-                    <Text style={[styles.headerTitle, { color: colors.foreground }]}>Morning Japa</Text>
-                    <Text style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>16 rounds of divine chanting</Text>
+                    <ThemedText type="heading" style={[styles.headerTitle, { color: colors.foreground }]}>Morning Japa</ThemedText>
+                    <ThemedText style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>16 rounds of divine chanting</ThemedText>
                 </View>
 
                 <View style={[styles.progressCard, { backgroundColor: colors.card }]}>
                     <View style={styles.progressHeader}>
-                        <Text style={[styles.progressTitle, { color: colors.foreground }]}>Today's Progress</Text>
-                        <Text style={[styles.progressCounter, { color: colors.mutedForeground }]}>{roundsCompleted}/{totalRounds} rounds</Text>
+                        <ThemedText type="subtitle" style={[styles.progressTitle, { color: colors.foreground }]}>Today's Progress</ThemedText>
+                        <ThemedText style={[styles.progressCounter, { color: colors.mutedForeground }]}>{roundsCompleted}/{totalRounds} rounds</ThemedText>
                     </View>
                     {Platform.OS === 'ios' ? (
                         <View style={[styles.progressBarContainer, { backgroundColor: colors.border }]}>
@@ -189,23 +189,23 @@ const MorningJapaScreen = ({ navigation }) => {
 
                     <View style={styles.progressStats}>
                         <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: colors.foreground }]}>{stats.currentStreak}</Text>
-                            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Days streak</Text>
+                            <ThemedText type="heading" style={[styles.statValue, { color: colors.foreground }]}>{stats.currentStreak}</ThemedText>
+                            <ThemedText type="small" style={[styles.statLabel, { color: colors.mutedForeground }]}>Days streak</ThemedText>
                         </View>
                         <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
                         <View style={styles.statItem}>
-                            <Text style={[styles.statValue, { color: colors.foreground }]}>{stats.totalRounds}</Text>
-                            <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Total rounds</Text>
+                            <ThemedText type="heading" style={[styles.statValue, { color: colors.foreground }]}>{stats.totalRounds}</ThemedText>
+                            <ThemedText type="small" style={[styles.statLabel, { color: colors.mutedForeground }]}>Total rounds</ThemedText>
                         </View>
                     </View>
                 </View>
 
                 <View style={[styles.roundCard, { backgroundColor: colors.card }]}>
-                    <Text style={[styles.roundTitle, { color: colors.foreground }]}>Round {roundsCompleted + 1}</Text>
-                    <Text style={[styles.roundTime, { color: colors.mutedForeground }]}>{formatTime(time)}</Text>
+                    <ThemedText type="subtitle" style={[styles.roundTitle, { color: colors.foreground }]}>Round {roundsCompleted + 1}</ThemedText>
+                    <ThemedText style={[styles.roundTime, { color: colors.mutedForeground }]}>{formatTime(time)}</ThemedText>
                     <TouchableOpacity style={[styles.startButton, { borderColor: colors.border, backgroundColor: colors.card }]} onPress={handleStartStopJapa}>
                         <Feather name={isRunning ? "pause" : "play"} size={20} color={colors.foreground} />
-                        <Text style={[styles.startButtonText, { color: colors.foreground }]}>{isRunning ? 'Pause Japa' : 'Start Japa'}</Text>
+                        <ThemedText type="defaultSemiBold" style={[styles.startButtonText, { color: colors.foreground }]}>{isRunning ? 'Pause Japa' : 'Start Japa'}</ThemedText>
                     </TouchableOpacity>
                 </View>
 
@@ -214,12 +214,12 @@ const MorningJapaScreen = ({ navigation }) => {
                         const hareKrishnaMantra = mantrasList.find(m => m.name === "Hare Krishna Mahamantra") || mantrasList[0];
                         return (
                             <>
-                                <Text style={styles.mantraCardTitle}>{hareKrishnaMantra.name}</Text>
+                                <ThemedText type="defaultSemiBold" style={styles.mantraCardTitle}>{hareKrishnaMantra.name}</ThemedText>
                                 {hareKrishnaMantra.sanskrit.split('\n').map((line, index) => (
-                                    <Text key={index} style={styles.sanskritMantra}>{line}</Text>
+                                    <ThemedText type="devanagari" key={index} style={styles.sanskritMantra}>{line}</ThemedText>
                                 ))}
                                 {hareKrishnaMantra.transliteration.split('\n').map((line, index) => (
-                                    <Text key={index} style={styles.englishMantra}>{line}</Text>
+                                    <ThemedText key={index} style={styles.englishMantra}>{line}</ThemedText>
                                 ))}
                             </>
                         );
@@ -232,7 +232,7 @@ const MorningJapaScreen = ({ navigation }) => {
                     disabled={roundsCompleted >= totalRounds}
                 >
                     <Feather name="target" size={20} color={colors.foreground} />
-                    <Text style={[styles.bottomActionButtonText, { color: colors.foreground }]}>Complete Round {roundsCompleted + 1}</Text>
+                    <ThemedText type="defaultSemiBold" style={[styles.bottomActionButtonText, { color: colors.foreground }]}>Complete Round {roundsCompleted + 1}</ThemedText>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -241,29 +241,29 @@ const MorningJapaScreen = ({ navigation }) => {
                     disabled={loading}
                 >
                     <AntDesign name="reload" size={20} color={'#fff'} />
-                    <Text style={styles.resetButtontext}>Reset Session </Text>
+                    <ThemedText type="defaultSemiBold" style={styles.resetButtontext}>Reset Session </ThemedText>
                 </TouchableOpacity>
 
                 <View style={[styles.japaTipsCard, { backgroundColor: colors.card }]}>
                     <View style={styles.japaTipsHeader}>
                         <Feather name="clock" size={20} color={colors.primary} />
-                        <Text style={[styles.japaTipsTitle, { color: colors.foreground }]}>Japa Tips</Text>
+                        <ThemedText type="subtitle" style={[styles.japaTipsTitle, { color: colors.foreground }]}>Japa Tips</ThemedText>
                     </View>
                     <View style={styles.tipItem}>
-                        <Text style={[styles.bullet, { color: colors.foreground }]}>•</Text>
-                        <Text style={[styles.tipText, { color: colors.foreground }]}>Chant clearly and attentively</Text>
+                        <ThemedText style={[styles.bullet, { color: colors.foreground }]}>•</ThemedText>
+                        <ThemedText style={[styles.tipText, { color: colors.foreground }]}>Chant clearly and attentively</ThemedText>
                     </View>
                     <View style={styles.tipItem}>
-                        <Text style={[styles.bullet, { color: colors.foreground }]}>•</Text>
-                        <Text style={[styles.tipText, { color: colors.foreground }]}>Complete 16 rounds daily before breakfast</Text>
+                        <ThemedText style={[styles.bullet, { color: colors.foreground }]}>•</ThemedText>
+                        <ThemedText style={[styles.tipText, { color: colors.foreground }]}>Complete 16 rounds daily before breakfast</ThemedText>
                     </View>
                     <View style={styles.tipItem}>
-                        <Text style={[styles.bullet, { color: colors.foreground }]}>•</Text>
-                        <Text style={[styles.tipText, { color: colors.foreground }]}>Focus on hearing the holy names</Text>
+                        <ThemedText style={[styles.bullet, { color: colors.foreground }]}>•</ThemedText>
+                        <ThemedText style={[styles.tipText, { color: colors.foreground }]}>Focus on hearing the holy names</ThemedText>
                     </View>
                     <View style={styles.tipItem}>
-                        <Text style={[styles.bullet, { color: colors.foreground }]}>•</Text>
-                        <Text style={[styles.tipText, { color: colors.foreground }]}>Average time per round: 7-8 minutes</Text>
+                        <ThemedText style={[styles.bullet, { color: colors.foreground }]}>•</ThemedText>
+                        <ThemedText style={[styles.tipText, { color: colors.foreground }]}>Average time per round: 7-8 minutes</ThemedText>
                     </View>
                 </View>
             </ScrollView>
@@ -316,7 +316,6 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: 22,
-        fontWeight: 'bold',
         marginBottom: 4,
     },
     headerSubtitle: {
@@ -338,7 +337,6 @@ const styles = StyleSheet.create({
     },
     progressTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
     },
     progressCounter: {
         fontSize: 14,
@@ -364,7 +362,6 @@ const styles = StyleSheet.create({
     },
     statValue: {
         fontSize: 24,
-        fontWeight: 'bold',
     },
     statLabel: {
         fontSize: 14,
@@ -380,12 +377,10 @@ const styles = StyleSheet.create({
     },
     roundTitle: {
         fontSize: 24,
-        fontWeight: 'bold',
         marginBottom: 8,
     },
     roundTime: {
         fontSize: 36,
-        fontWeight: '400',
         marginBottom: 20,
         fontVariant: ['tabular-nums'],
     },
@@ -401,7 +396,6 @@ const styles = StyleSheet.create({
     },
     startButtonText: {
         fontSize: 16,
-        fontWeight: 'bold',
         marginLeft: 10,
     },
     mantraCard: {
@@ -412,13 +406,11 @@ const styles = StyleSheet.create({
     },
     mantraCardTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
         color: '#fff',
         marginBottom: 15,
     },
     sanskritMantra: {
         fontSize: 20,
-        fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',
         marginBottom: 5,
@@ -447,13 +439,12 @@ const styles = StyleSheet.create({
     },
     resetButtontext: {
         fontSize: 16,
-        fontWeight: 'bold',
         color: '#fff',
         marginLeft: 10,
+        fontWeight: 'normal',
     },
     bottomActionButtonText: {
         fontSize: 16,
-        fontWeight: 'bold',
         marginLeft: 10,
     },
     japaTipsCard: {
@@ -467,7 +458,6 @@ const styles = StyleSheet.create({
     },
     japaTipsTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
         marginLeft: 10,
     },
     tipItem: {
@@ -487,7 +477,6 @@ const styles = StyleSheet.create({
     backText: {
         paddingHorizontal: 10,
         fontSize: 14,
-        fontWeight: '700'
     },
     loadingContainer: {
         flex: 1,

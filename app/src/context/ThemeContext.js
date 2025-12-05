@@ -1,11 +1,13 @@
 import { createContext, useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { DarkTheme, LightTheme } from '../constants/Colors';
+import Typography from '../constants/Typography';
 
 const ThemeContext = createContext({
     colors: LightTheme,
     isDark: false,
     theme: 'light',
+    typography: Typography,
 });
 
 export const ThemeProvider = ({ children }) => {
@@ -15,6 +17,7 @@ export const ThemeProvider = ({ children }) => {
         colors: resolvedTheme === 'dark' ? DarkTheme : LightTheme,
         isDark: resolvedTheme === 'dark',
         theme: theme,
+        typography: Typography,
     }), [resolvedTheme, theme]);
 
     return (

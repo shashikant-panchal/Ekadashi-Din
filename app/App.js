@@ -1,3 +1,19 @@
+import {
+  Inter_400Regular,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from "@expo-google-fonts/inter";
+import {
+  NotoSansDevanagari_400Regular,
+  NotoSansDevanagari_600SemiBold,
+  NotoSansDevanagari_700Bold,
+} from "@expo-google-fonts/noto-sans-devanagari";
+import {
+  Nunito_400Regular,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+} from "@expo-google-fonts/nunito";
+import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Appearance, StatusBar, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -17,6 +33,18 @@ function Root() {
   const { colors, isDark } = useTheme();
   const dispatch = useDispatch();
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    "Nunito-Regular": Nunito_400Regular,
+    "Nunito-SemiBold": Nunito_600SemiBold,
+    "Nunito-Bold": Nunito_700Bold,
+    "Inter-Regular": Inter_400Regular,
+    "Inter-SemiBold": Inter_600SemiBold,
+    "Inter-Bold": Inter_700Bold,
+    "NotoSansDevanagari-Regular": NotoSansDevanagari_400Regular,
+    "NotoSansDevanagari-SemiBold": NotoSansDevanagari_600SemiBold,
+    "NotoSansDevanagari-Bold": NotoSansDevanagari_700Bold,
+  });
 
   useEffect(() => {
     dispatch(loadTheme());
@@ -43,7 +71,7 @@ function Root() {
     return () => subscription.unsubscribe();
   }, [dispatch]);
 
-  if (!isAuthChecked || themeLoading) {
+  if (!isAuthChecked || themeLoading || !fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
         <StatusBar

@@ -5,7 +5,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -13,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "react-native-vector-icons/Feather";
 import DailyWisdomActionCard from "../components/DailyWisdomActionCard";
 import DailyWisdomReflectionCard from "../components/DailyWisdomReflectionCard";
+import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
 import { dailyWisdoms, getTimeBasedWisdom, getTodaysWisdom } from "../data/dailyWisdomData";
 
@@ -74,11 +74,11 @@ const DailyWisdom = ({ navigation }) => {
         >
           <Feather name="arrow-left" size={24} color={colors.mutedForeground} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.foreground }]}>Daily Wisdom</Text>
+        <ThemedText type="heading" style={[styles.headerTitle, { color: colors.foreground }]}>Daily Wisdom</ThemedText>
         <View style={styles.placeholderRight} />
-        <Text style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>
+        <ThemedText type="small" style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>
           Spiritual teachings for your journey
-        </Text>
+        </ThemedText>
         <DailyWisdomReflectionCard
           reflectionText={reflectionText}
           timeOfDay={timeOfDay}
@@ -92,23 +92,23 @@ const DailyWisdom = ({ navigation }) => {
                 color={colors.mutedForeground}
               />
             </View>
-            <Text style={[styles.mantraTag, { color: colors.mutedForeground }]}>
+            <ThemedText type="caption" style={[styles.mantraTag, { color: colors.mutedForeground }]}>
               {displayWisdom.type?.toUpperCase() || "MANTRA"}
-            </Text>
+            </ThemedText>
             <View style={[styles.bhagavadGitaTag, { backgroundColor: colors.lightBlueBg }]}>
-              <Text style={[styles.bhagavadGitaText, { color: colors.primary }]}>
+              <ThemedText type="caption" style={[styles.bhagavadGitaText, { color: colors.primary }]}>
                 {displayWisdom.verse || "Bhagavad Gita 7.7"}
-              </Text>
+              </ThemedText>
             </View>
           </View>
           <View style={[styles.mainMantraContainer, { backgroundColor: colors.lightBlueBg }]}>
-            <Text style={[styles.sanskritMantra, { color: colors.foreground }]}>{displayWisdom.sanskrit}</Text>
-            <Text style={[styles.englishMantra, { color: colors.mutedForeground }]}>
+            <ThemedText type="devanagari" style={[styles.sanskritMantra, { color: colors.foreground }]}>{displayWisdom.sanskrit}</ThemedText>
+            <ThemedText style={[styles.englishMantra, { color: colors.mutedForeground }]}>
               {displayWisdom.transliteration}
-            </Text>
+            </ThemedText>
           </View>
 
-          <Text style={[styles.mantraDescription, { color: colors.foreground }]}>{displayWisdom.english}</Text>
+          <ThemedText style={[styles.mantraDescription, { color: colors.foreground }]}>{displayWisdom.english}</ThemedText>
 
           <View style={[styles.mantraFooter, { borderTopColor: colors.border }]}>
             <View style={styles.mantraActions}>
@@ -121,17 +121,17 @@ const DailyWisdom = ({ navigation }) => {
                   size={18}
                   color={isLiked ? "#FF6B6B" : colors.mutedForeground}
                 />
-                <Text style={[styles.actionText, { color: colors.mutedForeground }]}>
+                <ThemedText style={[styles.actionText, { color: colors.mutedForeground }]}>
                   {isLiked ? "Loved" : "Love"}
-                </Text>
+                </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButton}>
                 <Feather name="share-2" size={18} color={colors.mutedForeground} />
-                <Text style={[styles.actionText, { color: colors.mutedForeground }]}>Share</Text>
+                <ThemedText style={[styles.actionText, { color: colors.mutedForeground }]}>Share</ThemedText>
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.primary }]} onPress={nextWisdom}>
-              <Text style={styles.nextButtonText}>Next</Text>
+              <ThemedText type="defaultSemiBold" style={styles.nextButtonText}>Next</ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -160,12 +160,12 @@ const DailyWisdom = ({ navigation }) => {
             color="#fff"
             style={styles.bottomCardIcon}
           />
-          <Text style={styles.bottomCardTitle}>Hare Krishna!</Text>
-          <Text style={styles.bottomCardDescription}>
+          <ThemedText type="heading" style={styles.bottomCardTitle}>Hare Krishna!</ThemedText>
+          <ThemedText style={styles.bottomCardDescription}>
             The easiest and most sublime process for understanding the Supreme
             Personality of Godhead is to hear about Him.
-          </Text>
-          <Text style={styles.bottomCardDescription}> Srila Prabhupada</Text>
+          </ThemedText>
+          <ThemedText style={styles.bottomCardDescription}> Srila Prabhupada</ThemedText>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
     flex: 1,
     textAlign: "center",
     marginLeft: -40,
@@ -232,7 +231,6 @@ const styles = StyleSheet.create({
   },
   mantraTag: {
     fontSize: 12,
-    fontWeight: "500",
     marginRight: "auto",
   },
   bhagavadGitaTag: {
@@ -242,11 +240,9 @@ const styles = StyleSheet.create({
   },
   bhagavadGitaText: {
     fontSize: 11,
-    fontWeight: "500",
   },
   sanskritMantra: {
     fontSize: 20,
-    fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,
     lineHeight: 30,
@@ -289,7 +285,6 @@ const styles = StyleSheet.create({
   nextButtonText: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "bold",
   },
   actionCardsContainer: {
     flexDirection: "row",
@@ -310,7 +305,6 @@ const styles = StyleSheet.create({
   },
   bottomCardTitle: {
     fontSize: 22,
-    fontWeight: "bold",
     color: "#fff",
     marginBottom: 8,
   },

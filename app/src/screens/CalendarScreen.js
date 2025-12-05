@@ -10,12 +10,12 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
 import { useEkadashiList } from "../hooks/useEkadashi";
 
@@ -74,7 +74,7 @@ const DateCell = ({ date, isEkadashi, isToday, colors, isDark }) => {
 
   if (isToday) {
     containerStyle.push({ backgroundColor: colors.primary });
-    cellStyle.push({ color: '#fff', fontWeight: '600' });
+    cellStyle.push({ color: '#fff' });
   }
 
   if (isEkadashi) {
@@ -82,13 +82,13 @@ const DateCell = ({ date, isEkadashi, isToday, colors, isDark }) => {
   }
 
   const ekadashiIcon = isEkadashi ? (
-    <Text style={styles.ekadashiIcon}>{"😊"}</Text>
+    <ThemedText style={styles.ekadashiIcon}>{"😊"}</ThemedText>
   ) : null;
 
   return (
     <TouchableOpacity style={containerStyle} disabled={!date}>
       {ekadashiIcon}
-      <Text style={cellStyle}>{date}</Text>
+      <ThemedText type={isToday ? "defaultSemiBold" : "default"} style={cellStyle}>{date}</ThemedText>
     </TouchableOpacity>
   );
 };
@@ -189,16 +189,16 @@ const CalendarScreen = ({ navigation }) => {
       })}>
         <View key={ekadashi.date.format('YYYY-MM-DD')} style={[styles.observanceItem, { backgroundColor: colors.muted, borderColor: colors.border }]}>
           <View style={[styles.observanceImagePlaceholder, { backgroundColor: colors.lightBlueBg }]}>
-            <Text style={{ fontSize: relativeWidth(5) }}>
+            <ThemedText style={{ fontSize: relativeWidth(5) }}>
               {ekadashi.moonPhase === "waxing" ? "🌕" : "🌑"}
-            </Text>
+            </ThemedText>
           </View>
           <View style={styles.observanceTextContainer}>
-            <Text style={[styles.observanceTitleText, { color: colors.foreground }]}>{ekadashi.name}</Text>
-            <Text style={[styles.observanceDateText, { color: colors.mutedForeground }]}>{formattedDate}</Text>
+            <ThemedText type="defaultSemiBold" style={[styles.observanceTitleText, { color: colors.foreground }]}>{ekadashi.name}</ThemedText>
+            <ThemedText type="small" style={[styles.observanceDateText, { color: colors.mutedForeground }]}>{formattedDate}</ThemedText>
           </View>
           <View style={[styles.phaseBadge, { borderColor: colors.border }]}>
-            <Text style={[styles.phaseBadgeText, { color: colors.foreground }]}>{phase}</Text>
+            <ThemedText type="caption" style={[styles.phaseBadgeText, { color: colors.foreground }]}>{phase}</ThemedText>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -211,9 +211,9 @@ const CalendarScreen = ({ navigation }) => {
         <TouchableOpacity onPress={goToPreviousMonth}>
           <Ionicons name="chevron-back" size={relativeWidth(6)} color={colors.foreground} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.foreground }]}>
+        <ThemedText type="heading" style={[styles.headerTitle, { color: colors.foreground }]}>
           {currentDate.format("MMMM YYYY")}
-        </Text>
+        </ThemedText>
         <TouchableOpacity onPress={goToNextMonth}>
           <Ionicons
             name="chevron-forward"
@@ -234,12 +234,12 @@ const CalendarScreen = ({ navigation }) => {
           style={styles.ekadashiSummaryCard}
         >
           <View>
-            <Text style={[styles.summaryTitle, { color: colors.foreground }]}>
+            <ThemedText type="defaultSemiBold" style={[styles.summaryTitle, { color: colors.foreground }]}>
               {loading ? "Loading..." : `${monthEkadashis.length} Ekadashi${monthEkadashis.length !== 1 ? 's' : ''} this month`}
-            </Text>
-            <Text style={[styles.summarySubtitle, { color: colors.mutedForeground }]}>
+            </ThemedText>
+            <ThemedText type="small" style={[styles.summarySubtitle, { color: colors.mutedForeground }]}>
               Tap on dates to view details
-            </Text>
+            </ThemedText>
           </View>
           <TouchableOpacity
             style={[styles.calendarIconContainer, { backgroundColor: colors.card }]}
@@ -252,9 +252,9 @@ const CalendarScreen = ({ navigation }) => {
         <View style={[styles.calendarGrid, { backgroundColor: colors.card }]}>
           <View style={styles.daysRow}>
             {DAYS.map((day, index) => (
-              <Text key={index} style={[styles.dayNameText, { color: colors.mutedForeground }]}>
+              <ThemedText key={index} type="defaultSemiBold" style={[styles.dayNameText, { color: colors.mutedForeground }]}>
                 {day}
-              </Text>
+              </ThemedText>
             ))}
           </View>
 
@@ -284,7 +284,7 @@ const CalendarScreen = ({ navigation }) => {
               color={colors.secondary}
               style={styles.starIcon}
             />
-            <Text style={[styles.observancesTitle, { color: colors.foreground }]}>Ekadashi Observances</Text>
+            <ThemedText type="defaultSemiBold" style={[styles.observancesTitle, { color: colors.foreground }]}>Ekadashi Observances</ThemedText>
           </View>
           {loading ? (
             <View style={{ padding: 20, alignItems: 'center' }}>
@@ -294,30 +294,30 @@ const CalendarScreen = ({ navigation }) => {
             monthEkadashis.map(ekadashi => renderObservanceItem(ekadashi))
           ) : (
             <View style={{ padding: 20, alignItems: 'center' }}>
-              <Text style={{ color: colors.mutedForeground, fontSize: 14 }}>No Ekadashis this month</Text>
+              <ThemedText type="small" style={{ color: colors.mutedForeground }}>No Ekadashis this month</ThemedText>
             </View>
           )}
           {error && (
             <View style={{ padding: 10, alignItems: 'center' }}>
-              <Text style={{ color: colors.destructive, fontSize: 12 }}>{error}</Text>
+              <ThemedText type="small" style={{ color: colors.destructive }}>{error}</ThemedText>
             </View>
           )}
         </View>
 
         <View style={[styles.legendContainer, { backgroundColor: colors.card }]}>
           <View>
-            <Text style={{ fontSize: relativeWidth(4), fontWeight: "500", color: colors.foreground }}>
+            <ThemedText type="defaultSemiBold" style={{ fontSize: relativeWidth(4), color: colors.foreground }}>
               Legend
-            </Text>
+            </ThemedText>
           </View>
           <View style={{ flexDirection: "row", marginTop: 10 }}>
             <View style={styles.legendItem}>
               <View style={[styles.legendColorBox, { backgroundColor: colors.primary }]} />
-              <Text style={[styles.legendText, { color: colors.mutedForeground }]}>Today</Text>
+              <ThemedText type="small" style={[styles.legendText, { color: colors.mutedForeground }]}>Today</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendColorBox, { backgroundColor: isDark ? colors.muted : "#FEF9D9", borderRadius: relativeWidth(0.5) }]} />
-              <Text style={[styles.legendText, { color: colors.mutedForeground }]}>Ekadashi</Text>
+              <ThemedText type="small" style={[styles.legendText, { color: colors.mutedForeground }]}>Ekadashi</ThemedText>
             </View>
           </View>
         </View>

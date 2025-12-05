@@ -1,11 +1,12 @@
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NextEkadashiCard from "../components/NextEkadashiCard";
 import PanchangCard from "../components/PanchangCard";
 import SplitCard from "../components/SplitCard";
+import { ThemedText } from "../components/ThemedText";
 import { dw } from "../constants/Dimensions";
 import { logo } from "../constants/Images";
 import { useTheme } from "../context/ThemeContext";
@@ -24,8 +25,8 @@ const HomeScreen = () => {
           <View style={styles.headerLeft}>
             <Image resizeMode="contain" source={logo} style={[styles.logo, { backgroundColor: colors.card }]} />
             <View style={styles.titleContainer}>
-              <Text style={[styles.title, { color: colors.foreground }]}>Ekadashi Din</Text>
-              <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>Sacred Fasting Calendar</Text>
+              <ThemedText type="subtitle" style={[styles.title, { color: colors.foreground }]}>Ekadashi Din</ThemedText>
+              <ThemedText type="small" style={[styles.subtitle, { color: colors.mutedForeground }]}>Sacred Fasting Calendar</ThemedText>
             </View>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Notification')} style={[styles.notificationButton, { backgroundColor: colors.card }]}>
@@ -36,12 +37,12 @@ const HomeScreen = () => {
 
         {/* Decorative Diya Section with Hindi Text */}
         <View style={[styles.diyaSection, { backgroundColor: colors.lightBlueBg }]}>
-          <Text style={styles.diyaIcon}>🪔</Text>
+          <ThemedText style={styles.diyaIcon}>🪔</ThemedText>
           <View style={styles.mantraContainer}>
-            <Text style={[styles.mantraText, { color: colors.primary }]}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे</Text>
-            <Text style={[styles.mantraText, { color: colors.primary }]}>हरे राम हरे राम राम राम हरे हरे</Text>
+            <ThemedText type="devanagariSemiBold" style={[styles.mantraText, { color: colors.primary }]}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे</ThemedText>
+            <ThemedText type="devanagariSemiBold" style={[styles.mantraText, { color: colors.primary }]}>हरे राम हरे राम राम राम हरे हरे</ThemedText>
           </View>
-          <Text style={styles.diyaIcon}>🪔</Text>
+          <ThemedText style={styles.diyaIcon}>🪔</ThemedText>
         </View>
 
         <StatusBar style={isDark ? "light" : "auto"} backgroundColor={colors.background} />
