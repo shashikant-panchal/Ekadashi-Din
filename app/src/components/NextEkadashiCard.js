@@ -273,20 +273,20 @@ const getStyles = (colors, isDark) => StyleSheet.create({
     overflow: "hidden",
   },
   nextCardContent: {
-    padding: 24,
+    padding: 16,
     backgroundColor: colors.card,
   },
   nextHeaderText: {
     fontSize: 14,
     color: colors.mutedForeground,
     letterSpacing: 1.5,
-    marginBottom: 20,
+    marginBottom: 12,
   },
   nameAndDateRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 28,
+    marginBottom: 16,
   },
   nameSection: {
     flexDirection: "row",
@@ -309,20 +309,20 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   countdownContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 28,
+    marginBottom: 16,
     gap: 12,
   },
   countdownBox: {
     flex: 1,
     backgroundColor: colors.muted,
     borderRadius: 16,
-    paddingVertical: 20,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 4,
     alignItems: "center",
     justifyContent: "center",
   },
   countdownNumber: {
-    fontSize: 32,
+    fontSize: 24,
     color: colors.foreground,
     marginBottom: 4,
   },
@@ -333,7 +333,7 @@ const getStyles = (colors, isDark) => StyleSheet.create({
   viewDetailsButton: {
     backgroundColor: colors.primary,
     borderRadius: 16,
-    paddingVertical: 16,
+    paddingVertical: 12,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
