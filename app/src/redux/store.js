@@ -11,7 +11,7 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            serializableCheck: false, // Potentially needed for Supabase session objects
+            serializableCheck: false,
         }),
 });
 

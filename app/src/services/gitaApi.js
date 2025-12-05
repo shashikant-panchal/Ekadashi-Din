@@ -169,7 +169,6 @@ export const fetchSingleVerse = async (chapter, verse) => {
         console.log('Failed to fetch single verse');
     }
 
-    // Return from famous verses if available
     if (famousVerses[chapter]?.[verse]) {
         return { chapter, verse, ...famousVerses[chapter][verse] };
     }

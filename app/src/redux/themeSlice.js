@@ -4,7 +4,6 @@ import { Appearance } from 'react-native';
 
 const THEME_STORAGE_KEY = 'ekadashi-theme';
 
-// Async thunk to load theme from AsyncStorage
 export const loadTheme = createAsyncThunk(
     'theme/loadTheme',
     async () => {
@@ -13,7 +12,6 @@ export const loadTheme = createAsyncThunk(
             if (savedTheme) {
                 return savedTheme;
             }
-            // Default to system preference
             return 'system';
         } catch (error) {
             console.error('Error loading theme:', error);
@@ -22,7 +20,6 @@ export const loadTheme = createAsyncThunk(
     }
 );
 
-// Async thunk to save theme to AsyncStorage
 export const saveTheme = createAsyncThunk(
     'theme/saveTheme',
     async (theme, { dispatch }) => {
@@ -36,7 +33,6 @@ export const saveTheme = createAsyncThunk(
     }
 );
 
-// Helper to get resolved theme (converts 'system' to actual theme)
 const getResolvedTheme = (theme) => {
     if (theme === 'system') {
         const colorScheme = Appearance.getColorScheme();
@@ -48,8 +44,8 @@ const getResolvedTheme = (theme) => {
 const themeSlice = createSlice({
     name: 'theme',
     initialState: {
-        theme: 'light', // 'light' | 'dark' | 'system'
-        resolvedTheme: 'light', // The actual applied theme ('light' | 'dark')
+        theme: 'light',
+        resolvedTheme: 'light',
         loading: true,
     },
     reducers: {
@@ -63,7 +59,6 @@ const themeSlice = createSlice({
             state.resolvedTheme = newTheme;
         },
         updateSystemTheme: (state) => {
-            // Called when system theme changes (only affects if theme is 'system')
             if (state.theme === 'system') {
                 state.resolvedTheme = getResolvedTheme('system');
             }

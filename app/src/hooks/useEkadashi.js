@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { getNextEkadashi, getEkadashiList } from '../services/api';
 import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { getEkadashiList, getNextEkadashi } from '../services/api';
 
 export const useNextEkadashi = () => {
   const [nextEkadashi, setNextEkadashi] = useState(null);
@@ -11,7 +11,7 @@ export const useNextEkadashi = () => {
     const fetchNextEkadashi = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         const data = await getNextEkadashi();
         setNextEkadashi(data);
@@ -24,10 +24,9 @@ export const useNextEkadashi = () => {
     };
 
     fetchNextEkadashi();
-    
-    // Refresh data every hour
+
     const interval = setInterval(fetchNextEkadashi, 60 * 60 * 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -43,13 +42,11 @@ export const useEkadashiList = (year = null) => {
     const fetchEkadashiList = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
-        // Use provided year or current year
         const yearToFetch = year || moment().year();
         const data = await getEkadashiList(yearToFetch);
-        
-        // Handle both array response and object with ekadashis property
+
         const ekadashis = Array.isArray(data) ? data : (data.ekadashis || data.data || []);
         setEkadashiList(ekadashis);
       } catch (err) {
@@ -61,8 +58,8 @@ export const useEkadashiList = (year = null) => {
     };
 
     fetchEkadashiList();
-    
-    return () => {};
+
+    return () => { };
   }, [year]);
 
   return { ekadashiList, loading, error };

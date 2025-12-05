@@ -13,11 +13,9 @@ export const detectLocation = createAsyncThunk(
             const location = await Location.getCurrentPositionAsync({});
             const { latitude, longitude } = location.coords;
 
-            // Reverse Geocoding
             let city = 'Unknown';
             let country = 'Unknown';
 
-            // Use expo-location reverseGeocodeAsync (preferred for RN over OSM API)
             const address = await Location.reverseGeocodeAsync({ latitude, longitude });
 
             if (address && address.length > 0) {
@@ -54,7 +52,6 @@ const locationSlice = createSlice({
             state.autoDetect = action.payload;
         },
         setManualLocation: (state, action) => {
-            // Future use for manual selection
             const { latitude, longitude, city, country } = action.payload;
             state.latitude = latitude;
             state.longitude = longitude;
@@ -78,7 +75,7 @@ const locationSlice = createSlice({
             .addCase(detectLocation.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                state.autoDetect = false; // Turn off if failed
+                state.autoDetect = false;
             });
     },
 });

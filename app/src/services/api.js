@@ -11,13 +11,11 @@ const PANCHANG_API_URL =
 
 export const getPanchangData = async (date = null) => {
   try {
-    // Use new Supabase API endpoint
     const requestData = {
       latitude: 19.076,
       longitude: 72.8777,
     };
 
-    // Add date if provided
     if (date) {
       requestData.date = date;
     }
@@ -30,7 +28,6 @@ export const getPanchangData = async (date = null) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching panchang data:", error);
-    // Return fallback data structure if API fails
     const fallbackDate = date ? moment(date) : moment();
     return {
       tithi: "Ekadashi",
@@ -56,22 +53,18 @@ export const getEkadashiList = async (year) => {
     });
     return response.data;
   } catch (error) {
-    // If API fails, use static data
     console.log("API unavailable, using static data for Ekadashi list");
 
-    // Use static data for the requested year
     const ekadashiList = getEkadashiListFromStaticData(year);
 
     if (ekadashiList.length > 0) {
       return ekadashiList;
     }
 
-    // If no data for requested year, throw error
     throw new Error(`No Ekadashi data available for year ${year}`);
   }
 };
 
-// Convert static Ekadashi data to API format
 const getEkadashiListFromStaticData = (year) => {
   if (year === 2025) {
     return EKADASHI_CALENDAR_2025.map((ekadashi) => ({
@@ -98,9 +91,7 @@ export const getNextEkadashi = async () => {
     const today = moment();
     const ekadashiDate = moment(data.date || data.ekadashi_date);
 
-    // If the API returns today's Ekadashi, find the next one after today
     if (ekadashiDate.isSame(today, "day")) {
-      // Find the next Ekadashi after today
       const currentYear = moment().year();
       const ekadashiList = getEkadashiListFromStaticData(currentYear);
       const nextEkadashi = ekadashiList.find((e) => {
@@ -112,7 +103,6 @@ export const getNextEkadashi = async () => {
         return nextEkadashi;
       }
 
-      // Check next year
       const nextYearList = getEkadashiListFromStaticData(currentYear + 1);
       if (nextYearList.length > 0) {
         return nextYearList[0];
@@ -121,14 +111,12 @@ export const getNextEkadashi = async () => {
 
     return data;
   } catch (error) {
-    // If API fails, calculate next Ekadashi from static data
     console.log("API unavailable, using static data for next Ekadashi");
 
     const currentYear = moment().year();
     const ekadashiList = getEkadashiListFromStaticData(currentYear);
     const today = moment();
 
-    // Find next ekadashi AFTER today (exclude today)
     const nextEkadashi = ekadashiList.find((e) => {
       const ekadashiDate = moment(e.date);
       return ekadashiDate.isAfter(today, "day");
@@ -138,18 +126,15 @@ export const getNextEkadashi = async () => {
       return nextEkadashi;
     }
 
-    // If none found in current year, check next year
     const nextYearList = getEkadashiListFromStaticData(currentYear + 1);
     if (nextYearList.length > 0) {
       return nextYearList[0];
     }
 
-    // If still no ekadashi found, throw error
     throw new Error("No upcoming Ekadashi found");
   }
 };
 
-// Helper function to get today's Ekadashi if it exists
 export const getTodayEkadashi = async () => {
   try {
     const currentYear = moment().year();

@@ -2,14 +2,12 @@ import { createContext, useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { DarkTheme, LightTheme } from '../constants/Colors';
 
-// Create the Theme Context
 const ThemeContext = createContext({
     colors: LightTheme,
     isDark: false,
     theme: 'light',
 });
 
-// Theme Provider Component
 export const ThemeProvider = ({ children }) => {
     const { resolvedTheme, theme } = useSelector((state) => state.theme);
 
@@ -26,7 +24,6 @@ export const ThemeProvider = ({ children }) => {
     );
 };
 
-// Custom hook to use theme
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (context === undefined) {

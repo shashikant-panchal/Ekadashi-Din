@@ -3,7 +3,7 @@ import { ActivityIndicator, Appearance, StatusBar, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
-import "./src/i18n"; // Import i18n configuration
+import "./src/i18n";
 import BottomTab from "./src/navigation/bottomnavigation/BottomTab";
 import { store } from "./src/redux/store";
 import { loadTheme, updateSystemTheme } from "./src/redux/themeSlice";
@@ -19,10 +19,8 @@ function Root() {
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
-    // Load theme from AsyncStorage on app start
     dispatch(loadTheme());
 
-    // Listen for system theme changes
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       dispatch(updateSystemTheme());
     });
@@ -31,13 +29,11 @@ function Root() {
   }, [dispatch]);
 
   useEffect(() => {
-    // Check initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       dispatch(setSession(session));
       setIsAuthChecked(true);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
