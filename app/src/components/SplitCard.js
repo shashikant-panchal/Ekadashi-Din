@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
         flex: 1,
         borderWidth: 0.5,
         elevation: 2,
-        borderRadius: 7,
+        borderRadius: 10,
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 10
+        margin: 15
     },
     iconBackground: {
         borderRadius: 10,
