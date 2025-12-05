@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -8,10 +9,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { useDispatch, useSelector } from "react-redux";
 import { DarkBlue, LIGHTBLUEBG } from "../constants/Colors";
+import { clearError, resetRegistrationSuccess, signIn, signUp } from "../redux/userSlice";
 
 const { width } = Dimensions.get("window");
 
@@ -21,6 +25,56 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const dispatch = useDispatch();
+  const { loading, error, registrationSuccess } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Authentication Error',
+        text2: error,
+      });
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  useEffect(() => {
+    if (registrationSuccess) {
+      Toast.show({
+        type: 'success',
+        text1: 'Registration Successful',
+        text2: 'Welcome! You are now logged in.',
+      });
+      dispatch(resetRegistrationSuccess());
+    }
+  }, [registrationSuccess, dispatch]);
+
+  const handleSignIn = () => {
+    if (!email || !password) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Fields',
+        text2: 'Please enter both email and password.',
+      });
+      return;
+    }
+    dispatch(signIn({ email, password }));
+  };
+
+  const handleSignUp = () => {
+    if (!email || !password) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Fields',
+        text2: 'Please enter email and password.',
+      });
+      return;
+    }
+    dispatch(signUp({ email, password, displayName }));
+  };
+
 
   const renderSignIn = () => (
     <>
@@ -76,14 +130,20 @@ export default function Login() {
           <Text style={styles.forgotPassword}>Forgot password?</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.signInButton}>
-        <Text style={styles.signInButtonText}>Sign In</Text>
-        <Feather
-          name="arrow-right"
-          size={20}
-          color="#fff"
-          style={{ marginLeft: 10 }}
-        />
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <>
+            <Text style={styles.signInButtonText}>Sign In</Text>
+            <Feather
+              name="arrow-right"
+              size={20}
+              color="#fff"
+              style={{ marginLeft: 10 }}
+            />
+          </>
+        )}
       </TouchableOpacity>
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />
@@ -163,14 +223,20 @@ export default function Login() {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={styles.signInButton}>
-        <Feather
-          name="user-plus"
-          size={20}
-          color="#fff"
-          style={{ marginRight: 10 }}
-        />
-        <Text style={styles.signInButtonText}>Create Account</Text>
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignUp} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <>
+            <Feather
+              name="user-plus"
+              size={20}
+              color="#fff"
+              style={{ marginRight: 10 }}
+            />
+            <Text style={styles.signInButtonText}>Create Account</Text>
+          </>
+        )}
       </TouchableOpacity>
       <View style={styles.dividerContainer}>
         <View style={styles.dividerLine} />

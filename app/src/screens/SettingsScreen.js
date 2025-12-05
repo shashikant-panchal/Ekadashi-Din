@@ -19,12 +19,14 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
 import {
   AppYellow,
   BackgroundGrey,
   DarkBlue,
   LightBlue,
 } from "../constants/Colors";
+import { signOut } from "../redux/userSlice";
 // Assume DarkBlue and LightBlue are defined in constants/Colors
 
 const { width, height } = Dimensions.get("window");
@@ -107,6 +109,7 @@ const LanguageModal = ({
 };
 
 const SettingsScreen = () => {
+  const dispatch = useDispatch();
   const [autoDetect, setAutoDetect] = useState(false);
   const [ekadashiReminder, setEkadashiReminder] = useState(true);
   const [morningReminder, setMorningReminder] = useState(true);
@@ -366,7 +369,7 @@ const SettingsScreen = () => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.logoutBtn}>
+          <TouchableOpacity style={styles.logoutBtn} onPress={() => dispatch(signOut())}>
             <Ionicons name="log-out-outline" size={18} color="#fff" />
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
