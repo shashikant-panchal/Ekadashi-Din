@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { Provider, useDispatch, useSelector } from "react-redux";
+import "./src/i18n"; // Import i18n configuration
 import BottomTab from "./src/navigation/bottomnavigation/BottomTab";
 import { store } from "./src/redux/store";
 import { setSession } from "./src/redux/userSlice";

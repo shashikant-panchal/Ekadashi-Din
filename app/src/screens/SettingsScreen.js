@@ -7,6 +7,7 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dimensions, // <-- Import Modal
   FlatList,
@@ -24,7 +25,7 @@ import {
   AppYellow,
   BackgroundGrey,
   DarkBlue,
-  LightBlue,
+  LightBlue
 } from "../constants/Colors";
 import { detectLocation, setAutoDetect } from "../redux/locationSlice";
 import { signOut } from "../redux/userSlice";
@@ -49,12 +50,14 @@ const LanguageModal = ({
   setModalVisible,
   selectedLanguage,
   setSelectedLanguage,
+  i18n, // Receive i18n as prop
 }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={modalStyles.listItem}
       onPress={() => {
         setSelectedLanguage(item.name);
+        i18n.changeLanguage(item.key); // Change global language
         setModalVisible(false);
       }}
     >
@@ -110,6 +113,7 @@ const LanguageModal = ({
 };
 
 const SettingsScreen = () => {
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const { city, country, autoDetect, loading } = useSelector((state) => state.location);
 
@@ -128,31 +132,31 @@ const SettingsScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8FAFC" }}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         {/* Header */}
-        <Text style={styles.header}>Settings</Text>
-        <Text style={styles.subHeader}>Customize your experience</Text>
+        <Text style={styles.header}>{t('settings.title')}</Text>
+        <Text style={styles.subHeader}>{t('settings.subtitle')}</Text>
         <View style={styles.divider} />
 
         {/* LOCATION */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Ionicons name="location-outline" size={18} color={DarkBlue} />
-            <Text style={styles.sectionTitle}>Location</Text>
+            <Text style={styles.sectionTitle}>{t('settings.location.title')}</Text>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Current Location</Text>
-              <Text style={styles.subLabel}>{loading ? "Detecting..." : (city ? `${city}, ${country}` : "Not detected")}</Text>
+              <Text style={styles.label}>{t('settings.location.current')}</Text>
+              <Text style={styles.subLabel}>{loading ? t('settings.location.detecting') : (city ? `${city}, ${country}` : t('settings.location.detected').replace('detected', 'Not detected'))}</Text>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
-              <Text style={styles.smallBtnText}>Change</Text>
+              <Text style={styles.smallBtnText}>{t('common.change')}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Auto-detect Location</Text>
-              <Text style={styles.subLabel}>Use GPS for accurate timings</Text>
+              <Text style={styles.label}>{t('settings.location.autoDetect')}</Text>
+              <Text style={styles.subLabel}>{t('settings.location.autoDetectDesc')}</Text>
             </View>
             <Switch
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
@@ -172,7 +176,7 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <FontAwesome5 name="language" size={16} color={DarkBlue} />
-            <Text style={styles.sectionTitle}>Language</Text>
+            <Text style={styles.sectionTitle}>{t('settings.language.title')}</Text>
           </View>
 
           <View
@@ -188,7 +192,7 @@ const SettingsScreen = () => {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Feather name="globe" size={20} color="black" />
               <View style={{ marginHorizontal: 10 }}>
-                <Text style={styles.label}>App Language</Text>
+                <Text style={styles.label}>{t('settings.language.appLanguage')}</Text>
                 <Text style={styles.subLabel}>{selectedLanguage}</Text>
               </View>
             </View>
@@ -214,19 +218,19 @@ const SettingsScreen = () => {
           setModalVisible={setLanguageModalVisible}
           selectedLanguage={selectedLanguage}
           setSelectedLanguage={setSelectedLanguage}
+          i18n={i18n} // Pass i18n instance
         />
-
         {/* NOTIFICATIONS */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Ionicons name="notifications-outline" size={18} color={DarkBlue} />
-            <Text style={styles.sectionTitle}>Notifications</Text>
+            <Text style={styles.sectionTitle}>{t('settings.notifications.title')}</Text>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Ekadashi Reminders</Text>
-              <Text style={styles.subLabel}>Day before notification</Text>
+              <Text style={styles.label}>{t('settings.notifications.ekadashiReminders')}</Text>
+              <Text style={styles.subLabel}>{t('settings.notifications.ekadashiRemindersDesc')}</Text>
             </View>
             <Switch
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
@@ -238,8 +242,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Morning Reminders</Text>
-              <Text style={styles.subLabel}>Fasting start notification</Text>
+              <Text style={styles.label}>{t('settings.notifications.morningReminders')}</Text>
+              <Text style={styles.subLabel}>{t('settings.notifications.morningRemindersDesc')}</Text>
             </View>
             <Switch
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
@@ -251,8 +255,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Parana Reminders</Text>
-              <Text style={styles.subLabel}>Fast breaking time</Text>
+              <Text style={styles.label}>{t('settings.notifications.paranaReminders')}</Text>
+              <Text style={styles.subLabel}>{t('settings.notifications.paranaRemindersDesc')}</Text>
             </View>
             <Switch
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
@@ -264,8 +268,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Notification Time</Text>
-              <Text style={styles.subLabel}>Daily reminder time</Text>
+              <Text style={styles.label}>{t('settings.notifications.notificationTime')}</Text>
+              <Text style={styles.subLabel}>{t('settings.notifications.dailyReminderTime')}</Text>
             </View>
             <TouchableOpacity style={styles.timeBtn}>
               <Ionicons name="time-outline" size={16} color={DarkBlue} />
@@ -278,13 +282,13 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Feather name="eye" size={18} color={DarkBlue} />
-            <Text style={styles.sectionTitle}>Display</Text>
+            <Text style={styles.sectionTitle}>{t('settings.display.title')}</Text>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Dark Mode</Text>
-              <Text style={styles.subLabel}>Easier on the eyes</Text>
+              <Text style={styles.label}>{t('settings.display.darkMode')}</Text>
+              <Text style={styles.subLabel}>{t('settings.display.darkModeDesc')}</Text>
             </View>
             <Switch
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
@@ -296,8 +300,8 @@ const SettingsScreen = () => {
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Large Text</Text>
-              <Text style={styles.subLabel}>Improve readability</Text>
+              <Text style={styles.label}>{t('settings.display.largeText')}</Text>
+              <Text style={styles.subLabel}>{t('settings.display.largeTextDesc')}</Text>
             </View>
             <Switch
               trackColor={{ false: "#E5E7EB", true: DarkBlue }}
@@ -312,26 +316,26 @@ const SettingsScreen = () => {
         <View style={[styles.card]}>
           <View style={styles.sectionHeader}>
             <Ionicons name="calendar-outline" size={18} color={AppYellow} />
-            <Text style={[styles.sectionTitle]}>Calendar Integration</Text>
+            <Text style={[styles.sectionTitle]}>{t('settings.calendar.title')}</Text>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Sync with Google Calendar</Text>
-              <Text style={styles.subLabel}>Add Ekadashi events</Text>
+              <Text style={styles.label}>{t('settings.calendar.syncGoogle')}</Text>
+              <Text style={styles.subLabel}>{t('settings.calendar.syncGoogleDesc')}</Text>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
-              <Text style={styles.smallBtnText}>Connect</Text>
+              <Text style={styles.smallBtnText}>{t('common.connect')}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.rowBetween}>
             <View>
-              <Text style={styles.label}>Export to iCal</Text>
-              <Text style={styles.subLabel}>Download calendar file</Text>
+              <Text style={styles.label}>{t('settings.calendar.exportICal')}</Text>
+              <Text style={styles.subLabel}>{t('settings.calendar.exportICalDesc')}</Text>
             </View>
             <TouchableOpacity style={styles.smallBtn}>
-              <Text style={styles.smallBtnText}>Export</Text>
+              <Text style={styles.smallBtnText}>{t('common.export')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -340,23 +344,23 @@ const SettingsScreen = () => {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Feather name="info" size={18} color={DarkBlue} />
-            <Text style={styles.sectionTitle}>App Information</Text>
+            <Text style={styles.sectionTitle}>{t('settings.appInfo.title')}</Text>
           </View>
 
           <View style={styles.rowBetween}>
-            <Text style={styles.label}>Version</Text>
+            <Text style={styles.label}>{t('settings.appInfo.version')}</Text>
             <Text style={[styles.subLabel, { color: DarkBlue }]}>1.0.0</Text>
           </View>
 
           <View style={styles.rowBetween}>
-            <Text style={styles.label}>Last Updated</Text>
+            <Text style={styles.label}>{t('settings.appInfo.lastUpdated')}</Text>
             <Text style={[styles.subLabel, { color: DarkBlue }]}>
               Jan 25, 2025
             </Text>
           </View>
 
           <TouchableOpacity style={styles.updateBtn}>
-            <Text style={styles.updateText}>Check for Updates</Text>
+            <Text style={styles.updateText}>{t('settings.appInfo.checkUpdates')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -364,22 +368,22 @@ const SettingsScreen = () => {
         <View style={[styles.card]}>
           <View style={styles.sectionHeader}>
             <Entypo name="heart-outlined" size={20} color={AppYellow} />
-            <Text style={[styles.sectionTitle]}>Support</Text>
+            <Text style={[styles.sectionTitle]}>{t('settings.support.title')}</Text>
           </View>
 
           <TouchableOpacity style={styles.coffeeBtn}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <SimpleLineIcons name="cup" size={17} color="black" />
-              <Text style={styles.coffeeText}>Coffee for Designer</Text>
+              <Text style={styles.coffeeText}>{t('settings.support.coffeeDesigner')}</Text>
             </View>
             <View style={styles.thankTag}>
-              <Text style={styles.thankText}>☕ Thank you!</Text>
+              <Text style={styles.thankText}>☕ {t('settings.support.thankYou')}</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutBtn} onPress={() => dispatch(signOut())}>
             <Ionicons name="log-out-outline" size={18} color="#fff" />
-            <Text style={styles.logoutText}>Logout</Text>
+            <Text style={styles.logoutText}>{t('settings.support.logout')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
