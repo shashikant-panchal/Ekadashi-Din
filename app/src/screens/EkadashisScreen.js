@@ -75,8 +75,13 @@ const EkadashiScreen = ({ navigation }) => {
   const { ekadashiList, loading: listLoading, error: listError } = useEkadashiList(currentYear);
   const { nextEkadashi, loading: nextLoading } = useNextEkadashi();
 
-  const handleMonthPress = (month) => {
-    navigation.navigate('CalendarMonth')
+  const handleMonthPress = (month, index) => {
+    // Create a moment object for the selected month in the current year
+    const selectedMonth = moment().month(index).year(currentYear);
+    navigation.navigate('CalendarMonth', {
+      month: selectedMonth.format('YYYY-MM'),
+      monthName: month
+    });
   };
 
   // Group ekadashis by month
@@ -202,7 +207,7 @@ const EkadashiScreen = ({ navigation }) => {
               month={item.month}
               ekadashis={item.ekadashis}
               isUpcoming={item.isUpcoming}
-              onPress={() => handleMonthPress(item.month)}
+              onPress={() => handleMonthPress(item.month, index)}
             />
           ))}
         </View>
