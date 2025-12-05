@@ -1,4 +1,4 @@
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   Dimensions,
@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { DarkBlue, LIGHTBLUEBG } from "../constants/Colors";
 
 const { width } = Dimensions.get("window");
 
@@ -67,7 +68,7 @@ export default function Login() {
       <View style={styles.passwordOptions}>
         <View style={styles.checkboxContainer}>
           <TouchableOpacity style={styles.checkbox}>
-            <Feather name="square" size={18} color="#ccc" />
+            {/* <Feather name="check" size={14} color={DarkBlue} /> */}
           </TouchableOpacity>
           <Text style={styles.checkboxLabel}>Remember me</Text>
         </View>
@@ -77,10 +78,25 @@ export default function Login() {
       </View>
       <TouchableOpacity style={styles.signInButton}>
         <Text style={styles.signInButtonText}>Sign In</Text>
+        <Feather
+          name="arrow-right"
+          size={20}
+          color="#fff"
+          style={{ marginLeft: 10 }}
+        />
       </TouchableOpacity>
-      <Text style={styles.orText}>OR CONTINUE WITH</Text>
+      <View style={styles.dividerContainer}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.orText}>OR CONTINUE WITH</Text>
+        <View style={styles.dividerLine} />
+      </View>
       <TouchableOpacity style={styles.googleButton}>
-        <AntDesign name="google" size={20} color="#333" style={styles.icon} />
+        <Image
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
+          }}
+          style={styles.googleIcon}
+        />
         <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
       <TouchableOpacity>
@@ -101,7 +117,6 @@ export default function Login() {
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Display Name</Text>
         <View style={styles.inputWrapper}>
-          <Feather name="user" size={18} color="#777" style={styles.icon} />
           <TextInput
             style={styles.textInput}
             placeholder="Enter your display name"
@@ -149,11 +164,26 @@ export default function Login() {
         </View>
       </View>
       <TouchableOpacity style={styles.signInButton}>
+        <Feather
+          name="user-plus"
+          size={20}
+          color="#fff"
+          style={{ marginRight: 10 }}
+        />
         <Text style={styles.signInButtonText}>Create Account</Text>
       </TouchableOpacity>
-      <Text style={styles.orText}>OR CONTINUE WITH</Text>
+      <View style={styles.dividerContainer}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.orText}>OR CONTINUE WITH</Text>
+        <View style={styles.dividerLine} />
+      </View>
       <TouchableOpacity style={styles.googleButton}>
-        <AntDesign name="google" size={20} color="#333" style={styles.icon} />
+        <Image
+          source={{
+            uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png",
+          }}
+          style={styles.googleIcon}
+        />
         <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
       <TouchableOpacity>
@@ -171,10 +201,9 @@ export default function Login() {
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.logoContainer}>
             <Image
-              source={{
-                uri: "https://placehold.co/100x100/544974/ffffff?text=Icon",
-              }}
+              source={require("../assets/images/logo.png")}
               style={styles.logo}
+              resizeMode="contain"
             />
           </View>
           <Text style={styles.title}>Ekadashi Din</Text>
@@ -185,7 +214,7 @@ export default function Login() {
             <View style={styles.tabContainer}>
               <TouchableOpacity
                 onPress={() => setActiveTab("signIn")}
-                style={styles.tab}
+                style={[styles.tab, activeTab === "signIn" && styles.activeTab]}
               >
                 <Text
                   style={
@@ -199,7 +228,7 @@ export default function Login() {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setActiveTab("signUp")}
-                style={styles.tab}
+                style={[styles.tab, activeTab === "signUp" && styles.activeTab]}
               >
                 <Text
                   style={
@@ -229,98 +258,111 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
   },
   logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#544974",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: LIGHTBLUEBG,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 40,
+    height: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
+    color: DarkBlue,
+    marginBottom: 10,
   },
   subtitle: {
-    fontSize: 14,
-    color: "#777",
+    fontSize: 16,
+    color: "#4A6583", // A nice blue-grey
     textAlign: "center",
     marginBottom: 30,
     paddingHorizontal: 20,
+    lineHeight: 22,
   },
   card: {
     width: width * 0.9,
     backgroundColor: "#fff",
-    borderRadius: 20,
+    borderRadius: 16,
     padding: 20,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    // elevation: 2,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.05,
+    // shadowRadius: 4,
   },
   tabContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 10,
+    justifyContent: "center",
+    marginBottom: 20,
+    borderBottomWidth: 0,
   },
   tab: {
     paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  activeTab: {
+    borderBottomColor: DarkBlue,
   },
   tabText: {
     fontSize: 16,
     color: "#777",
+    fontWeight: "500",
   },
   activeTabText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#544974",
+    color: DarkBlue,
   },
   formTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
-    color: "#333",
+    color: DarkBlue,
     textAlign: "center",
     marginBottom: 5,
   },
   formSubtitle: {
     fontSize: 14,
-    color: "#777",
+    color: "#4A6583",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   inputContainer: {
     marginBottom: 15,
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
+    fontWeight: "600",
+    color: DarkBlue,
+    marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    borderColor: "#eee",
+    borderColor: "#E0E0E0",
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 15,
+    backgroundColor: "#F9FAFB",
   },
   icon: {
     marginRight: 10,
   },
   textInput: {
     flex: 1,
-    height: 45,
+    height: 50,
     fontSize: 16,
     color: "#333",
   },
@@ -337,12 +379,12 @@ const styles = StyleSheet.create({
   checkbox: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
-    width: 20,
-    height: 20,
+    borderRadius: 4,
+    width: 18,
+    height: 18,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 5,
+    marginRight: 8,
   },
   checkboxLabel: {
     fontSize: 14,
@@ -350,13 +392,15 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     fontSize: 14,
-    color: "#544974",
-    textDecorationLine: "underline",
+    color: DarkBlue,
+    fontWeight: "600",
   },
   signInButton: {
-    backgroundColor: "#544974",
-    borderRadius: 10,
-    paddingVertical: 15,
+    backgroundColor: DarkBlue,
+    borderRadius: 8,
+    paddingVertical: 14,
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
   },
@@ -365,39 +409,52 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
   },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#E0E0E0",
+  },
   orText: {
     textAlign: "center",
-    color: "#777",
-    marginBottom: 20,
+    color: "#999",
+    marginHorizontal: 10,
+    fontSize: 12,
+    fontWeight: "600",
   },
   googleButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#fff",
-    borderColor: "#eee",
+    borderColor: "#E0E0E0",
     borderWidth: 1,
-    borderRadius: 10,
-    paddingVertical: 15,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginBottom: 25,
+  },
+  googleIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
   googleButtonText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "#333",
   },
   privacyText: {
     fontSize: 12,
     color: "#777",
     textAlign: "center",
+    lineHeight: 18,
   },
   privacyLink: {
-    color: "#544974",
-    textDecorationLine: "underline",
+    color: DarkBlue,
+    fontWeight: "600",
   },
 });
