@@ -1,11 +1,14 @@
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { getPanchangData } from "../services/api";
 
 export const usePanchang = (date = null) => {
   const [panchangData, setPanchangData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const location = useSelector((state) => state.location);
 
   const fetchPanchangData = useCallback(async () => {
     setLoading(true);
@@ -16,7 +19,11 @@ export const usePanchang = (date = null) => {
         ? moment(date).format("YYYY-MM-DD")
         : moment().format("YYYY-MM-DD");
 
-      const data = await getPanchangData(dateString);
+      const locationData = location?.latitude && location?.longitude
+        ? { latitude: location.latitude, longitude: location.longitude }
+        : null;
+
+      const data = await getPanchangData(dateString, locationData);
       if (data) {
         setPanchangData(data);
       } else {
@@ -28,7 +35,7 @@ export const usePanchang = (date = null) => {
     } finally {
       setLoading(false);
     }
-  }, [date]);
+  }, [date, location?.latitude, location?.longitude]);
 
   useEffect(() => {
     fetchPanchangData();

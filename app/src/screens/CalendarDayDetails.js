@@ -263,6 +263,9 @@ const CalendarDayDetails = ({ navigation, route }) => {
     const [ekadashi, setEkadashi] = useState(null);
     const [panchangData, setPanchangData] = useState(null);
 
+    // Get location from Redux store
+    const location = useSelector((state) => state.location);
+
     const ekadashiFromRoute = route?.params?.ekadashi;
     const ekadashiDate = route?.params?.date ? moment(route.params.date) : moment();
     const currentYear = moment().year();
@@ -286,14 +289,18 @@ const CalendarDayDetails = ({ navigation, route }) => {
         const fetchPanchang = async () => {
             try {
                 const { getPanchangData } = require('../services/api');
-                const data = await getPanchangData(ekadashiDate.format('YYYY-MM-DD'));
+                // Pass location to getPanchangData if available
+                const locationData = location?.latitude && location?.longitude
+                    ? { latitude: location.latitude, longitude: location.longitude }
+                    : null;
+                const data = await getPanchangData(ekadashiDate.format('YYYY-MM-DD'), locationData);
                 setPanchangData(data);
             } catch (error) {
                 console.error('Error fetching panchang:', error);
             }
         };
         fetchPanchang();
-    }, [ekadashiDate]);
+    }, [ekadashiDate, location?.latitude, location?.longitude]);
 
     const handleBhajanPress = (bhajan) => {
         setActiveBhajan(bhajan);

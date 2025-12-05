@@ -9,11 +9,14 @@ const BASE_URL = "https://panchang-api.herokuapp.com/api/v1";
 const PANCHANG_API_URL =
   "https://giocigrgpwdcaajrxvrf.supabase.co/functions/v1/get-panchang";
 
-export const getPanchangData = async (date = null) => {
+export const getPanchangData = async (date = null, location = null) => {
   try {
+    const latitude = location?.latitude ?? 19.076;
+    const longitude = location?.longitude ?? 72.8777;
+
     const requestData = {
-      latitude: 19.076,
-      longitude: 72.8777,
+      latitude,
+      longitude,
     };
 
     if (date) {
