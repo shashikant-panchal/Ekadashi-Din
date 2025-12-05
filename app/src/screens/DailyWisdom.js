@@ -19,39 +19,48 @@ import {
   LightBlue,
   LIGHTBLUEBG,
 } from "../constants/Colors";
-import { getTimeBasedWisdom, getTodaysWisdom } from "../data/dailyWisdomData";
+import { dailyWisdoms, getTimeBasedWisdom, getTodaysWisdom } from "../data/dailyWisdomData";
 
 const DailyWisdom = ({ navigation }) => {
   const [currentWisdom, setCurrentWisdom] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [timeOfDay, setTimeOfDay] = useState("morning");
-  const [wisdom, setWisdom] = useState(null);
+  const [wisdom, setWisdom] = useState(dailyWisdoms[0]);
   const [reflectionText, setReflectionText] = useState("");
 
   useEffect(() => {
     // Determine time of day
     const hour = new Date().getHours();
+    let currentTimeOfDay = "morning";
     if (hour < 12) {
-      setTimeOfDay("morning");
+      currentTimeOfDay = "morning";
     } else if (hour < 18) {
-      setTimeOfDay("afternoon");
+      currentTimeOfDay = "afternoon";
     } else {
-      setTimeOfDay("evening");
+      currentTimeOfDay = "evening";
+    }
+    setTimeOfDay(currentTimeOfDay);
+
+    // Get today's wisdom to show initially (consistent with web)
+    const todaysWisdom = getTodaysWisdom();
+    const todayIndex = dailyWisdoms.findIndex(
+      w => w.sanskrit === todaysWisdom.sanskrit
+    );
+    if (todayIndex !== -1) {
+      setCurrentWisdom(todayIndex);
+      setWisdom(todaysWisdom);
     }
 
-    // Get today's wisdom
-    const todaysWisdom = getTodaysWisdom();
-    setWisdom(todaysWisdom);
-
-    // Get time-based reflection
-    const reflection = getTimeBasedWisdom(timeOfDay);
+    // Get time-based reflection using current time
+    const reflection = getTimeBasedWisdom(currentTimeOfDay);
     setReflectionText(reflection);
   }, []);
 
   const nextWisdom = () => {
-    const todaysWisdom = getTodaysWisdom();
-    setCurrentWisdom((prev) => (prev + 1) % 3);
-    setWisdom(todaysWisdom);
+    // Cycle through the dailyWisdoms array
+    const nextIndex = (currentWisdom + 1) % dailyWisdoms.length;
+    setCurrentWisdom(nextIndex);
+    setWisdom(dailyWisdoms[nextIndex]);
     setIsLiked(false);
   };
 

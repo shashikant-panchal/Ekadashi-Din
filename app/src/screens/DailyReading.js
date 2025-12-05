@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+    ActivityIndicator,
     Platform,
     ScrollView,
     StyleSheet,
@@ -11,8 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSelector } from 'react-redux';
 import { AppYellow, DarkBlue, LightBlue, LIGHTBLUEBG } from '../constants/Colors';
-import { bhagavadGitaChapters, getTodaysVerse } from '../data/bhagavadGitaData';
+import { bhagavadGitaChapters } from '../data/bhagavadGitaData';
+import * as ReadingService from '../services/readingProgress';
 
 // Reusable component for the Chapter List Item
 const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress }) => (
@@ -34,25 +37,70 @@ const ChapterListItem = ({ chapterNumber, title, verseCount, progress, onPress }
 
 
 const DailyReading = ({ navigation }) => {
+    const user = useSelector((state) => state.user.user);
     const [todaysVerse, setTodaysVerse] = useState(null);
-    const [chaptersCompleted, setChaptersCompleted] = useState(0);
-    const [totalVersesRead, setTotalVersesRead] = useState(0);
+    const [chapterProgress, setChapterProgress] = useState([]);
+    const [stats, setStats] = useState({
+        totalVersesRead: 0,
+        chaptersCompleted: 0,
+        currentStreak: 0,
+        averageReadingTime: 0
+    });
+    const [loading, setLoading] = useState(true);
+
+    const loadReadingData = async () => {
+        if (!user?.id) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            setLoading(true);
+            // Use the service's getTodaysVerse function for consistency
+            const verse = ReadingService.getTodaysVerse();
+            setTodaysVerse(verse);
+
+            // Fetch reading progress from Supabase
+            const progressData = await ReadingService.fetchReadingProgress(user.id);
+
+            // Calculate chapter progress
+            const chapters = ReadingService.calculateChapterProgress(progressData);
+            setChapterProgress(chapters);
+
+            // Calculate stats
+            const calculatedStats = ReadingService.calculateReadingStats(progressData, chapters);
+            setStats(calculatedStats);
+        } catch (error) {
+            console.error('Error loading reading data:', error);
+            // Use default values on error
+            const verse = ReadingService.getTodaysVerse();
+            setTodaysVerse(verse);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        // Get today's verse dynamically
-        const verse = getTodaysVerse();
-        setTodaysVerse(verse);
-
-        // Calculate progress from chapters (in a real app, this would come from API/database)
-        const completed = bhagavadGitaChapters.filter(ch => ch.completed).length;
-        setChaptersCompleted(completed);
-
-        // Calculate total verses read (placeholder - would come from API in real app)
-        setTotalVersesRead(1);
-    }, []);
+        loadReadingData();
+    }, [user?.id]);
 
     const totalChapters = bhagavadGitaChapters.length;
-    const studyProgress = totalChapters > 0 ? chaptersCompleted / totalChapters : 0;
+    const studyProgress = totalChapters > 0 ? stats.chaptersCompleted / totalChapters : 0;
+
+    const handleMarkAsRead = async () => {
+        if (!user?.id || !verse) {
+            console.warn('No user logged in or no verse selected');
+            return;
+        }
+
+        try {
+            await ReadingService.markVerseComplete(user.id, verse.chapter, verse.verse);
+            // Refresh data after marking as read
+            await loadReadingData();
+        } catch (error) {
+            console.error('Error marking verse as read:', error);
+        }
+    };
 
     // Use today's verse or fallback
     const verse = todaysVerse || {
@@ -69,6 +117,17 @@ const DailyReading = ({ navigation }) => {
     const englishMeaning = verse.translation;
     const significance = verse.purport || "This famous verse explains the purpose of divine incarnation - to restore dharma when it declines.";
 
+
+    if (loading && !todaysVerse) {
+        return (
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={DarkBlue} />
+                    <Text style={styles.loadingText}>Loading reading progress...</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -101,7 +160,7 @@ const DailyReading = ({ navigation }) => {
                 <View style={styles.progressCard}>
                     <View style={styles.progressHeader}>
                         <Text style={styles.progressTitle}>Study Progress</Text>
-                        <Text style={styles.progressCounter}>{chaptersCompleted}/{totalChapters} chapters</Text>
+                        <Text style={styles.progressCounter}>{stats.chaptersCompleted}/{totalChapters} chapters</Text>
                     </View>
 
                     {/* Progress Bar */}
@@ -111,12 +170,12 @@ const DailyReading = ({ navigation }) => {
 
                     <View style={styles.progressStats}>
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>0</Text>
+                            <Text style={styles.statValue}>{stats.chaptersCompleted}</Text>
                             <Text style={styles.statLabel}>Completed</Text>
                         </View>
                         <View style={styles.statDivider} />
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>1</Text>
+                            <Text style={styles.statValue}>{stats.currentStreak}</Text>
                             <Text style={styles.statLabel}>Days streak</Text>
                         </View>
                     </View>
@@ -142,7 +201,7 @@ const DailyReading = ({ navigation }) => {
                         {significance.replace("Significance: ", "")}
                     </Text>
 
-                    <TouchableOpacity style={styles.markAsReadButton}>
+                    <TouchableOpacity style={styles.markAsReadButton} onPress={handleMarkAsRead} disabled={loading}>
                         <Text style={styles.markAsReadButtonText}>Mark as Read</Text>
                     </TouchableOpacity>
                 </View>
@@ -152,14 +211,20 @@ const DailyReading = ({ navigation }) => {
                     <Text style={styles.chapterSectionTitle}>Bhagavad Gita Chapters</Text>
 
 
-                    {bhagavadGitaChapters.map(chapter => (
+                    {(chapterProgress.length > 0 ? chapterProgress : bhagavadGitaChapters.map((ch, i) => ({
+                        chapter: ch.id,
+                        title: ch.englishName,
+                        totalVerses: ch.verseCount,
+                        completedVerses: 0,
+                        isCompleted: false
+                    }))).map(chapter => (
                         <ChapterListItem
-                            key={chapter.id}
-                            chapterNumber={chapter.id}
-                            title={chapter.englishName}
-                            verseCount={chapter.verseCount}
-                            progress={chapter.completed ? chapter.verseCount : 0}
-                            onPress={() => console.log(`Navigating to Chapter ${chapter.id}`)}
+                            key={chapter.chapter}
+                            chapterNumber={chapter.chapter}
+                            title={chapter.title}
+                            verseCount={chapter.totalVerses}
+                            progress={chapter.completedVerses}
+                            onPress={() => console.log(`Navigating to Chapter ${chapter.chapter}`)}
                         />
                     ))}
 
@@ -169,12 +234,12 @@ const DailyReading = ({ navigation }) => {
                 <View style={styles.footerMetricsContainer}>
                     <View style={styles.footerMetricCard}>
                         <MaterialCommunityIcons name="clock-outline" size={32} color={AppYellow} />
-                        <Text style={styles.footerMetricValue}>0</Text>
+                        <Text style={styles.footerMetricValue}>{stats.averageReadingTime}</Text>
                         <Text style={styles.footerMetricLabel}>Avg minutes</Text>
                     </View>
                     <View style={styles.footerMetricCard}>
                         <Ionicons name="book-outline" size={32} color={DarkBlue} />
-                        <Text style={styles.footerMetricValue}>{totalVersesRead}</Text>
+                        <Text style={styles.footerMetricValue}>{stats.totalVersesRead}</Text>
                         <Text style={styles.footerMetricLabel}>Verses read</Text>
                     </View>
                 </View>
@@ -418,7 +483,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: LightBlue,
         textAlign: 'center',
-    }
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: LightBlue,
+    },
 });
 
 // Styles specifically for the Chapter List Items

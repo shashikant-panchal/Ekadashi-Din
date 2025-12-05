@@ -1,6 +1,7 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
+    ActivityIndicator,
     Platform,
     ProgressBarAndroid,
     ScrollView,
@@ -11,11 +12,22 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 import { DarkBlue, LightBlue } from '../constants/Colors';
 import { mantrasList } from '../data/bhajansData';
+import * as JapaService from '../services/japaSessions';
 
 const MorningJapaScreen = ({ navigation }) => {
-    const [roundsCompleted, setRoundsCompleted] = useState(0);
+    const user = useSelector((state) => state.user.user);
+    const [todaySession, setTodaySession] = useState(null);
+    const [stats, setStats] = useState({
+        totalRounds: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        averageRounds: 0,
+        totalSessions: 0
+    });
+    const [loading, setLoading] = useState(true);
     const totalRounds = 16;
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
@@ -40,25 +52,111 @@ const MorningJapaScreen = ({ navigation }) => {
         return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     };
 
-    const handleStartStopJapa = () => {
+    const handleStartStopJapa = async () => {
+        if (!user?.id) {
+            console.warn('No user logged in');
+            return;
+        }
+
+        if (!isRunning && !todaySession?.start_time) {
+            // Start a new session
+            try {
+                const session = await JapaService.startSession(user.id);
+                setTodaySession(session);
+            } catch (error) {
+                console.error('Error starting session:', error);
+            }
+        }
         setIsRunning(!isRunning);
     };
 
-    const handleCompleteRound = () => {
-        if (roundsCompleted < totalRounds) {
-            setRoundsCompleted(prev => prev + 1);
-            setIsRunning(false);
-            setTime(0);
+    const handleCompleteRound = async () => {
+        if (!user?.id) {
+            console.warn('No user logged in');
+            return;
+        }
+
+        const currentRounds = todaySession?.completed_rounds || 0;
+        if (currentRounds < totalRounds) {
+            try {
+                const updatedSession = await JapaService.completeRound(user.id);
+                setTodaySession(updatedSession);
+                // Refresh stats
+                await loadSessionData();
+            } catch (error) {
+                console.error('Error completing round:', error);
+            }
         }
     };
 
-    const handleResetSession = () => {
-        setRoundsCompleted(0);
-        setTime(0);
-        setIsRunning(false);
+    const handleResetSession = async () => {
+        if (!user?.id) {
+            console.warn('No user logged in');
+            return;
+        }
+
+        try {
+            const resetSession = await JapaService.resetSession(user.id);
+            setTodaySession(resetSession);
+            setTime(0);
+            setIsRunning(false);
+            // Refresh stats
+            await loadSessionData();
+        } catch (error) {
+            console.error('Error resetting session:', error);
+        }
     };
 
+    const loadSessionData = async () => {
+        if (!user?.id) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            setLoading(true);
+            // Fetch today's session
+            const session = await JapaService.fetchTodaySession(user.id);
+            setTodaySession(session);
+
+            // Fetch recent sessions for stats
+            const sessions = await JapaService.fetchRecentSessions(user.id);
+            const calculatedStats = JapaService.calculateStats(sessions);
+            setStats(calculatedStats);
+        } catch (error) {
+            console.error('Error loading session data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load session data on mount
+    useEffect(() => {
+        loadSessionData();
+    }, [user?.id]);
+
+    // Set time from existing session
+    useEffect(() => {
+        if (todaySession?.start_time && !todaySession.end_time) {
+            const startTime = new Date(todaySession.start_time);
+            const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+            setTime(elapsed);
+        }
+    }, [todaySession]);
+
+    const roundsCompleted = todaySession?.completed_rounds || 0;
     const progress = roundsCompleted / totalRounds;
+
+    if (loading && !todaySession) {
+        return (
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={DarkBlue} />
+                    <Text style={styles.loadingText}>Loading session...</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -103,12 +201,12 @@ const MorningJapaScreen = ({ navigation }) => {
 
                     <View style={styles.progressStats}>
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>0</Text>
+                            <Text style={styles.statValue}>{stats.currentStreak}</Text>
                             <Text style={styles.statLabel}>Days streak</Text>
                         </View>
                         <View style={styles.statDivider} />
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>0</Text>
+                            <Text style={styles.statValue}>{stats.totalRounds}</Text>
                             <Text style={styles.statLabel}>Total rounds</Text>
                         </View>
                     </View>
@@ -154,8 +252,8 @@ const MorningJapaScreen = ({ navigation }) => {
 
                 <TouchableOpacity
                     style={[styles.bottomActionButton, styles.resetButton]}
-                    onPress={handleCompleteRound}
-                    disabled={roundsCompleted >= totalRounds}
+                    onPress={handleResetSession}
+                    disabled={loading}
                 >
                     <AntDesign name="reload" size={20} color={'#fff'} />
                     <Text style={styles.resetButtontext}>Reset Session </Text>
@@ -469,7 +567,17 @@ const styles = StyleSheet.create({
         color: LightBlue,
         fontSize: 14,
         fontWeight: '700'
-    }
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: LightBlue,
+    },
 });
 
 export default MorningJapaScreen;
