@@ -11,14 +11,15 @@ const ThemeContext = createContext({
 });
 
 export const ThemeProvider = ({ children }) => {
-    const { resolvedTheme, theme } = useSelector((state) => state.theme);
+    const { resolvedTheme, theme, isLargeText } = useSelector((state) => state.theme);
 
     const value = useMemo(() => ({
         colors: resolvedTheme === 'dark' ? DarkTheme : LightTheme,
         isDark: resolvedTheme === 'dark',
         theme: theme,
+        isLargeText: isLargeText,
         typography: Typography,
-    }), [resolvedTheme, theme]);
+    }), [resolvedTheme, theme, isLargeText]);
 
     return (
         <ThemeContext.Provider value={value}>

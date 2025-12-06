@@ -19,11 +19,12 @@ import {
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WebView } from 'react-native-webview';
 import { useDispatch, useSelector } from "react-redux";
 import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
 import { detectLocation, setAutoDetect } from "../redux/locationSlice";
-import { saveTheme, toggleTheme } from "../redux/themeSlice";
+import { saveTextSize, saveTheme, toggleLargeText, toggleTheme } from "../redux/themeSlice";
 import { signOut } from "../redux/userSlice";
 
 const { width, height } = Dimensions.get("window");
@@ -114,12 +115,14 @@ const SettingsScreen = () => {
   const dispatch = useDispatch();
   const { colors, isDark } = useTheme();
   const { city, country, autoDetect, loading } = useSelector((state) => state.location);
-  const { resolvedTheme } = useSelector((state) => state.theme);
+  const { resolvedTheme, isLargeText } = useSelector((state) => state.theme);
 
   const [ekadashiReminder, setEkadashiReminder] = useState(true);
   const [morningReminder, setMorningReminder] = useState(true);
   const [paranaReminder, setParanaReminder] = useState(true);
-  const [largeText, setLargeText] = useState(false);
+
+  // Feedback State
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
 
   // New State for Language Dropdown
   const [selectedLanguage, setSelectedLanguage] = useState("English");
@@ -128,6 +131,18 @@ const SettingsScreen = () => {
   const handleToggleDarkMode = () => {
     dispatch(toggleTheme());
     dispatch(saveTheme(resolvedTheme === 'dark' ? 'light' : 'dark'));
+  };
+
+  // Coffee State
+  const [coffeeModalVisible, setCoffeeModalVisible] = useState(false);
+
+  const handleToggleLargeText = (value) => {
+    dispatch(toggleLargeText());
+    dispatch(saveTextSize(value));
+  }
+
+  const handleCoffee = () => {
+    setCoffeeModalVisible(true);
   };
 
   const styles = getStyles(colors, dw, dh);
@@ -152,7 +167,10 @@ const SettingsScreen = () => {
               <ThemedText style={styles.label}>{t('settings.location.current')}</ThemedText>
               <ThemedText type="small" style={styles.subLabel}>{loading ? t('settings.location.detecting') : (city ? `${city}, ${country}` : t('settings.location.detected').replace('detected', 'Not detected'))}</ThemedText>
             </View>
-            <TouchableOpacity style={styles.smallBtn}>
+            <TouchableOpacity
+              style={styles.smallBtn}
+              onPress={() => dispatch(detectLocation())}
+            >
               <ThemedText type="small" style={styles.smallBtnText}>{t('common.change')}</ThemedText>
             </TouchableOpacity>
           </View>
@@ -311,8 +329,8 @@ const SettingsScreen = () => {
             <Switch
               trackColor={{ false: colors.muted, true: colors.primary }}
               thumbColor="#fff"
-              value={largeText}
-              onValueChange={setLargeText}
+              value={isLargeText}
+              onValueChange={handleToggleLargeText}
             />
           </View>
         </View>
@@ -369,6 +387,25 @@ const SettingsScreen = () => {
           </TouchableOpacity>
         </View>
 
+        {/* FEEDBACK */}
+        <View style={styles.card}>
+          <View style={styles.sectionHeader}>
+            <MaterialIcons name="feedback" size={18} color={colors.primary} />
+            <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>Feedback</ThemedText>
+          </View>
+
+          <ThemedText type="small" style={[styles.subLabel, { marginBottom: 15 }]}>
+            Help us improve by sharing your thoughts and suggestions.
+          </ThemedText>
+
+          <TouchableOpacity
+            style={styles.coffeeBtn}
+            onPress={() => setFeedbackModalVisible(true)}
+          >
+            <ThemedText type="defaultSemiBold" style={[styles.coffeeText, { marginHorizontal: 0, flex: 1, textAlign: 'center' }]}>Share Feedback</ThemedText>
+          </TouchableOpacity>
+        </View>
+
         {/* SUPPORT */}
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
@@ -376,7 +413,7 @@ const SettingsScreen = () => {
             <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>{t('settings.support.title')}</ThemedText>
           </View>
 
-          <TouchableOpacity style={styles.coffeeBtn}>
+          <TouchableOpacity style={styles.coffeeBtn} onPress={handleCoffee}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <SimpleLineIcons name="cup" size={17} color={colors.foreground} />
               <ThemedText type="small" style={styles.coffeeText}>{t('settings.support.coffeeDesigner')}</ThemedText>
@@ -392,6 +429,48 @@ const SettingsScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Feedback Modal */}
+      <Modal
+        animationType="slide"
+        presentationStyle="pageSheet"
+        visible={feedbackModalVisible}
+        onRequestClose={() => setFeedbackModalVisible(false)}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+          <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'flex-end', borderBottomWidth: 1, borderBottomColor: colors.border }}>
+            <TouchableOpacity onPress={() => setFeedbackModalVisible(false)} style={{ padding: 5 }}>
+              <Ionicons name="close" size={30} color={colors.foreground} />
+            </TouchableOpacity>
+          </View>
+          <WebView
+            source={{ uri: 'https://tally.so/r/MeeZOp' }}
+            style={{ flex: 1 }}
+            startInLoadingState={true}
+          />
+        </SafeAreaView>
+      </Modal>
+
+      {/* Coffee Modal */}
+      <Modal
+        animationType="slide"
+        presentationStyle="pageSheet"
+        visible={coffeeModalVisible}
+        onRequestClose={() => setCoffeeModalVisible(false)}
+      >
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+          <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'flex-end', borderBottomWidth: 1, borderBottomColor: colors.border }}>
+            <TouchableOpacity onPress={() => setCoffeeModalVisible(false)} style={{ padding: 5 }}>
+              <Ionicons name="close" size={30} color={colors.foreground} />
+            </TouchableOpacity>
+          </View>
+          <WebView
+            source={{ uri: 'https://buymeacoffee.com/designer' }}
+            style={{ flex: 1 }}
+            startInLoadingState={true}
+          />
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 };

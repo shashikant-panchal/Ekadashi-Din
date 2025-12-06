@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     },
     completeButton: {},
     resetButton: {
-        backgroundColor: '#EF4443'
+        backgroundColor: '#EF4443' // Keeping specific red for reset/destructive action
     },
     resetButtontext: {
         fontSize: 16,

@@ -7,7 +7,7 @@ export function ThemedText({
     color,
     ...rest
 }) {
-    const { colors, typography } = useTheme();
+    const { colors, typography, isLargeText } = useTheme();
 
     const getStyleParams = () => {
         switch (type) {
@@ -71,13 +71,16 @@ export function ThemedText({
 
     const { fontFamily, fontSize, lineHeight, color: defaultColor } = getStyleParams();
 
+    // Scale factor for generic large text support (approx 1.25x)
+    const scale = isLargeText ? 1.25 : 1;
+
     return (
         <Text
             style={[
                 {
                     fontFamily,
-                    fontSize,
-                    lineHeight,
+                    fontSize: fontSize * scale,
+                    lineHeight: lineHeight * scale,
                     color: color || defaultColor || colors.foreground,
                 },
                 style,

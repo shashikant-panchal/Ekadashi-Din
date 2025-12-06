@@ -3,19 +3,22 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native';
 
 const THEME_STORAGE_KEY = 'ekadashi-theme';
+const TEXT_SIZE_STORAGE_KEY = 'ekadashi-large-text';
 
 export const loadTheme = createAsyncThunk(
     'theme/loadTheme',
     async () => {
         try {
             const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-            if (savedTheme) {
-                return savedTheme;
-            }
-            return 'system';
+            const savedTextSize = await AsyncStorage.getItem(TEXT_SIZE_STORAGE_KEY);
+
+            return {
+                theme: savedTheme || 'system',
+                isLargeText: savedTextSize || 'false'
+            };
         } catch (error) {
             console.error('Error loading theme:', error);
-            return 'system';
+            return { theme: 'system', isLargeText: 'false' };
         }
     }
 );
@@ -28,6 +31,19 @@ export const saveTheme = createAsyncThunk(
             return theme;
         } catch (error) {
             console.error('Error saving theme:', error);
+            throw error;
+        }
+    }
+);
+
+export const saveTextSize = createAsyncThunk(
+    'theme/saveTextSize',
+    async (isLarge, { dispatch }) => {
+        try {
+            await AsyncStorage.setItem(TEXT_SIZE_STORAGE_KEY, String(isLarge));
+            return isLarge;
+        } catch (error) {
+            console.error('Error saving text size:', error);
             throw error;
         }
     }
@@ -46,6 +62,7 @@ const themeSlice = createSlice({
     initialState: {
         theme: 'light',
         resolvedTheme: 'light',
+        isLargeText: false,
         loading: true,
     },
     reducers: {
@@ -57,6 +74,9 @@ const themeSlice = createSlice({
             const newTheme = state.resolvedTheme === 'light' ? 'dark' : 'light';
             state.theme = newTheme;
             state.resolvedTheme = newTheme;
+        },
+        toggleLargeText: (state) => {
+            state.isLargeText = !state.isLargeText;
         },
         updateSystemTheme: (state) => {
             if (state.theme === 'system') {
@@ -70,8 +90,9 @@ const themeSlice = createSlice({
                 state.loading = true;
             })
             .addCase(loadTheme.fulfilled, (state, action) => {
-                state.theme = action.payload;
-                state.resolvedTheme = getResolvedTheme(action.payload);
+                state.theme = action.payload.theme;
+                state.isLargeText = action.payload.isLargeText === 'true';
+                state.resolvedTheme = getResolvedTheme(action.payload.theme);
                 state.loading = false;
             })
             .addCase(loadTheme.rejected, (state) => {
@@ -80,9 +101,12 @@ const themeSlice = createSlice({
             .addCase(saveTheme.fulfilled, (state, action) => {
                 state.theme = action.payload;
                 state.resolvedTheme = getResolvedTheme(action.payload);
+            })
+            .addCase(saveTextSize.fulfilled, (state, action) => {
+                state.isLargeText = action.payload;
             });
     },
 });
 
-export const { setTheme, toggleTheme, updateSystemTheme } = themeSlice.actions;
+export const { setTheme, toggleTheme, updateSystemTheme, toggleLargeText } = themeSlice.actions;
 export default themeSlice.reducer;
