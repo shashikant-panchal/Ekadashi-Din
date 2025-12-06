@@ -294,7 +294,7 @@ const getStyles = (colors, isDark) => StyleSheet.create({
     flex: 1,
   },
   moonIconSmall: {
-    fontSize: 28,
+    fontSize: 20,
     marginRight: 12,
   },
   nextEkadashiName: {

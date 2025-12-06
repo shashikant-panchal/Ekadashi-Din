@@ -37,12 +37,12 @@ const HomeScreen = () => {
 
         {/* Decorative Diya Section with Hindi Text */}
         <View style={[styles.diyaSection, { backgroundColor: colors.lightBlueBg }]}>
-          <ThemedText style={styles.diyaIcon}>🪔</ThemedText>
+          <ThemedText type="devanagari" style={styles.diyaIcon}>🪔</ThemedText>
           <View style={styles.mantraContainer}>
             <ThemedText type="devanagariSemiBold" style={[styles.mantraText, { color: colors.primary }]}>हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे</ThemedText>
             <ThemedText type="devanagariSemiBold" style={[styles.mantraText, { color: colors.primary }]}>हरे राम हरे राम राम राम हरे हरे</ThemedText>
           </View>
-          <ThemedText style={styles.diyaIcon}>🪔</ThemedText>
+          <ThemedText type="devanagari" style={styles.diyaIcon}>🪔</ThemedText>
         </View>
 
         <StatusBar style={isDark ? "light" : "auto"} backgroundColor={colors.background} />
@@ -152,7 +152,7 @@ const getStyles = (colors) => StyleSheet.create({
     borderRadius: 16,
   },
   diyaIcon: {
-    fontSize: 36,
+    fontSize: 30,
   },
   mantraContainer: {
     marginHorizontal: 20,
