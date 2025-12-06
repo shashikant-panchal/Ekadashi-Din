@@ -37,13 +37,13 @@ export function ThemedText({
                 };
             case 'small':
                 return {
-                    fontFamily: typography.family.sans,
+                    fontFamily: typography.family.sansSemiBold,
                     fontSize: 14,
                     lineHeight: 20,
                 };
             case 'caption':
                 return {
-                    fontFamily: typography.family.sans,
+                    fontFamily: typography.family.sansSemiBold,
                     fontSize: 12,
                     lineHeight: 16,
                 };
@@ -62,7 +62,7 @@ export function ThemedText({
                 }
             default:
                 return {
-                    fontFamily: typography.family.sans,
+                    fontFamily: typography.family.sansSemiBold,
                     fontSize: 16,
                     lineHeight: 24,
                 };
