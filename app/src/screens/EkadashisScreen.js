@@ -23,15 +23,19 @@ const relativeHeight = (percentage) => WINDOW_HEIGHT * (percentage / 100);
 const EkadashiScreen = ({ navigation }) => {
   const { colors, isDark } = useTheme();
   const currentYear = moment().year();
-  const { ekadashiList, loading: listLoading, error: listError } = useEkadashiList(currentYear);
+  const {
+    ekadashiList,
+    loading: listLoading,
+    error: listError,
+  } = useEkadashiList(currentYear);
   const { nextEkadashi, loading: nextLoading } = useNextEkadashi();
-  const [viewMode, setViewMode] = useState('month'); // 'month' or 'all'
+  const [viewMode, setViewMode] = useState("month"); // 'month' or 'all'
 
   const handleMonthPress = (month, index) => {
     const selectedMonth = moment().month(index).year(currentYear);
-    navigation.navigate('CalendarMonth', {
-      month: selectedMonth.format('YYYY-MM'),
-      monthName: month
+    navigation.navigate("CalendarMonth", {
+      month: selectedMonth.format("YYYY-MM"),
+      monthName: month,
     });
   };
 
@@ -41,7 +45,7 @@ const EkadashiScreen = ({ navigation }) => {
     const grouped = {};
     ekadashiList.forEach((ekadashi) => {
       const date = moment(ekadashi.date || ekadashi.ekadashi_date);
-      const monthName = date.format('MMMM');
+      const monthName = date.format("MMMM");
 
       if (!grouped[monthName]) {
         grouped[monthName] = [];
@@ -52,7 +56,6 @@ const EkadashiScreen = ({ navigation }) => {
     return grouped;
   };
 
-
   const getMonthData = () => {
     const grouped = getEkadashisByMonth();
     const months = moment.months();
@@ -62,14 +65,19 @@ const EkadashiScreen = ({ navigation }) => {
       const monthEkadashis = grouped[month] || [];
       const monthDate = moment().month(index);
       // Logic for upcoming: If it's the current month or future month
-      const isUpcoming = monthDate.isAfter(today, 'month') || (monthDate.month() === today.month() && monthDate.year() === today.year());
+      const isUpcoming =
+        monthDate.isAfter(today, "month") ||
+        (monthDate.month() === today.month() &&
+          monthDate.year() === today.year());
 
       // Specifically check for December if needed, but generic logic holds
       return {
         month,
         ekadashis: monthEkadashis.length,
         isUpcoming,
-        isCurrent: monthDate.month() === today.month() && monthDate.year() === today.year()
+        isCurrent:
+          monthDate.month() === today.month() &&
+          monthDate.year() === today.year(),
       };
     });
   };
@@ -77,19 +85,19 @@ const EkadashiScreen = ({ navigation }) => {
   const totalEkadashis = ekadashiList ? ekadashiList.length : 0;
   const today = moment();
   const remainingEkadashis = ekadashiList
-    ? ekadashiList.filter(e => {
-      const date = moment(e.date || e.ekadashi_date);
-      return date.isAfter(today, 'day');
-    }).length
+    ? ekadashiList.filter((e) => {
+        const date = moment(e.date || e.ekadashi_date);
+        return date.isAfter(today, "day");
+      }).length
     : 0;
 
   const getNextEkadashiData = () => {
     if (!nextEkadashi) return null;
 
     const date = moment(nextEkadashi.date || nextEkadashi.ekadashi_date);
-    const month = date.format('MMM');
-    const day = date.format('D');
-    const year = date.format('YYYY');
+    const month = date.format("MMM");
+    const day = date.format("D");
+    const year = date.format("YYYY");
 
     const hinduMonth = nextEkadashi.month || month;
 
@@ -97,7 +105,10 @@ const EkadashiScreen = ({ navigation }) => {
       title: nextEkadashi.name || nextEkadashi.ekadashi_name || "Next Ekadashi",
       dateFormatted: `${day} ${month} ${year}`,
       hinduMonth: hinduMonth,
-      details: nextEkadashi.significance || nextEkadashi.description || "Makes all endeavors successful and fruitful..."
+      details:
+        nextEkadashi.significance ||
+        nextEkadashi.description ||
+        "Makes all endeavors successful and fruitful...",
     };
   };
 
@@ -110,36 +121,103 @@ const EkadashiScreen = ({ navigation }) => {
         style={[
           styles.monthCard,
           {
-            backgroundColor: isDark ? colors.card : '#F8FAFC',
-            borderColor: colors.border
-          }
+            backgroundColor: isDark ? colors.card : "#F8FAFC",
+            borderColor: colors.border,
+          },
         ]}
         onPress={onPress}
       >
-        <ThemedText type="defaultSemiBold" style={[styles.monthText, { color: colors.foreground }]}>{month}</ThemedText>
+        <ThemedText
+          type="defaultSemiBold"
+          style={[styles.monthText, { color: colors.foreground }]}
+        >
+          {month}
+        </ThemedText>
         <View style={styles.ekadashiCountContainer}>
-          <Feather name="clock" size={relativeWidth(3.5)} color={colors.primary} />
-          <ThemedText type="small" style={[styles.ekadashiCountText, { color: colors.primary }]}>{ekadashis} Ekadashis</ThemedText>
+          <Feather
+            name="clock"
+            size={relativeWidth(3.5)}
+            color={colors.primary}
+          />
+          <ThemedText
+            type="small"
+            style={[styles.ekadashiCountText, { color: colors.primary }]}
+          >
+            {ekadashis} Ekadashis
+          </ThemedText>
         </View>
         {isUpcoming && (
-          <View style={[styles.upcomingBadge, { backgroundColor: isDark ? colors.secondary : '#FACC15' }]}>
-            <ThemedText type="caption" style={[styles.upcomingBadgeText, { color: isDark ? colors.secondaryForeground : '#422006' }]}>Upcoming</ThemedText>
+          <View
+            style={[
+              styles.upcomingBadge,
+              { backgroundColor: isDark ? colors.secondary : "#FACC15" },
+            ]}
+          >
+            <ThemedText
+              type="caption"
+              style={[
+                styles.upcomingBadgeText,
+                { color: isDark ? colors.secondaryForeground : "#422006" },
+              ]}
+            >
+              Upcoming
+            </ThemedText>
           </View>
         )}
       </TouchableOpacity>
     );
   };
 
-  const NextEkadashiCardSimple = ({ title, dateFormatted, hinduMonth, details }) => (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate('DayDetails')}>
-      <View style={[styles.nextEkadashiCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+  const NextEkadashiCardSimple = ({
+    title,
+    dateFormatted,
+    hinduMonth,
+    details,
+    ekadashi,
+  }) => (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        if (ekadashi) {
+          const ekadashiDate = ekadashi.date || ekadashi.ekadashi_date;
+          navigation.navigate("DayDetails", {
+            ekadashi: ekadashi,
+            date: moment(ekadashiDate).format("YYYY-MM-DD"),
+          });
+        }
+      }}
+    >
+      <View
+        style={[
+          styles.nextEkadashiCard,
+          { backgroundColor: colors.card, borderColor: colors.border },
+        ]}
+      >
         <View style={styles.nextEkadashiMoonContainer}>
           <Ionicons name="moon" size={relativeWidth(6)} color="#FFFFFF" />
         </View>
         <View style={styles.nextEkadashiContent}>
-          <ThemedText type="defaultSemiBold" style={[styles.nextEkadashiTitle, { color: colors.foreground }]}>{title}</ThemedText>
-          <ThemedText type="small" style={[styles.nextEkadashiDate, { color: colors.primary }]}>{dateFormatted} • {hinduMonth}</ThemedText>
-          <ThemedText numberOfLines={2} type="small" style={[styles.nextEkadashiDetails, { color: colors.mutedForeground }]}>{details}</ThemedText>
+          <ThemedText
+            type="defaultSemiBold"
+            style={[styles.nextEkadashiTitle, { color: colors.foreground }]}
+          >
+            {title}
+          </ThemedText>
+          <ThemedText
+            type="small"
+            style={[styles.nextEkadashiDate, { color: colors.primary }]}
+          >
+            {dateFormatted} • {hinduMonth}
+          </ThemedText>
+          <ThemedText
+            numberOfLines={2}
+            type="small"
+            style={[
+              styles.nextEkadashiDetails,
+              { color: colors.mutedForeground },
+            ]}
+          >
+            {details}
+          </ThemedText>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -147,8 +225,12 @@ const EkadashiScreen = ({ navigation }) => {
 
   if (listLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
@@ -156,103 +238,185 @@ const EkadashiScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
       >
         <View style={styles.screenHeader}>
-          <ThemedText style={[styles.mainTitle, { color: colors.foreground }]}>Ekadashi Calendar {currentYear}</ThemedText>
-          <ThemedText style={[styles.subtitle, { color: colors.mutedForeground }]}>
+          <ThemedText style={[styles.mainTitle, { color: colors.foreground }]}>
+            Ekadashi Calendar {currentYear}
+          </ThemedText>
+          <ThemedText
+            style={[styles.subtitle, { color: colors.mutedForeground }]}
+          >
             Complete spiritual calendar for the year
           </ThemedText>
-          <View style={[styles.subtitleUnderline, { backgroundColor: colors.mutedForeground }]} />
+          <View
+            style={[
+              styles.subtitleUnderline,
+              { backgroundColor: colors.mutedForeground },
+            ]}
+          />
         </View>
 
         {/* Stats Section */}
         <View style={styles.statsContainer}>
-          <View style={[
-            styles.statCard,
-            {
-              backgroundColor: isDark ? colors.card : '#F3E8FF',
-              borderWidth: isDark ? 1 : 0,
-              borderColor: colors.border
-            }
-          ]}>
-            <ThemedText style={[styles.statNumber, { color: isDark ? colors.primary : '#7E22CE' }]}>{totalEkadashis}</ThemedText>
-            <ThemedText style={[styles.statLabel, { color: isDark ? colors.primary : '#7E22CE' }]}>TOTAL EKADASHIS</ThemedText>
+          <View
+            style={[
+              styles.statCard,
+              {
+                backgroundColor: isDark ? colors.card : "#F3E8FF",
+                borderWidth: isDark ? 1 : 0,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <ThemedText
+              style={[
+                styles.statNumber,
+                { color: isDark ? colors.primary : "#7E22CE" },
+              ]}
+            >
+              {totalEkadashis}
+            </ThemedText>
+            <ThemedText
+              style={[
+                styles.statLabel,
+                { color: isDark ? colors.primary : "#7E22CE" },
+              ]}
+            >
+              TOTAL EKADASHIS
+            </ThemedText>
           </View>
-          <View style={[
-            styles.statCard,
-            {
-              backgroundColor: isDark ? colors.card : '#FFEDD5',
-              borderWidth: isDark ? 1 : 0,
-              borderColor: colors.border
-            }
-          ]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-              <Feather name="star" size={24} color={isDark ? colors.secondary : '#C2410C'} style={{ marginRight: 6 }} />
-              <ThemedText style={[styles.statNumber, { color: isDark ? colors.secondary : '#C2410C' }]}>{remainingEkadashis}</ThemedText>
+          <View
+            style={[
+              styles.statCard,
+              {
+                backgroundColor: isDark ? colors.card : "#FFEDD5",
+                borderWidth: isDark ? 1 : 0,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Feather
+                name="star"
+                size={24}
+                color={isDark ? colors.secondary : "#C2410C"}
+                style={{ marginRight: 6 }}
+              />
+              <ThemedText
+                style={[
+                  styles.statNumber,
+                  { color: isDark ? colors.secondary : "#C2410C" },
+                ]}
+              >
+                {remainingEkadashis}
+              </ThemedText>
             </View>
-            <ThemedText style={[styles.statLabel, { color: isDark ? colors.secondary : '#C2410C' }]}>REMAINING</ThemedText>
+            <ThemedText
+              style={[
+                styles.statLabel,
+                { color: isDark ? colors.secondary : "#C2410C" },
+              ]}
+            >
+              REMAINING
+            </ThemedText>
           </View>
         </View>
 
         {/* Toggle View */}
         <View style={styles.toggleContainerWrapper}>
-          <View style={[
-            styles.toggleContainer,
-            {
-              backgroundColor: isDark ? colors.muted : '#F1F5F9',
-              borderColor: colors.border
-            }
-          ]}>
+          <View
+            style={[
+              styles.toggleContainer,
+              {
+                backgroundColor: isDark ? colors.muted : "#F1F5F9",
+                borderColor: colors.border,
+              },
+            ]}
+          >
             <TouchableOpacity
               style={[
                 styles.toggleButton,
-                viewMode === 'month' && {
-                  backgroundColor: isDark ? colors.card : '#FFFFFF',
-                  ...styles.toggleButtonActive
-                }
+                viewMode === "month" && {
+                  backgroundColor: isDark ? colors.card : "#FFFFFF",
+                  ...styles.toggleButtonActive,
+                },
               ]}
-              onPress={() => setViewMode('month')}
+              onPress={() => setViewMode("month")}
             >
               <Feather
                 name="calendar"
                 size={16}
-                color={viewMode === 'month' ? colors.foreground : colors.mutedForeground}
+                color={
+                  viewMode === "month"
+                    ? colors.foreground
+                    : colors.mutedForeground
+                }
                 style={{ marginRight: 8 }}
               />
-              <ThemedText style={[
-                styles.toggleText,
-                { color: viewMode === 'month' ? colors.foreground : colors.mutedForeground }
-              ]}>By Month</ThemedText>
+              <ThemedText
+                style={[
+                  styles.toggleText,
+                  {
+                    color:
+                      viewMode === "month"
+                        ? colors.foreground
+                        : colors.mutedForeground,
+                  },
+                ]}
+              >
+                By Month
+              </ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.toggleButton,
-                viewMode === 'all' && {
-                  backgroundColor: isDark ? colors.card : '#FFFFFF',
-                  ...styles.toggleButtonActive
-                }
+                viewMode === "all" && {
+                  backgroundColor: isDark ? colors.card : "#FFFFFF",
+                  ...styles.toggleButtonActive,
+                },
               ]}
-              onPress={() => setViewMode('all')}
+              onPress={() => setViewMode("all")}
             >
               <Feather
                 name="list"
                 size={16}
-                color={viewMode === 'all' ? colors.foreground : colors.mutedForeground}
+                color={
+                  viewMode === "all"
+                    ? colors.foreground
+                    : colors.mutedForeground
+                }
                 style={{ marginRight: 8 }}
               />
-              <ThemedText style={[
-                styles.toggleText,
-                { color: viewMode === 'all' ? colors.foreground : colors.mutedForeground }
-              ]}>All Ekadashis</ThemedText>
+              <ThemedText
+                style={[
+                  styles.toggleText,
+                  {
+                    color:
+                      viewMode === "all"
+                        ? colors.foreground
+                        : colors.mutedForeground,
+                  },
+                ]}
+              >
+                All Ekadashis
+              </ThemedText>
             </TouchableOpacity>
           </View>
         </View>
 
-        {viewMode === 'month' ? (
+        {viewMode === "month" ? (
           <View style={styles.monthGrid}>
             {monthData.map((item, index) => (
               <MonthCard
@@ -266,79 +430,147 @@ const EkadashiScreen = ({ navigation }) => {
           </View>
         ) : (
           <View style={styles.listContainer}>
-            {ekadashiList && ekadashiList.map((ekadashi, index) => {
-              const date = moment(ekadashi.date || ekadashi.ekadashi_date);
-              const isPast = date.isBefore(today, 'day');
-              const status = isPast ? 'Past' : 'Upcoming';
+            {ekadashiList &&
+              ekadashiList.map((ekadashi, index) => {
+                const date = moment(ekadashi.date || ekadashi.ekadashi_date);
+                const isPast = date.isBefore(today, "day");
+                const isToday = date.isSame(today, "day");
+                const status = isToday ? "Today" : isPast ? "Past" : "Upcoming";
 
-              return (
-                <View key={index} style={[
-                  styles.listCard,
-                  {
-                    backgroundColor: colors.card,
-                    borderColor: colors.border
-                  }
-                ]}>
-                  <View style={[styles.listMoonContainer, { backgroundColor: isDark ? colors.muted : '#475569' }]}>
-                    <Ionicons name="moon" size={relativeWidth(5)} color="#FFFFFF" style={{ opacity: 0.8 }} />
-                  </View>
-
-                  <View style={styles.listContent}>
-                    <ThemedText type="defaultSemiBold" style={[styles.listTitle, { color: colors.foreground }]}>
-                      {ekadashi.name || ekadashi.ekadashi_name}
-                    </ThemedText>
-                    <View style={styles.listDateRow}>
-                      <Feather name="calendar" size={12} color={colors.mutedForeground} style={{ marginRight: 4 }} />
-                      <ThemedText type="small" style={[styles.listDate, { color: colors.mutedForeground }]}>
-                        {date.format('D MMM YYYY')}
-                      </ThemedText>
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      const ekadashiDate =
+                        ekadashi.date || ekadashi.ekadashi_date;
+                      navigation.navigate("DayDetails", {
+                        ekadashi: ekadashi,
+                        date: moment(ekadashiDate).format("YYYY-MM-DD"),
+                      });
+                    }}
+                    style={[
+                      styles.listCard,
+                      {
+                        backgroundColor: colors.card,
+                        borderColor: colors.border,
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.listMoonContainer,
+                        { backgroundColor: isDark ? colors.muted : "#475569" },
+                      ]}
+                    >
+                      <Ionicons
+                        name="moon"
+                        size={relativeWidth(5)}
+                        color="#FFFFFF"
+                        style={{ opacity: 0.8 }}
+                      />
                     </View>
-                  </View>
 
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={[
-                      styles.statusBadge,
-                      status === 'Past'
-                        ? { backgroundColor: isDark ? colors.secondary : '#FDE047' }
-                        : { borderColor: colors.border, borderWidth: 1 },
-                    ]}>
-                      <ThemedText style={[
-                        styles.statusText,
-                        status === 'Past'
-                          ? { color: isDark ? colors.secondaryForeground : '#422006' }
-                          : { color: colors.foreground }
-                      ]}>
-                        {status}
+                    <View style={styles.listContent}>
+                      <ThemedText
+                        type="defaultSemiBold"
+                        style={[styles.listTitle, { color: colors.foreground }]}
+                      >
+                        {ekadashi.name || ekadashi.ekadashi_name}
                       </ThemedText>
+                      <View style={styles.listDateRow}>
+                        <Feather
+                          name="calendar"
+                          size={12}
+                          color={colors.mutedForeground}
+                          style={{ marginRight: 4 }}
+                        />
+                        <ThemedText
+                          type="small"
+                          style={[
+                            styles.listDate,
+                            { color: colors.mutedForeground },
+                          ]}
+                        >
+                          {date.format("D MMM YYYY")}
+                        </ThemedText>
+                      </View>
                     </View>
-                    <Feather name="chevron-right" size={16} color={colors.mutedForeground} style={{ marginLeft: 8 }} />
-                  </View>
-                </View>
-              );
-            })}
+
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          status === "Today"
+                            ? { backgroundColor: colors.primary }
+                            : status === "Past"
+                            ? {
+                                backgroundColor: isDark
+                                  ? colors.secondary
+                                  : "#FDE047",
+                              }
+                            : { borderColor: colors.border, borderWidth: 1 },
+                        ]}
+                      >
+                        <ThemedText
+                          style={[
+                            styles.statusText,
+                            status === "Today"
+                              ? { color: "#FFFFFF" }
+                              : status === "Past"
+                              ? {
+                                  color: isDark
+                                    ? colors.secondaryForeground
+                                    : "#422006",
+                                }
+                              : { color: colors.foreground },
+                          ]}
+                        >
+                          {status}
+                        </ThemedText>
+                      </View>
+                      <Feather
+                        name="chevron-right"
+                        size={16}
+                        color={colors.mutedForeground}
+                        style={{ marginLeft: 8 }}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
           </View>
         )}
 
-
-        {nextEkadashiData && (
+        {nextEkadashiData && nextEkadashi && (
           <View style={styles.nextEkadashiSection}>
-            <ThemedText type="subtitle" style={[styles.sectionTitle, { color: colors.foreground }]}>Next Ekadashi</ThemedText>
+            <ThemedText
+              type="subtitle"
+              style={[styles.sectionTitle, { color: colors.foreground }]}
+            >
+              Next Ekadashi
+            </ThemedText>
             <NextEkadashiCardSimple
               title={nextEkadashiData.title}
               dateFormatted={nextEkadashiData.dateFormatted}
               hinduMonth={nextEkadashiData.hinduMonth}
               details={nextEkadashiData.details}
+              ekadashi={nextEkadashi}
             />
           </View>
         )}
 
         {listError && (
-          <View style={{ padding: 20, alignItems: 'center' }}>
-            <ThemedText type="small" style={{ color: colors.destructive }}>{listError}</ThemedText>
+          <View style={{ padding: 20, alignItems: "center" }}>
+            <ThemedText type="small" style={{ color: colors.destructive }}>
+              {listError}
+            </ThemedText>
           </View>
         )}
       </ScrollView>
-    </SafeAreaView >
+    </SafeAreaView>
   );
 };
 
@@ -354,14 +586,14 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 28, // Larger for header
-    fontFamily: 'serif', // Serif font as requested
-    fontWeight: 'bold',
+    fontFamily: "serif", // Serif font as requested
+    fontWeight: "bold",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 16,
   },
   subtitleUnderline: {
@@ -399,26 +631,26 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
     letterSpacing: 0.5,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
 
   /* Toggle Refinement */
   toggleContainerWrapper: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   toggleContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 12,
     padding: 4,
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
   },
   toggleButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 10,
     borderRadius: 8,
   },
@@ -431,7 +663,7 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   /* Month Grid Refinement */
@@ -447,12 +679,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginBottom: 16,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   monthText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   ekadashiCountContainer: {
@@ -462,7 +694,7 @@ const styles = StyleSheet.create({
   ekadashiCountText: {
     fontSize: 13,
     marginLeft: 6,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   upcomingBadge: {
     marginTop: 12,
@@ -472,7 +704,7 @@ const styles = StyleSheet.create({
   },
   upcomingBadgeText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   /* List View Refinement */
@@ -480,8 +712,8 @@ const styles = StyleSheet.create({
     marginBottom: relativeHeight(2),
   },
   listCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderRadius: 16,
     padding: 16,
@@ -497,8 +729,8 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 16,
   },
   listContent: {
@@ -506,12 +738,12 @@ const styles = StyleSheet.create({
   },
   listTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
   },
   listDateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   listDate: {
     fontSize: 13,
@@ -520,13 +752,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 8,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   /* Next Ekadashi Refinement */
@@ -535,14 +767,14 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 16,
   },
   nextEkadashiCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 20,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
     // Shadow
     shadowColor: "#94A3B8",
@@ -554,10 +786,10 @@ const styles = StyleSheet.create({
   nextEkadashiMoonContainer: {
     width: 64,
     height: 64,
-    backgroundColor: '#000000', // Black as per image
+    backgroundColor: "#000000", // Black as per image
     borderRadius: 8, // Square with slight radius
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 20,
   },
   nextEkadashiContent: {
@@ -565,12 +797,12 @@ const styles = StyleSheet.create({
   },
   nextEkadashiTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 4,
   },
   nextEkadashiDate: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   nextEkadashiDetails: {

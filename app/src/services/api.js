@@ -91,6 +91,7 @@ const getEkadashiListFromStaticData = (year) => {
       paksha: ekadashi.paksha,
       month: ekadashi.month,
       significance: ekadashi.significance,
+      description: ekadashi.vrataKatha || ekadashi.significance, // Use vrataKatha as description for story
       fastingRules: ekadashi.fastingRules,
       benefits: ekadashi.benefits,
       moonPhase: ekadashi.moonPhase,

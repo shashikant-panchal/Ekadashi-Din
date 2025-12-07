@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import { getTodayEkadashi } from "../services/api";
 import { ThemedText } from "./ThemedText";
 
 const NextEkadashiCard = () => {
+  const navigation = useNavigation();
   const { colors, isDark } = useTheme();
   const { nextEkadashi, loading, error } = useNextEkadashi();
   const [todayEkadashi, setTodayEkadashi] = useState(null);
@@ -64,11 +66,27 @@ const NextEkadashiCard = () => {
   }, [nextEkadashi, todayEkadashi]);
 
   const handleBeginObservance = () => {
-    console.log("Begin Observance Pressed!");
+    const displayEkadashi = todayEkadashi || nextEkadashi;
+    if (displayEkadashi) {
+      const ekadashiDate =
+        displayEkadashi.date || displayEkadashi.ekadashi_date;
+      navigation.navigate("DayDetails", {
+        ekadashi: displayEkadashi,
+        date: moment(ekadashiDate).format("YYYY-MM-DD"),
+      });
+    }
   };
 
   const handleViewDetails = () => {
-    console.log("View Details Pressed!");
+    const displayEkadashi = todayEkadashi || nextEkadashi;
+    if (displayEkadashi) {
+      const ekadashiDate =
+        displayEkadashi.date || displayEkadashi.ekadashi_date;
+      navigation.navigate("DayDetails", {
+        ekadashi: displayEkadashi,
+        date: moment(ekadashiDate).format("YYYY-MM-DD"),
+      });
+    }
   };
 
   const displayEkadashi = todayEkadashi || nextEkadashi;
