@@ -118,6 +118,7 @@ const HomeScreen = () => {
             iconBackground={isDark ? colors.muted : "#FEFCEB"}
             title={"Calendar"}
             subTitle={"Monthly view"}
+            onPress={() => navigation.navigate("Calendar")}
           />
         </View>
 
@@ -129,6 +130,7 @@ const HomeScreen = () => {
           iconColor={colors.primary}
           title={"All Ekadashi"}
           subTitle={"Complete list"}
+          onPress={() => navigation.navigate("Ekadashis")}
         />
 
         {/* Today's Panchang Card */}
