@@ -411,11 +411,13 @@ const DailyReading = ({ navigation }) => {
                                 <ActivityIndicator size="large" color={colors.primary} />
                                 <ThemedText style={[mStyles.loadingText, { color: colors.mutedForeground }]}>Loading verses...</ThemedText>
                             </View>
-                        ) : currentModalVerse && (
+                        ) : currentModalVerse ? (
                             <>
                                 {/* Sanskrit Banner */}
                                 <View style={[mStyles.sanskritBanner, { backgroundColor: colors.primary }]}>
-                                    <ThemedText type="devanagari" style={mStyles.sanskritBannerText}>{currentModalVerse.sanskrit}</ThemedText>
+                                    <ThemedText type="devanagari" style={mStyles.sanskritBannerText}>
+                                        {currentModalVerse.sanskrit || currentModalVerse.text || currentModalVerse.slok || 'Loading...'}
+                                    </ThemedText>
                                 </View>
 
                                 {/* Verse Card */}
@@ -423,7 +425,9 @@ const DailyReading = ({ navigation }) => {
                                     <View style={mStyles.verseHeader}>
                                         <View style={mStyles.verseLabelContainer}>
                                             <Feather name="book-open" size={18} color={colors.primary} />
-                                            <ThemedText type="defaultSemiBold" style={[mStyles.verseLabel, { color: colors.foreground }]}>Verse {currentModalVerse.verse}</ThemedText>
+                                            <ThemedText type="defaultSemiBold" style={[mStyles.verseLabel, { color: colors.foreground }]}>
+                                                Verse {currentModalVerse.verse || currentModalVerse.verse_number || currentVerseIndex + 1}
+                                            </ThemedText>
                                         </View>
                                         <TouchableOpacity style={[mStyles.readBadge, { backgroundColor: colors.lightBlueBg }]} onPress={handleModalMarkAsRead}>
                                             <AntDesign name="check" size={14} color={colors.primary} />
@@ -432,21 +436,41 @@ const DailyReading = ({ navigation }) => {
                                     </View>
 
                                     <View style={[mStyles.verseContent, { backgroundColor: colors.lightBlueBg }]}>
-                                        <ThemedText type="devanagari" style={[mStyles.verseSanskrit, { color: colors.foreground }]}>{currentModalVerse.sanskrit}</ThemedText>
-                                        <ThemedText style={[mStyles.verseTransliteration, { color: colors.mutedForeground }]}>{currentModalVerse.transliteration}</ThemedText>
+                                        <ThemedText type="devanagari" style={[mStyles.verseSanskrit, { color: colors.foreground }]}>
+                                            {currentModalVerse.sanskrit || currentModalVerse.text || currentModalVerse.slok || 'Sanskrit text loading...'}
+                                        </ThemedText>
+                                        {(currentModalVerse.transliteration) ? (
+                                            <ThemedText style={[mStyles.verseTransliteration, { color: colors.mutedForeground }]}>
+                                                {currentModalVerse.transliteration}
+                                            </ThemedText>
+                                        ) : null}
                                     </View>
 
                                     <View style={mStyles.translationSection}>
                                         <ThemedText type="defaultSemiBold" style={[mStyles.translationLabel, { color: colors.foreground }]}>Translation</ThemedText>
-                                        <ThemedText style={[mStyles.translationText, { color: colors.mutedForeground }]}>{currentModalVerse.translation}</ThemedText>
+                                        <ThemedText style={[mStyles.translationText, { color: colors.mutedForeground }]}>
+                                            {currentModalVerse.translation || currentModalVerse.meaning || 'Translation loading...'}
+                                        </ThemedText>
                                     </View>
 
                                     <View style={[mStyles.significanceSection, { borderTopColor: colors.border }]}>
                                         <ThemedText type="defaultSemiBold" style={[mStyles.significanceLabel, { color: colors.foreground }]}>Significance</ThemedText>
-                                        <ThemedText style={[mStyles.significanceText, { color: colors.mutedForeground }]}>{currentModalVerse.significance}</ThemedText>
+                                        <ThemedText style={[mStyles.significanceText, { color: colors.mutedForeground }]}>
+                                            {currentModalVerse.significance || currentModalVerse.commentary || currentModalVerse.purport || 'Significance will be available soon'}
+                                        </ThemedText>
                                     </View>
                                 </View>
                             </>
+                        ) : (
+                            <View style={mStyles.loadingContainer}>
+                                <Ionicons name="book-outline" size={48} color={colors.mutedForeground} style={{ marginBottom: 16, opacity: 0.5 }} />
+                                <ThemedText style={[mStyles.loadingText, { color: colors.mutedForeground }]}>
+                                    {chapterVerses && chapterVerses.length === 0 ? 'No verses available for this chapter' : 'Unable to load verse data'}
+                                </ThemedText>
+                                <ThemedText style={[mStyles.loadingText, { color: colors.mutedForeground, fontSize: 12, marginTop: 8 }]}>
+                                    Please try again or check your connection
+                                </ThemedText>
+                            </View>
                         )}
                     </ScrollView>
 

@@ -27,18 +27,31 @@ export const getPanchangData = async (date = null, location = null) => {
       headers: {
         Authorization: `Bearer ${SUPABASE_KEY}`,
       },
+      timeout: 10000, // 10 second timeout
     });
-    return response.data;
+
+    if (response.data) {
+      return response.data;
+    }
+
+    throw new Error("No data received from API");
   } catch (error) {
     console.error("Error fetching panchang data:", error);
+
+    // Better fallback data matching web version format
     const fallbackDate = date ? moment(date) : moment();
+    const locationStr =
+      location?.latitude && location?.longitude
+        ? `${location.latitude.toFixed(2)}°, ${location.longitude.toFixed(2)}°`
+        : "Mumbai, India";
+
     return {
       tithi: "Ekadashi",
       sunrise: "06:09",
       sunset: "18:30",
       moonrise: "12:00",
       moonset: "00:00",
-      location: "Mumbai, India",
+      location: locationStr,
       nakshatra: "Rohini",
       yoga: "Vishkumbha",
       karana: "Bava",

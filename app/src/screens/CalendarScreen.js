@@ -85,10 +85,10 @@ const CalendarScreen = ({ navigation }) => {
   const ekadashiDates = useMemo(() => monthEkadashis.map(e => e.date.getDate().toString()), [monthEkadashis]);
 
   // Dynamic Festivals and Moon Phases
-  const festivals = useMemo(() => getFestivalsByMonth(currentMonth).sort((a, b) => a.date - b.date), [currentMonth]);
-  const festivalDates = useMemo(() => festivals.map(f => f.date.getDate().toString()), [festivals]);
+  const festivals = useMemo(() => getFestivalsByMonth(currentMonth, currentYear).sort((a, b) => a.date.getTime() - b.date.getTime()), [currentMonth, currentYear]);
+  const festivalDates = useMemo(() => festivals.map(f => new Date(f.date).getDate().toString()), [festivals]);
 
-  const moonPhases = useMemo(() => getMoonPhasesByMonth(currentMonth), [currentMonth]);
+  const moonPhases = useMemo(() => getMoonPhasesByMonth(currentMonth, currentYear), [currentMonth, currentYear]);
   const moonDates = useMemo(() => moonPhases.map(m => m.date.date().toString()), [moonPhases]);
 
 
