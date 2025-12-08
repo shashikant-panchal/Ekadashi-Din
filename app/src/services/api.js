@@ -1,48 +1,47 @@
 import axios from "axios";
 import moment from "moment";
 import { ekadashiData2025 } from "../data/ekadashiData";
-
-const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpb2NpZ3JncHdkY2FhanJ4dnJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxODE0NDMsImV4cCI6MjA3MTc1NzQ0M30.3wL7Z4bUNkmAVPUE43gW97Bpq2bqYLW1i-KOaZQb3ko";
+import { supabase } from "../utils/supabase";
 
 const BASE_URL = "https://panchang-api.herokuapp.com/api/v1";
-const PANCHANG_API_URL =
-  "https://giocigrgpwdcaajrxvrf.supabase.co/functions/v1/get-panchang";
 
+// Use exactly the same API as web code - supabase.functions.invoke
 export const getPanchangData = async (date = null, location = null) => {
   try {
-    const latitude = location?.latitude ?? 19.076;
-    const longitude = location?.longitude ?? 72.8777;
+    // Match web code exactly: only send latitude and longitude
+    // The edge function automatically calculates panchang for today
+    let latitude = 19.076; // Default: Mumbai
+    let longitude = 72.8777;
 
-    const requestData = {
-      latitude,
-      longitude,
-    };
-
-    if (date) {
-      requestData.date = date;
+    if (location?.latitude && location?.longitude) {
+      latitude = location.latitude;
+      longitude = location.longitude;
     }
 
-    const response = await axios.post(PANCHANG_API_URL, requestData, {
-      headers: {
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-      },
-      timeout: 10000, // 10 second timeout
-    });
+    // Use Supabase client to call edge function with authentication - EXACTLY like web code
+    const { data, error: functionError } = await supabase.functions.invoke(
+      "get-panchang",
+      {
+        body: { latitude, longitude },
+      }
+    );
 
-    if (response.data) {
-      return response.data;
+    if (functionError) {
+      throw new Error(functionError.message || "Failed to fetch Panchang data");
     }
 
-    throw new Error("No data received from API");
+    // Return data exactly as received from web code API
+    return data;
   } catch (error) {
     console.error("Error fetching panchang data:", error);
 
-    // Better fallback data matching web version format
+    // Fallback data matching web version format exactly
     const fallbackDate = date ? moment(date) : moment();
+    const latitude = location?.latitude ?? 19.076;
+    const longitude = location?.longitude ?? 72.8777;
     const locationStr =
       location?.latitude && location?.longitude
-        ? `${location.latitude.toFixed(2)}°, ${location.longitude.toFixed(2)}°`
+        ? `${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`
         : "Mumbai, India";
 
     return {
