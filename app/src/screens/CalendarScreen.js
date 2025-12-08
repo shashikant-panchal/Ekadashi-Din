@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "../components/ThemedText";
+import { DarkTheme, LightTheme } from "../constants/Colors";
 import { useTheme } from "../context/ThemeContext";
 import { getEkadashiByMonth } from "../data/ekadashiData";
 import { getFestivalsByMonth } from "../data/festivalData";
@@ -201,7 +202,7 @@ const CalendarScreen = ({ navigation }) => {
         </View>
 
         {/* Ekadashi Section */}
-        <View style={styles.sectionContainer}>
+        <View style={[styles.sectionContainer, { backgroundColor: isDark ? DarkTheme.background : LightTheme.primaryForeground, borderColor: isDark ? DarkTheme.border : LightTheme.border }]}>
           <SectionHeader
             icon={<Feather name="moon" size={20} color="#EF4444" />}
             title="Ekadashi Observances"
@@ -242,7 +243,7 @@ const CalendarScreen = ({ navigation }) => {
         </View>
 
         {/* Festivals Section */}
-        <View style={styles.sectionContainer}>
+        <View style={[styles.sectionContainer, { backgroundColor: isDark ? DarkTheme.background : LightTheme.primaryForeground, borderColor: isDark ? DarkTheme.border : LightTheme.border }]}>
           <SectionHeader
             icon={<Feather name="star" size={20} color="#D97706" />}
             title="Hindu Festivals"
@@ -275,7 +276,7 @@ const CalendarScreen = ({ navigation }) => {
         </View>
 
         {/* Moon Phases Section */}
-        <View style={styles.sectionContainer}>
+        <View style={[styles.sectionContainer, { backgroundColor: isDark ? DarkTheme.background : LightTheme.primaryForeground, borderColor: isDark ? DarkTheme.border : LightTheme.border }]}>
           <SectionHeader
             icon={<View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#D4AF37' }} />}
             title="Moon Phases"
@@ -286,8 +287,8 @@ const CalendarScreen = ({ navigation }) => {
             <View key={index} style={[
               styles.card,
               {
-                backgroundColor: colors.card,
-                borderColor: colors.border
+                backgroundColor: isDark ? DarkTheme.card : LightTheme.card,
+                borderColor: isDark ? DarkTheme.border : LightTheme.border
               }
             ]}>
               <View style={[styles.iconBox, { backgroundColor: isDark ? colors.muted : '#F1F5F9' }]}>
@@ -336,7 +337,7 @@ const styles = StyleSheet.create({
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendText: { fontSize: 12 },
 
-  sectionContainer: { marginTop: 10, paddingHorizontal: 16, marginBottom: 10 },
+  sectionContainer: { marginTop: 10, paddingHorizontal: 16, marginBottom: 10, marginHorizontal: 10, paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   sectionTitle: { fontSize: 16, fontWeight: '700' },
 
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
   cardContent: { flex: 1, marginLeft: 12 },
   cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 2 },
   cardSubtitle: { fontSize: 13 },
-  pill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
+  pill: { paddingHorizontal: 10, paddingVertical: 0, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
   pillText: { fontSize: 11, fontWeight: '600' }
 });
 
