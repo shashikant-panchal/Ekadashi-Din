@@ -910,6 +910,7 @@ const CalendarDayDetails = ({ navigation, route }) => {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.card }]}>
       <Header />
       <ScrollView
+        showsVerticalScrollIndicator={false}
         style={[styles.container, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.contentContainer}
       >

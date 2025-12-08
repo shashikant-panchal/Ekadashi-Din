@@ -1,5 +1,5 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
 import { useState } from "react";
 import {
@@ -87,9 +87,9 @@ const EkadashiScreen = ({ navigation }) => {
   const today = moment();
   const remainingEkadashis = ekadashiList
     ? ekadashiList.filter((e) => {
-      const date = moment(e.date || e.ekadashi_date);
-      return date.isAfter(today, "day");
-    }).length
+        const date = moment(e.date || e.ekadashi_date);
+        return date.isAfter(today, "day");
+      }).length
     : 0;
 
   const getNextEkadashiData = () => {
@@ -124,8 +124,10 @@ const EkadashiScreen = ({ navigation }) => {
           {
             backgroundColor: isUpcoming
               ? "#E9EDF6"
-              : isDark ? colors.card : "#F8FAFC",
-            borderColor: isUpcoming ? '#ADBBDB' : colors.border,
+              : isDark
+              ? colors.card
+              : "#F8FAFC",
+            borderColor: isUpcoming ? "#ADBBDB" : colors.border,
           },
         ]}
         onPress={onPress}
@@ -195,7 +197,12 @@ const EkadashiScreen = ({ navigation }) => {
         end={{ x: 1, y: 0 }}
         style={[styles.nextEkadashiCard, { borderColor: colors.border }]}
       >
-        <View style={[styles.nextEkadashiMoonContainer, { backgroundColor: colors.primary }]}>
+        <View
+          style={[
+            styles.nextEkadashiMoonContainer,
+            { backgroundColor: colors.primary },
+          ]}
+        >
           <Ionicons name="moon" size={relativeWidth(6)} color="#FFFFFF" />
         </View>
         <View style={styles.nextEkadashiContent}>
@@ -276,24 +283,14 @@ const EkadashiScreen = ({ navigation }) => {
               {
                 backgroundColor: "#F3E8FF",
                 borderWidth: isDark ? 1 : 2,
-                borderColor: '#CEBDFD',
+                borderColor: "#CEBDFD",
               },
             ]}
           >
-            <ThemedText
-              style={[
-                styles.statNumber,
-                { color: "#7E22CE" },
-              ]}
-            >
+            <ThemedText style={[styles.statNumber, { color: "#7E22CE" }]}>
               {totalEkadashis}
             </ThemedText>
-            <ThemedText
-              style={[
-                styles.statLabel,
-                { color: "#7E22CE" },
-              ]}
-            >
+            <ThemedText style={[styles.statLabel, { color: "#7E22CE" }]}>
               TOTAL EKADASHIS
             </ThemedText>
           </View>
@@ -303,7 +300,7 @@ const EkadashiScreen = ({ navigation }) => {
               {
                 backgroundColor: "#FFEDD5",
                 borderWidth: isDark ? 1 : 2,
-                borderColor: '#FDD09B',
+                borderColor: "#FDD09B",
               },
             ]}
           >
@@ -467,7 +464,13 @@ const EkadashiScreen = ({ navigation }) => {
                     <View
                       style={[
                         styles.listMoonContainer,
-                        { backgroundColor: !isPast ? 'black' : isDark ? colors.muted : "#475569" },
+                        {
+                          backgroundColor: !isPast
+                            ? "black"
+                            : isDark
+                            ? colors.muted
+                            : "#475569",
+                        },
                       ]}
                     >
                       <Ionicons
@@ -513,12 +516,12 @@ const EkadashiScreen = ({ navigation }) => {
                           status === "Today"
                             ? { backgroundColor: colors.primary }
                             : status === "Past"
-                              ? {
+                            ? {
                                 backgroundColor: isDark
                                   ? colors.secondary
                                   : "#FDE047",
                               }
-                              : { borderColor: colors.border, borderWidth: 1 },
+                            : { borderColor: colors.border, borderWidth: 1 },
                         ]}
                       >
                         <ThemedText
@@ -527,12 +530,12 @@ const EkadashiScreen = ({ navigation }) => {
                             status === "Today"
                               ? { color: "#FFFFFF" }
                               : status === "Past"
-                                ? {
+                              ? {
                                   color: isDark
                                     ? colors.secondaryForeground
                                     : "#422006",
                                 }
-                                : { color: colors.foreground },
+                              : { color: colors.foreground },
                           ]}
                         >
                           {status}
@@ -629,9 +632,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statNumber: {
-    fontSize: 36,
+    fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 8,
   },
   statLabel: {
     fontSize: 13,

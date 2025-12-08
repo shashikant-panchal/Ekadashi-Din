@@ -14,7 +14,11 @@ import DailyWisdomActionCard from "../components/DailyWisdomActionCard";
 import DailyWisdomReflectionCard from "../components/DailyWisdomReflectionCard";
 import { ThemedText } from "../components/ThemedText";
 import { useTheme } from "../context/ThemeContext";
-import { dailyWisdoms, getTimeBasedWisdom, getTodaysWisdom } from "../data/dailyWisdomData";
+import {
+  dailyWisdoms,
+  getTimeBasedWisdom,
+  getTodaysWisdom,
+} from "../data/dailyWisdomData";
 
 const DailyWisdom = ({ navigation }) => {
   const { colors, isDark } = useTheme();
@@ -38,7 +42,7 @@ const DailyWisdom = ({ navigation }) => {
 
     const todaysWisdom = getTodaysWisdom();
     const todayIndex = dailyWisdoms.findIndex(
-      w => w.sanskrit === todaysWisdom.sanskrit
+      (w) => w.sanskrit === todaysWisdom.sanskrit
     );
     if (todayIndex !== -1) {
       setCurrentWisdom(todayIndex);
@@ -66,17 +70,30 @@ const DailyWisdom = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+    >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         <TouchableOpacity
           style={styles.header}
           onPress={() => navigation.goBack()}
         >
           <Feather name="arrow-left" size={24} color={colors.mutedForeground} />
         </TouchableOpacity>
-        <ThemedText type="heading" style={[styles.headerTitle, { color: colors.foreground }]}>Daily Wisdom</ThemedText>
+        <ThemedText
+          type="heading"
+          style={[styles.headerTitle, { color: colors.foreground }]}
+        >
+          Daily Wisdom
+        </ThemedText>
         <View style={styles.placeholderRight} />
-        <ThemedText type="small" style={[styles.headerSubtitle, { color: colors.mutedForeground }]}>
+        <ThemedText
+          type="small"
+          style={[styles.headerSubtitle, { color: colors.mutedForeground }]}
+        >
           Spiritual teachings for your journey
         </ThemedText>
         <DailyWisdomReflectionCard
@@ -85,32 +102,62 @@ const DailyWisdom = ({ navigation }) => {
         />
         <View style={[styles.mantraCard, { backgroundColor: colors.card }]}>
           <View style={styles.mantraHeader}>
-            <View style={[styles.mantraIconContainer, { backgroundColor: colors.card }]}>
-              <Entypo
-                name="quote"
-                size={20}
-                color={colors.mutedForeground}
-              />
+            <View
+              style={[
+                styles.mantraIconContainer,
+                { backgroundColor: colors.card },
+              ]}
+            >
+              <Entypo name="quote" size={20} color={colors.mutedForeground} />
             </View>
-            <ThemedText type="caption" style={[styles.mantraTag, { color: colors.mutedForeground }]}>
+            <ThemedText
+              type="caption"
+              style={[styles.mantraTag, { color: colors.mutedForeground }]}
+            >
               {displayWisdom.type?.toUpperCase() || "MANTRA"}
             </ThemedText>
-            <View style={[styles.bhagavadGitaTag, { backgroundColor: colors.lightBlueBg }]}>
-              <ThemedText type="caption" style={[styles.bhagavadGitaText, { color: colors.primary }]}>
+            <View
+              style={[
+                styles.bhagavadGitaTag,
+                { backgroundColor: colors.lightBlueBg },
+              ]}
+            >
+              <ThemedText
+                type="caption"
+                style={[styles.bhagavadGitaText, { color: colors.primary }]}
+              >
                 {displayWisdom.verse || "Bhagavad Gita 7.7"}
               </ThemedText>
             </View>
           </View>
-          <View style={[styles.mainMantraContainer, { backgroundColor: colors.lightBlueBg }]}>
-            <ThemedText type="devanagari" style={[styles.sanskritMantra, { color: colors.foreground }]}>{displayWisdom.sanskrit}</ThemedText>
-            <ThemedText style={[styles.englishMantra, { color: colors.mutedForeground }]}>
+          <View
+            style={[
+              styles.mainMantraContainer,
+              { backgroundColor: colors.lightBlueBg },
+            ]}
+          >
+            <ThemedText
+              type="devanagari"
+              style={[styles.sanskritMantra, { color: colors.foreground }]}
+            >
+              {displayWisdom.sanskrit}
+            </ThemedText>
+            <ThemedText
+              style={[styles.englishMantra, { color: colors.mutedForeground }]}
+            >
               {displayWisdom.transliteration}
             </ThemedText>
           </View>
 
-          <ThemedText style={[styles.mantraDescription, { color: colors.foreground }]}>{displayWisdom.english}</ThemedText>
+          <ThemedText
+            style={[styles.mantraDescription, { color: colors.foreground }]}
+          >
+            {displayWisdom.english}
+          </ThemedText>
 
-          <View style={[styles.mantraFooter, { borderTopColor: colors.border }]}>
+          <View
+            style={[styles.mantraFooter, { borderTopColor: colors.border }]}
+          >
             <View style={styles.mantraActions}>
               <TouchableOpacity
                 style={styles.actionButton}
@@ -121,17 +168,32 @@ const DailyWisdom = ({ navigation }) => {
                   size={18}
                   color={isLiked ? "#FF6B6B" : colors.mutedForeground}
                 />
-                <ThemedText style={[styles.actionText, { color: colors.mutedForeground }]}>
+                <ThemedText
+                  style={[styles.actionText, { color: colors.mutedForeground }]}
+                >
                   {isLiked ? "Loved" : "Love"}
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButton}>
-                <Feather name="share-2" size={18} color={colors.mutedForeground} />
-                <ThemedText style={[styles.actionText, { color: colors.mutedForeground }]}>Share</ThemedText>
+                <Feather
+                  name="share-2"
+                  size={18}
+                  color={colors.mutedForeground}
+                />
+                <ThemedText
+                  style={[styles.actionText, { color: colors.mutedForeground }]}
+                >
+                  Share
+                </ThemedText>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.primary }]} onPress={nextWisdom}>
-              <ThemedText type="defaultSemiBold" style={styles.nextButtonText}>Next</ThemedText>
+            <TouchableOpacity
+              style={[styles.nextButton, { backgroundColor: colors.primary }]}
+              onPress={nextWisdom}
+            >
+              <ThemedText type="defaultSemiBold" style={styles.nextButtonText}>
+                Next
+              </ThemedText>
             </TouchableOpacity>
           </View>
         </View>
@@ -160,12 +222,17 @@ const DailyWisdom = ({ navigation }) => {
             color="#fff"
             style={styles.bottomCardIcon}
           />
-          <ThemedText type="heading" style={styles.bottomCardTitle}>Hare Krishna!</ThemedText>
+          <ThemedText type="heading" style={styles.bottomCardTitle}>
+            Hare Krishna!
+          </ThemedText>
           <ThemedText style={styles.bottomCardDescription}>
             The easiest and most sublime process for understanding the Supreme
             Personality of Godhead is to hear about Him.
           </ThemedText>
-          <ThemedText style={styles.bottomCardDescription}> Srila Prabhupada</ThemedText>
+          <ThemedText style={styles.bottomCardDescription}>
+            {" "}
+            Srila Prabhupada
+          </ThemedText>
         </View>
       </ScrollView>
     </SafeAreaView>
