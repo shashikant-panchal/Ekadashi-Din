@@ -73,9 +73,16 @@ function Root() {
 
   if (!isAuthChecked || themeLoading || !fontsLoaded) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: colors.background,
+        }}
+      >
         <StatusBar
-          barStyle={isDark ? 'light-content' : 'dark-content'}
+          barStyle={isDark ? "light-content" : "dark-content"}
           backgroundColor={colors.background}
         />
         <ActivityIndicator size="large" color={colors.primary} />
@@ -86,7 +93,7 @@ function Root() {
   return (
     <>
       <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
+        barStyle={isDark ? "light-content" : "dark-content"}
         backgroundColor={colors.background}
       />
       {session ? <BottomTab /> : <Login />}
