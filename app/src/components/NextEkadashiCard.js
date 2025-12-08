@@ -1,3 +1,4 @@
+import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { dh, dw } from "../constants/Dimensions";
 import { useTheme } from "../context/ThemeContext";
 import { useNextEkadashi } from "../hooks/useEkadashi";
 import { getTodayEkadashi } from "../services/api";
@@ -189,9 +191,24 @@ const NextEkadashiCard = () => {
     <View style={styles.nextCardContainer}>
       <View style={styles.nextCardWrapper}>
         <View style={styles.nextCardContent}>
-          <ThemedText type="small" style={styles.nextHeaderText}>
-            NEXT EKADASHI
-          </ThemedText>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 8,
+            }}
+          >
+            <ThemedText type="small" style={styles.nextHeaderText}>
+              NEXT EKADASHI
+            </ThemedText>
+            <View
+              style={{
+                width: dw / 1.9,
+                backgroundColor: isDark ? "#fff" : "#000",
+                height: dh * 0.0005,
+                marginTop: dh * 0.01,
+              }}
+            />
+          </View>
 
           <View style={styles.nameAndDateRow}>
             <View style={styles.nameSection}>
@@ -250,6 +267,11 @@ const NextEkadashiCard = () => {
             >
               View Details
             </ThemedText>
+            <Feather
+              name="arrow-right"
+              size={20}
+              color={isDark ? "#F8F9FA" : colors.background}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -263,7 +285,7 @@ const getStyles = (colors, isDark) =>
       backgroundColor: colors.lightBlueBg,
       borderRadius: 24,
       margin: 16,
-      marginTop: 20,
+      marginVertical: 20,
       padding: 16,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
@@ -339,19 +361,19 @@ const getStyles = (colors, isDark) =>
 
     nextCardContainer: {
       backgroundColor: colors.lightBlueBg,
-      borderRadius: 24,
-      margin: 16,
-      marginTop: 20,
+      borderRadius: 15,
+      marginHorizontal: 20,
+      marginVertical: 10,
       padding: 2,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.08,
       shadowRadius: 8,
-      elevation: 3,
+      elevation: 0.5,
     },
     nextCardWrapper: {
       backgroundColor: colors.card,
-      borderRadius: 22,
+      borderRadius: 15,
       overflow: "hidden",
     },
     nextCardContent: {
@@ -415,8 +437,12 @@ const getStyles = (colors, isDark) =>
       color: colors.mutedForeground,
     },
     viewDetailsButton: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 8,
       backgroundColor: colors.primary,
-      borderRadius: 16,
+      borderRadius: 10,
       paddingVertical: 12,
       alignItems: "center",
       shadowColor: "#000",

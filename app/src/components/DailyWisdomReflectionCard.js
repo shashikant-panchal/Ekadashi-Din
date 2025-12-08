@@ -18,12 +18,24 @@ const DailyWisdomReflectionCard = ({
 
   return (
     <View style={[styles.reflectionCard, { backgroundColor: colors.card }]}>
-      <View style={[styles.reflectionIconContainer, { backgroundColor: colors.lightBlueBg }]}>
+      <View
+        style={[
+          styles.reflectionIconContainer,
+          { backgroundColor: colors.lightBlueBg },
+        ]}
+      >
         <Ionicons name={iconName} size={24} color={colors.primary} />
       </View>
       <View style={styles.reflectionContent}>
-        <ThemedText type="defaultSemiBold" style={[styles.reflectionTitle, { color: colors.foreground }]}>{title}</ThemedText>
-        <ThemedText style={[styles.reflectionDescription, { color: colors.foreground }]}>
+        <ThemedText
+          type="defaultSemiBold"
+          style={[styles.reflectionTitle, { color: colors.foreground }]}
+        >
+          {title}
+        </ThemedText>
+        <ThemedText
+          style={[styles.reflectionDescription, { color: colors.foreground }]}
+        >
           {reflectionText || defaultText}
         </ThemedText>
       </View>

@@ -246,7 +246,10 @@ const EkadashiScreen = ({ navigation }) => {
         contentContainerStyle={styles.scrollViewContent}
       >
         <View style={styles.screenHeader}>
-          <ThemedText style={[styles.mainTitle, { color: colors.foreground }]}>
+          <ThemedText
+            type="heading"
+            style={[styles.mainTitle, { color: colors.foreground }]}
+          >
             Ekadashi Calendar {currentYear}
           </ThemedText>
           <ThemedText
@@ -586,7 +589,6 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 28, // Larger for header
-    fontFamily: "serif", // Serif font as requested
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "center",

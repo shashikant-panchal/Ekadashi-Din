@@ -76,13 +76,13 @@ const HomeScreen = () => {
           </ThemedText>
           <View style={styles.mantraContainer}>
             <ThemedText
-              type="devanagariSemiBold"
+              type="devanagari"
               style={[styles.mantraText, { color: colors.primary }]}
             >
               हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे
             </ThemedText>
             <ThemedText
-              type="devanagariSemiBold"
+              type="devanagari"
               style={[styles.mantraText, { color: colors.primary }]}
             >
               हरे राम हरे राम राम राम हरे हरे
@@ -104,7 +104,6 @@ const HomeScreen = () => {
         {/* Daily Wisdom and Calendar Cards Row */}
         <View style={styles.cardsRow}>
           <SplitCard
-            width={dw / 2.25}
             icon={"book-outline"}
             iconColor={colors.primary}
             iconBackground={colors.lightBlueBg}
@@ -211,19 +210,20 @@ const getStyles = (colors) =>
       justifyContent: "space-around",
       paddingVertical: 16,
       paddingHorizontal: 16,
-      marginHorizontal: 16,
+      marginHorizontal: 20,
+      marginVertical: 10,
       marginTop: 8,
       borderRadius: 16,
     },
     diyaIcon: {
-      fontSize: 30,
+      fontSize: 27,
     },
     mantraContainer: {
       marginHorizontal: 16,
       alignItems: "center",
     },
     mantraText: {
-      fontSize: 16,
+      fontSize: 18,
       textAlign: "center",
       lineHeight: 28,
     },
