@@ -359,7 +359,10 @@ const DailyReading = ({ navigation }) => {
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
     >
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
@@ -679,6 +682,7 @@ const DailyReading = ({ navigation }) => {
 
           {/* Verse Content */}
           <ScrollView
+            showsVerticalScrollIndicator={false}
             style={mStyles.scrollView}
             contentContainerStyle={mStyles.scrollContent}
           >

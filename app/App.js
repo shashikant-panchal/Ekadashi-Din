@@ -13,6 +13,7 @@ import {
   Nunito_600SemiBold,
   Nunito_700Bold,
 } from "@expo-google-fonts/nunito";
+import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Appearance, StatusBar, View } from "react-native";
@@ -91,13 +92,13 @@ function Root() {
   }
 
   return (
-    <>
+    <NavigationContainer>
       <StatusBar
         barStyle={isDark ? "light-content" : "dark-content"}
         backgroundColor={colors.background}
       />
       {session ? <BottomTab /> : <Login />}
-    </>
+    </NavigationContainer>
   );
 }
 
