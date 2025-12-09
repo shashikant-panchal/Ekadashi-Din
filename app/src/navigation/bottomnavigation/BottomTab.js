@@ -13,7 +13,6 @@ import ProfileStack from "../stacknavigation/ProfileStack";
 
 const Tab = createBottomTabNavigator();
 
-// Main screens that should show bottom tab
 const MAIN_SCREENS = [
   "HomeScreen",
   "CalendarScreen",
@@ -23,35 +22,31 @@ const MAIN_SCREENS = [
   "Home",
   "Calendar",
   "Ekadashis",
-  'Profile'
+  "Profile",
 ];
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const { colors, isDark } = useTheme();
 
   const focusedRoute = state.routes[state.index];
-  const focusedRouteName = getFocusedRouteNameFromRoute(focusedRoute) || focusedRoute.name;
+  const focusedRouteName =
+    getFocusedRouteNameFromRoute(focusedRoute) || focusedRoute.name;
 
-  const shouldShowTabBar = MAIN_SCREENS.includes(focusedRouteName);
-
-  if (!shouldShowTabBar) {
+  if (!MAIN_SCREENS.includes(focusedRouteName)) {
     return null;
   }
 
   const styles = getStyles(colors, isDark);
+
+  const ACTIVE_BORDER_WIDTH = 3;
+  const ACTIVE_BORDER_RADIUS = 20;
 
   return (
     <View style={styles.tabBarWrapper}>
       <View style={styles.tabContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
-          const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-                ? options.title
-                : route.name;
-
+          const label = options.tabBarLabel ?? options.title ?? route.name;
           const isFocused = state.index === index;
 
           const onPress = () => {
@@ -67,8 +62,12 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           };
 
           const iconName = options.tabBarIconName;
-          const iconColor = isFocused ? colors.tabActiveText : colors.tabInactiveText;
-          const textColor = isFocused ? colors.tabActiveText : colors.tabInactiveText;
+          const iconColor = isFocused
+            ? colors.tabActiveText
+            : colors.tabInactiveText;
+          const textColor = isFocused
+            ? colors.tabActiveText
+            : colors.tabInactiveText;
 
           const TabContent = () => (
             <>
@@ -90,14 +89,37 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               style={styles.tabButton}
             >
               {isFocused ? (
-                <LinearGradient
-                  colors={isDark ? [colors.primary, colors.accent] : ['#34629E', '#16366B']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={[styles.tabPill, styles.tabPillActive]}
+                <View
+                  style={[
+                    styles.tabPillBorderWrapper,
+                    {
+                      minWidth: styles.tabPill.minWidth,
+                      height: styles.tabPill.height,
+                      borderRadius: ACTIVE_BORDER_RADIUS,
+                      borderWidth: ACTIVE_BORDER_WIDTH,
+                      borderColor: isDark ? colors.border : "#C2CAD5",
+                    },
+                  ]}
                 >
-                  <TabContent />
-                </LinearGradient>
+                  <LinearGradient
+                    colors={
+                      isDark
+                        ? [colors.primary, colors.accent]
+                        : ["#34629E", "#16366B"]
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={[
+                      styles.tabPillGradient,
+                      {
+                        borderRadius:
+                          ACTIVE_BORDER_RADIUS - ACTIVE_BORDER_WIDTH,
+                      },
+                    ]}
+                  >
+                    <TabContent />
+                  </LinearGradient>
+                </View>
               ) : (
                 <View style={styles.tabPill}>
                   <TabContent />
@@ -164,63 +186,73 @@ const BottomTab = () => {
   );
 };
 
-const getStyles = (colors, isDark) => StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.background,
-  },
-  screenText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  tabBarWrapper: {
-    backgroundColor: colors.tabBarBackground,
-    borderTopWidth: 1,
-    borderTopColor: colors.tabBarBorder,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 10,
-    height: 90,
-    paddingTop: 5,
-  },
-  tabContainer: {
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    paddingHorizontal: 5,
-    paddingBottom: 5,
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 75,
-  },
-  tabPill: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 4,
-    paddingHorizontal: 6,
-    minWidth: 70,
-    height: 65,
-  },
-  tabPillActive: {
-    borderRadius: 15,
-    borderWidth: 3,
-    borderColor: isDark ? colors.border : "#C2CAD5",
-  },
-  tabLabel: {
-    fontSize: 12,
-    marginTop: 2,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-});
+const getStyles = (colors, isDark) => {
+  const styles = StyleSheet.create({
+    screen: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.background,
+    },
+    screenText: {
+      fontSize: 24,
+      fontWeight: "bold",
+    },
+    tabBarWrapper: {
+      backgroundColor: colors.tabBarBackground,
+      borderTopWidth: 1,
+      borderTopColor: colors.tabBarBorder,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 3,
+      elevation: 10,
+      height: 90,
+      paddingTop: 5,
+    },
+    tabContainer: {
+      flexDirection: "row",
+      backgroundColor: "transparent",
+      paddingHorizontal: 5,
+      paddingBottom: 5,
+      justifyContent: "space-around",
+      alignItems: "center",
+    },
+    tabButton: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 75,
+    },
+    tabPillBorderWrapper: {
+      overflow: "hidden",
+    },
+    tabPill: {
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 4,
+      paddingHorizontal: 6,
+      minWidth: 70,
+      height: 65,
+    },
+    tabPillGradient: {
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 4,
+      paddingHorizontal: 6,
+      minWidth: 70 - 3 * 2,
+      height: 65 - 3 * 2,
+    },
+    tabLabel: {
+      fontSize: 12,
+      marginTop: 2,
+      fontWeight: "600",
+      textAlign: "center",
+    },
+  });
+  return styles;
+};
 
 export default BottomTab;
