@@ -595,13 +595,13 @@ const styles = StyleSheet.create({
     paddingVertical: relativeHeight(3),
   },
   mainTitle: {
-    fontSize: responsiveFontSize(28), // Larger for header
+    fontSize: 28, // Larger for header
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
     textAlign: "center",
     marginBottom: 16,
   },
@@ -632,11 +632,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statNumber: {
-    fontSize: responsiveFontSize(30),
+    fontSize: 30,
     fontWeight: "bold",
   },
   statLabel: {
-    fontSize: responsiveFontSize(13),
+    fontSize: 13,
     fontWeight: "700",
     letterSpacing: 0.5,
     textTransform: "uppercase",
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   toggleText: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
     fontWeight: "600",
   },
 
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   monthText: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 8,
   },
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ekadashiCountText: {
-    fontSize: responsiveFontSize(13),
+    fontSize: 13,
     marginLeft: 6,
     fontWeight: "500",
   },
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   upcomingBadgeText: {
-    fontSize: responsiveFontSize(12),
+    fontSize: 12,
     fontWeight: "700",
   },
 
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listTitle: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 4,
   },
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listDate: {
-    fontSize: responsiveFontSize(13),
+    fontSize: 13,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -765,7 +765,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   statusText: {
-    fontSize: responsiveFontSize(12),
+    fontSize: 12,
     fontWeight: "600",
   },
 
@@ -802,18 +802,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   nextEkadashiTitle: {
-    fontSize: responsiveFontSize(20),
+    fontSize: 20,
     fontWeight: "700",
     marginBottom: 4,
   },
   nextEkadashiDate: {
-    fontSize: responsiveFontSize(15),
+    fontSize: 15,
     fontWeight: "600",
     marginBottom: 8,
   },
   nextEkadashiDetails: {
-    fontSize: responsiveFontSize(14),
-    lineHeight: responsiveFontSize(20),
+    fontSize: 14,
+    lineHeight: 20,
   },
 });
 

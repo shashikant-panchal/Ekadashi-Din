@@ -16,7 +16,6 @@ import { ThemedText } from "../components/ThemedText";
 import { dw } from "../constants/Dimensions";
 import { logo } from "../constants/Images";
 import { useTheme } from "../context/ThemeContext";
-import { responsiveFontSize } from "../utils/responsive";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -181,10 +180,10 @@ const getStyles = (colors) =>
       justifyContent: "center",
     },
     title: {
-      fontSize: responsiveFontSize(22),
+      fontSize: 22,
     },
     subtitle: {
-      fontSize: responsiveFontSize(14),
+      fontSize: 14,
       opacity: 0.8,
     },
     notificationButton: {
@@ -217,16 +216,16 @@ const getStyles = (colors) =>
       borderRadius: 16,
     },
     diyaIcon: {
-      fontSize: responsiveFontSize(27),
+      fontSize: 27,
     },
     mantraContainer: {
       marginHorizontal: 16,
       alignItems: "center",
     },
     mantraText: {
-      fontSize: responsiveFontSize(18),
+      fontSize: 18,
       textAlign: "center",
-      lineHeight: responsiveFontSize(28),
+      lineHeight: 28,
     },
     cardsRow: {
       flexDirection: "row",

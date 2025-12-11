@@ -1,6 +1,5 @@
 import { Text } from "react-native";
 import { useTheme } from "../context/ThemeContext";
-import { responsiveFontSize } from "../utils/responsive";
 
 export function ThemedText({ style, type = "default", color, ...rest }) {
   const { colors, typography, isLargeText } = useTheme();
@@ -10,57 +9,57 @@ export function ThemedText({ style, type = "default", color, ...rest }) {
       case "title":
         return {
           fontFamily: typography.family.sansBold,
-          fontSize: responsiveFontSize(32),
-          lineHeight: responsiveFontSize(40),
+          fontSize: 32,
+          lineHeight: 40,
         };
       case "subtitle":
         return {
           fontFamily: typography.family.sansBold,
-          fontSize: responsiveFontSize(24),
-          lineHeight: responsiveFontSize(32),
+          fontSize: 24,
+          lineHeight: 32,
         };
       case "heading":
         return {
           fontFamily: typography.family.sansBold,
-          fontSize: responsiveFontSize(20),
-          lineHeight: responsiveFontSize(28),
+          fontSize: 20,
+          lineHeight: 28,
         };
       case "defaultSemiBold":
         return {
           fontFamily: typography.family.sansSemiBold,
-          fontSize: responsiveFontSize(16),
-          lineHeight: responsiveFontSize(24),
+          fontSize: 16,
+          lineHeight: 24,
         };
       case "small":
         return {
           fontFamily: typography.family.sansSemiBold,
-          fontSize: responsiveFontSize(14),
-          lineHeight: responsiveFontSize(20),
+          fontSize: 14,
+          lineHeight: 20,
         };
       case "caption":
         return {
           fontFamily: typography.family.sansSemiBold,
-          fontSize: responsiveFontSize(12),
-          lineHeight: responsiveFontSize(16),
+          fontSize: 12,
+          lineHeight: 16,
         };
       case "link":
         return {
           fontFamily: typography.family.sansSemiBold,
-          fontSize: responsiveFontSize(16),
-          lineHeight: responsiveFontSize(24),
+          fontSize: 16,
+          lineHeight: 24,
           color: colors.primary,
         };
       case "devanagari":
         return {
           fontFamily: typography.family.devanagari,
-          fontSize: responsiveFontSize(18),
-          lineHeight: responsiveFontSize(28),
+          fontSize: 18,
+          lineHeight: 28,
         };
       default:
         return {
           fontFamily: typography.family.sansSemiBold,
-          fontSize: responsiveFontSize(16),
-          lineHeight: responsiveFontSize(24),
+          fontSize: 16,
+          lineHeight: 24,
         };
     }
   };
@@ -89,7 +88,6 @@ export function ThemedText({ style, type = "default", color, ...rest }) {
 
   return (
     <Text
-      allowFontScaling={false}
       style={[
         {
           fontFamily,

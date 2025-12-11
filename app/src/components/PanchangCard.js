@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 import { dh, dw } from "../constants/Dimensions";
 import { useTheme } from "../context/ThemeContext";
 import { usePanchang } from "../hooks/usePanchang";
-import { responsiveFontSize } from "../utils/responsive";
 import { ThemedText } from "./ThemedText";
 
 const PanchangCard = () => {
@@ -158,7 +157,7 @@ const PanchangCard = () => {
       <View style={[styles.card, { backgroundColor: colors.card }]}>
         {renderHeader()}
         <View style={{ padding: 20, alignItems: "center" }}>
-          <ThemedText style={{ color: colors.destructive, fontSize: responsiveFontSize(14) }}>
+          <ThemedText style={{ color: colors.destructive, fontSize: 14 }}>
             {error || "Failed to load Panchang data"}
           </ThemedText>
         </View>

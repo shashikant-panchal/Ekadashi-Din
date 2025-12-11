@@ -1,7 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../context/ThemeContext";
-import { responsiveFontSize } from "../utils/responsive";
 import { ThemedText } from "./ThemedText";
 
 const SplitCard = ({
@@ -74,10 +73,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: responsiveFontSize(18),
+    fontSize: 18,
     marginVertical: 5,
   },
   subtitle: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
   },
 });

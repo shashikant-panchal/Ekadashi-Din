@@ -980,10 +980,10 @@ const styles = StyleSheet.create({
     paddingRight: 15,
   },
   mainTitle: {
-    fontSize: responsiveFontSize(18),
+    fontSize: 18,
   },
   subtitle: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
   },
   cardContainer: {
     borderRadius: 12,
@@ -1004,14 +1004,14 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   cardTitle: {
-    fontSize: responsiveFontSize(20),
+    fontSize: 20,
   },
   cardContent: {
     paddingTop: 5,
   },
   bodyText: {
-    fontSize: responsiveFontSize(15),
-    lineHeight: responsiveFontSize(22),
+    fontSize: 15,
+    lineHeight: 22,
     marginBottom: 15,
   },
   readButton: {
@@ -1022,7 +1022,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   readButtonText: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
   },
   ruleItem: {
     flexDirection: "row",
@@ -1040,11 +1040,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   ruleNumberText: {
-    fontSize: responsiveFontSize(12),
+    fontSize: 12,
   },
   ruleText: {
     flex: 1,
-    fontSize: responsiveFontSize(15),
+    fontSize: 15,
   },
   timingRow: {
     flexDirection: "row",
@@ -1055,11 +1055,11 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH / 2 - 32 - 8,
   },
   timingLabel: {
-    fontSize: responsiveFontSize(15),
+    fontSize: 15,
     marginBottom: 4,
   },
   timingValue: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
   },
   bhajanButton: {
     flexDirection: "row",
@@ -1076,10 +1076,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bhajanText: {
-    fontSize: responsiveFontSize(15),
+    fontSize: 15,
   },
   bhajanArtist: {
-    fontSize: responsiveFontSize(12),
+    fontSize: 12,
     marginTop: 2,
   },
   recipeItem: {
@@ -1090,10 +1090,10 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   recipeName: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
   },
   recipeDesc: {
-    fontSize: responsiveFontSize(13),
+    fontSize: 13,
     marginTop: 2,
   },
   modalOverlay: {
@@ -1117,7 +1117,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   modalTitle: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
     marginLeft: 8,
     flex: 1,
   },
@@ -1125,12 +1125,12 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   modalContentHeading: {
-    fontSize: responsiveFontSize(18),
+    fontSize: 18,
     marginBottom: 10,
     marginTop: 15,
   },
   modalSubHeading: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
     marginBottom: 8,
     marginTop: 12,
     fontWeight: "600",
@@ -1142,8 +1142,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   modalContentText: {
-    fontSize: responsiveFontSize(15),
-    lineHeight: responsiveFontSize(22),
+    fontSize: 15,
+    lineHeight: 22,
     marginBottom: 10,
   },
   bhajanModalContainer: {
@@ -1178,10 +1178,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   errorText: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
   },
   devotionalText: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
     textAlign: "center",
     marginVertical: 15,
   },
@@ -1199,7 +1199,7 @@ const styles = StyleSheet.create({
   },
   activeFooterBhajanButton: {},
   footerBhajanText: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
   },
   activeFooterBhajanText: {
     color: "white",

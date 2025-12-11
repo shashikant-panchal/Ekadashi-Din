@@ -19,7 +19,6 @@ import {
   getTimeBasedWisdom,
   getTodaysWisdom,
 } from "../data/dailyWisdomData";
-import { responsiveFontSize } from "../utils/responsive";
 
 const DailyWisdom = ({ navigation }) => {
   const { colors, isDark } = useTheme();
@@ -255,7 +254,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? 10 : 0,
   },
   headerTitle: {
-    fontSize: responsiveFontSize(20),
+    fontSize: 20,
     flex: 1,
     textAlign: "center",
     marginLeft: -40,
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   headerSubtitle: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
     textAlign: "center",
     marginBottom: 16,
   },
@@ -298,7 +297,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   mantraTag: {
-    fontSize: responsiveFontSize(12),
+    fontSize: 12,
     marginRight: "auto",
   },
   bhagavadGitaTag: {
@@ -307,24 +306,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   bhagavadGitaText: {
-    fontSize: responsiveFontSize(11),
+    fontSize: 11,
   },
   sanskritMantra: {
-    fontSize: responsiveFontSize(20),
+    fontSize: 20,
     textAlign: "center",
     marginBottom: 8,
-    lineHeight: responsiveFontSize(30),
+    lineHeight: 30,
   },
   englishMantra: {
-    fontSize: responsiveFontSize(16),
+    fontSize: 16,
     fontStyle: "italic",
     marginBottom: 16,
   },
   mantraDescription: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
     marginVertical: 15,
     marginHorizontal: 10,
-    lineHeight: responsiveFontSize(20),
+    lineHeight: 20,
   },
   mantraFooter: {
     flexDirection: "row",
@@ -342,7 +341,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   actionText: {
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
     marginLeft: 6,
   },
   nextButton: {
@@ -352,7 +351,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     color: "#fff",
-    fontSize: responsiveFontSize(14),
+    fontSize: 14,
   },
   actionCardsContainer: {
     flexDirection: "row",
@@ -372,15 +371,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   bottomCardTitle: {
-    fontSize: responsiveFontSize(22),
+    fontSize: 22,
     color: "#fff",
     marginBottom: 8,
   },
   bottomCardDescription: {
-    fontSize: responsiveFontSize(15),
+    fontSize: 15,
     color: "#fff",
     textAlign: "center",
-    lineHeight: responsiveFontSize(25),
+    lineHeight: 25,
   },
 });
 
