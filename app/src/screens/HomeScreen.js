@@ -110,6 +110,7 @@ const HomeScreen = () => {
             title={"Daily Wisdom"}
             subTitle={"Spiritual guidance"}
             onPress={() => navigation.navigate("DailyWisdom")}
+            style={{ marginLeft: 20, marginRight: 8 }}
           />
           <SplitCard
             icon={"calendar-outline"}
@@ -118,6 +119,7 @@ const HomeScreen = () => {
             title={"Calendar"}
             subTitle={"Monthly view"}
             onPress={() => navigation.navigate("Calendar")}
+            style={{ marginLeft: 8, marginRight: 20 }}
           />
         </View>
 

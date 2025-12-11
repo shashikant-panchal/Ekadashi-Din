@@ -11,6 +11,7 @@ const SplitCard = ({
   title,
   subTitle,
   onPress,
+  style,
 }) => {
   const { colors } = useTheme();
 
@@ -19,6 +20,7 @@ const SplitCard = ({
       style={[
         styles.container,
         { backgroundColor: colors.card, borderColor: colors.border },
+        style,
       ]}
       onPress={onPress}
     >
