@@ -16,6 +16,7 @@ import { useTheme } from "../context/ThemeContext";
 import { getEkadashiByMonth } from "../data/ekadashiData";
 import { getFestivalsByMonth } from "../data/festivalData";
 import { getMoonPhasesByMonth } from "../data/moonPhaseData";
+import { responsiveFontSize } from "../utils/responsive";
 
 const WINDOW_WIDTH = Dimensions.get("window").width;
 const relativeWidth = (percentage) => WINDOW_WIDTH * (percentage / 100);
@@ -316,12 +317,12 @@ const CalendarScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1 },
-  headerMonth: { fontSize: 18, fontWeight: 'bold' },
-  headerSubtitle: { fontSize: 13 },
+  headerMonth: { fontSize: responsiveFontSize(18), fontWeight: 'bold' },
+  headerSubtitle: { fontSize: responsiveFontSize(13) },
 
   chipsContainer: { flexDirection: 'row', justifyContent: 'center', gap: 10, paddingVertical: 16 },
   summaryChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, gap: 6 },
-  summaryChipText: { fontSize: 12, fontWeight: '500' },
+  summaryChipText: { fontSize: responsiveFontSize(12), fontWeight: '500' },
 
   calendarCard: { marginHorizontal: 16, borderRadius: 20, padding: 16, borderWidth: 1, marginBottom: 20 },
   daysHeader: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 10 },
@@ -329,26 +330,26 @@ const styles = StyleSheet.create({
   weekRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 12 },
 
   dateCell: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
-  dateCellText: { fontSize: 15, fontWeight: '500' },
+  dateCellText: { fontSize: responsiveFontSize(15), fontWeight: '500' },
   dot: { width: 5, height: 5, borderRadius: 3, marginTop: 2 },
 
   legendContainer: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginTop: 10 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { fontSize: 12 },
+  legendText: { fontSize: responsiveFontSize(12) },
 
   sectionContainer: { marginTop: 10, paddingHorizontal: 16, marginBottom: 10, marginHorizontal: 10, paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  sectionTitle: { fontSize: 16, fontWeight: '700' },
+  sectionTitle: { fontSize: responsiveFontSize(16), fontWeight: '700' },
 
   card: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, borderWidth: 1, marginBottom: 10 },
   iconBox: { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
   iconCircle: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   cardContent: { flex: 1, marginLeft: 12 },
-  cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 2 },
-  cardSubtitle: { fontSize: 13 },
+  cardTitle: { fontSize: responsiveFontSize(16), fontWeight: '600', marginBottom: 2 },
+  cardSubtitle: { fontSize: responsiveFontSize(13) },
   pill: { paddingHorizontal: 10, paddingVertical: 0, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
-  pillText: { fontSize: 11, fontWeight: '600' }
+  pillText: { fontSize: responsiveFontSize(11), fontWeight: '600' }
 });
 
 export default CalendarScreen;

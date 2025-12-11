@@ -87,9 +87,9 @@ const EkadashiScreen = ({ navigation }) => {
   const today = moment();
   const remainingEkadashis = ekadashiList
     ? ekadashiList.filter((e) => {
-        const date = moment(e.date || e.ekadashi_date);
-        return date.isAfter(today, "day");
-      }).length
+      const date = moment(e.date || e.ekadashi_date);
+      return date.isAfter(today, "day");
+    }).length
     : 0;
 
   const getNextEkadashiData = () => {
@@ -125,8 +125,8 @@ const EkadashiScreen = ({ navigation }) => {
             backgroundColor: isUpcoming
               ? "#E9EDF6"
               : isDark
-              ? colors.card
-              : "#F8FAFC",
+                ? colors.card
+                : "#F8FAFC",
             borderColor: isUpcoming ? "#ADBBDB" : colors.border,
           },
         ]}
@@ -468,8 +468,8 @@ const EkadashiScreen = ({ navigation }) => {
                           backgroundColor: !isPast
                             ? "black"
                             : isDark
-                            ? colors.muted
-                            : "#475569",
+                              ? colors.muted
+                              : "#475569",
                         },
                       ]}
                     >
@@ -516,12 +516,12 @@ const EkadashiScreen = ({ navigation }) => {
                           status === "Today"
                             ? { backgroundColor: colors.primary }
                             : status === "Past"
-                            ? {
+                              ? {
                                 backgroundColor: isDark
                                   ? colors.secondary
                                   : "#FDE047",
                               }
-                            : { borderColor: colors.border, borderWidth: 1 },
+                              : { borderColor: colors.border, borderWidth: 1 },
                         ]}
                       >
                         <ThemedText
@@ -530,12 +530,12 @@ const EkadashiScreen = ({ navigation }) => {
                             status === "Today"
                               ? { color: "#FFFFFF" }
                               : status === "Past"
-                              ? {
+                                ? {
                                   color: isDark
                                     ? colors.secondaryForeground
                                     : "#422006",
                                 }
-                              : { color: colors.foreground },
+                                : { color: colors.foreground },
                           ]}
                         >
                           {status}
@@ -595,13 +595,13 @@ const styles = StyleSheet.create({
     paddingVertical: relativeHeight(3),
   },
   mainTitle: {
-    fontSize: 28, // Larger for header
+    fontSize: responsiveFontSize(28), // Larger for header
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(16),
     textAlign: "center",
     marginBottom: 16,
   },
@@ -632,11 +632,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statNumber: {
-    fontSize: 30,
+    fontSize: responsiveFontSize(30),
     fontWeight: "bold",
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: responsiveFontSize(13),
     fontWeight: "700",
     letterSpacing: 0.5,
     textTransform: "uppercase",
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   toggleText: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(14),
     fontWeight: "600",
   },
 
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   monthText: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(16),
     fontWeight: "600",
     marginBottom: 8,
   },
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ekadashiCountText: {
-    fontSize: 13,
+    fontSize: responsiveFontSize(13),
     marginLeft: 6,
     fontWeight: "500",
   },
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   upcomingBadgeText: {
-    fontSize: 12,
+    fontSize: responsiveFontSize(12),
     fontWeight: "700",
   },
 
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listTitle: {
-    fontSize: 16,
+    fontSize: responsiveFontSize(16),
     fontWeight: "600",
     marginBottom: 4,
   },
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listDate: {
-    fontSize: 13,
+    fontSize: responsiveFontSize(13),
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -765,7 +765,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: responsiveFontSize(12),
     fontWeight: "600",
   },
 
@@ -802,18 +802,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   nextEkadashiTitle: {
-    fontSize: 20,
+    fontSize: responsiveFontSize(20),
     fontWeight: "700",
     marginBottom: 4,
   },
   nextEkadashiDate: {
-    fontSize: 15,
+    fontSize: responsiveFontSize(15),
     fontWeight: "600",
     marginBottom: 8,
   },
   nextEkadashiDetails: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: responsiveFontSize(14),
+    lineHeight: responsiveFontSize(20),
   },
 });
 

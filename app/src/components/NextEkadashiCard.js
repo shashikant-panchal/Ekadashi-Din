@@ -14,6 +14,7 @@ import { dh, dw } from "../constants/Dimensions";
 import { useTheme } from "../context/ThemeContext";
 import { useNextEkadashi } from "../hooks/useEkadashi";
 import { getTodayEkadashi } from "../services/api";
+import { responsiveFontSize } from "../utils/responsive";
 import { ThemedText } from "./ThemedText";
 
 const NextEkadashiCard = () => {
@@ -320,7 +321,7 @@ const getStyles = (colors, isDark) =>
     },
     todayBadgeText: {
       color: "#FFFFFF",
-      fontSize: 14,
+      fontSize: responsiveFontSize(14),
     },
     moonIconContainer: {
       backgroundColor: isDark ? colors.muted : "#FEF3C7",
@@ -334,10 +335,10 @@ const getStyles = (colors, isDark) =>
       marginBottom: 24,
     },
     moonIcon: {
-      fontSize: 35,
+      fontSize: responsiveFontSize(35),
     },
     todayEkadashiName: {
-      fontSize: 20,
+      fontSize: responsiveFontSize(20),
       color: isDark ? colors.foreground : "#7C2D12",
       textAlign: "center",
       marginBottom: 20,
@@ -356,7 +357,7 @@ const getStyles = (colors, isDark) =>
     },
     observanceButtonText: {
       color: "#FFFFFF",
-      fontSize: 15,
+      fontSize: responsiveFontSize(15),
     },
 
     nextCardContainer: {
@@ -381,7 +382,7 @@ const getStyles = (colors, isDark) =>
       backgroundColor: colors.card,
     },
     nextHeaderText: {
-      fontSize: 14,
+      fontSize: responsiveFontSize(14),
       color: colors.mutedForeground,
       letterSpacing: 1.5,
       marginBottom: 12,
@@ -398,16 +399,16 @@ const getStyles = (colors, isDark) =>
       flex: 1,
     },
     moonIconSmall: {
-      fontSize: 20,
+      fontSize: responsiveFontSize(20),
       marginRight: 12,
     },
     nextEkadashiName: {
-      fontSize: 22,
+      fontSize: responsiveFontSize(22),
       color: colors.foreground,
       flex: 1,
     },
     dateText: {
-      fontSize: 16,
+      fontSize: responsiveFontSize(16),
       color: colors.foreground,
     },
     countdownContainer: {
@@ -428,12 +429,12 @@ const getStyles = (colors, isDark) =>
       borderColor: isDark ? colors.border : "#E9ECEF",
     },
     countdownNumber: {
-      fontSize: 30,
+      fontSize: responsiveFontSize(30),
       color: colors.primary,
       marginBottom: 2,
     },
     countdownLabel: {
-      fontSize: 12,
+      fontSize: responsiveFontSize(12),
       color: colors.mutedForeground,
     },
     viewDetailsButton: {
@@ -453,11 +454,11 @@ const getStyles = (colors, isDark) =>
     },
     viewDetailsButtonText: {
       color: "#FFFFFF",
-      fontSize: 16,
+      fontSize: responsiveFontSize(16),
     },
 
     errorText: {
-      fontSize: 14,
+      fontSize: responsiveFontSize(14),
       color: colors.destructive,
       textAlign: "center",
       padding: 20,

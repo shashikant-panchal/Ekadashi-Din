@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useTheme } from '../context/ThemeContext';
+import { responsiveFontSize } from '../utils/responsive';
 import { ThemedText } from './ThemedText';
 
 const NotificationCard = ({
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     title: {
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
     },
     unreadDot: {
         width: 10,
@@ -79,9 +80,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     description: {
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
         marginBottom: 8,
-        lineHeight: 20,
+        lineHeight: responsiveFontSize(20),
     },
     footerRow: {
         flexDirection: 'row',
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     time: {
-        fontSize: 12,
+        fontSize: responsiveFontSize(12),
     },
     tag: {
         borderRadius: 12,
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     tagText: {
-        fontSize: 11,
+        fontSize: responsiveFontSize(11),
     },
 });
 
