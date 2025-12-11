@@ -71,8 +71,8 @@ export function ThemedText({ style, type = "default", color, ...rest }) {
     color: defaultColor,
   } = getStyleParams();
 
-  // Scale factor for generic large text support (1.35x for more noticeable difference)
-  const scale = isLargeText ? 1.35 : 1;
+  // Scale factor for generic large text support (1.15x for a subtle but helpful difference)
+  const scale = isLargeText ? 1.15 : 1;
 
   // Extract fontSize and lineHeight from style prop if present, and scale them
   const styleArray = Array.isArray(style) ? style : [style];
