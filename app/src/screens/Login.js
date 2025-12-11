@@ -116,6 +116,7 @@ export default function Login() {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            allowFontScaling={false}
           />
         </View>
       </View>
@@ -137,6 +138,7 @@ export default function Login() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!isPasswordVisible}
+            allowFontScaling={false}
           />
           <TouchableOpacity
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -229,6 +231,7 @@ export default function Login() {
             placeholderTextColor={colors.mutedForeground}
             value={displayName}
             onChangeText={setDisplayName}
+            allowFontScaling={false}
           />
         </View>
       </View>
@@ -250,6 +253,7 @@ export default function Login() {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            allowFontScaling={false}
           />
         </View>
       </View>
@@ -271,6 +275,7 @@ export default function Login() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!isPasswordVisible}
+            allowFontScaling={false}
           />
           <TouchableOpacity
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}

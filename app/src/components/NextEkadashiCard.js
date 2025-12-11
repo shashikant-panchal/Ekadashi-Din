@@ -224,7 +224,7 @@ const NextEkadashiCard = () => {
 
           <View style={styles.countdownContainer}>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>
+              <Text style={styles.countdownNumber} allowFontScaling={false}>
                 {String(countdown.days).padStart(2, "0")}
               </Text>
               <ThemedText type="caption" style={styles.countdownLabel}>
@@ -232,7 +232,7 @@ const NextEkadashiCard = () => {
               </ThemedText>
             </View>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>
+              <Text style={styles.countdownNumber} allowFontScaling={false}>
                 {String(countdown.hours).padStart(2, "0")}
               </Text>
               <ThemedText type="caption" style={styles.countdownLabel}>
@@ -240,7 +240,7 @@ const NextEkadashiCard = () => {
               </ThemedText>
             </View>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>
+              <Text style={styles.countdownNumber} allowFontScaling={false}>
                 {String(countdown.minutes).padStart(2, "0")}
               </Text>
               <ThemedText type="caption" style={styles.countdownLabel}>
@@ -248,7 +248,7 @@ const NextEkadashiCard = () => {
               </ThemedText>
             </View>
             <View style={styles.countdownBox}>
-              <Text style={styles.countdownNumber}>
+              <Text style={styles.countdownNumber} allowFontScaling={false}>
                 {String(countdown.seconds).padStart(2, "0")}
               </Text>
               <ThemedText type="caption" style={styles.countdownLabel}>

@@ -97,6 +97,7 @@ export function ThemedText({ style, type = "default", color, ...rest }) {
         },
         restStyle,
       ]}
+      allowFontScaling={false}
       {...rest}
     />
   );
