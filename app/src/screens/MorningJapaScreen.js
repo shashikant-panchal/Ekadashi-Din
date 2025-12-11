@@ -49,9 +49,8 @@ const MorningJapaScreen = ({ navigation }) => {
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes < 10 ? "0" : ""}${minutes}:${
-      remainingSeconds < 10 ? "0" : ""
-    }${remainingSeconds}`;
+    return `${minutes < 10 ? "0" : ""}${minutes}:${remainingSeconds < 10 ? "0" : ""
+      }${remainingSeconds}`;
   };
 
   const handleStartStopJapa = async () => {
@@ -165,7 +164,8 @@ const MorningJapaScreen = ({ navigation }) => {
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
     >
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
@@ -235,7 +235,7 @@ const MorningJapaScreen = ({ navigation }) => {
                   styles.progressBarFill,
                   {
                     width: `${progress * 100}%`,
-                    backgroundColor: colors.secondary,
+                    backgroundColor: colors.mutedForeground,
                   },
                 ]}
               />
@@ -245,7 +245,7 @@ const MorningJapaScreen = ({ navigation }) => {
               styleAttr="Horizontal"
               indeterminate={false}
               progress={progress}
-              color={colors.secondary}
+              color={colors.mutedForeground}
               style={{ width: "100%", height: 10 }}
             />
           )}
