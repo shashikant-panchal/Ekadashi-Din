@@ -4,6 +4,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import moment from "moment";
+import { useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -14,39 +15,86 @@ import { useSelector } from "react-redux";
 import { dh, dw } from "../constants/Dimensions";
 import { useTheme } from "../context/ThemeContext";
 import { usePanchang } from "../hooks/usePanchang";
+import CalendarModal from "./CalendarModal";
 import { ThemedText } from "./ThemedText";
 
 const PanchangCard = () => {
   const { colors, isDark } = useTheme();
-  const { panchangData, loading, error, refreshData } = usePanchang();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const { panchangData, loading, error, refreshData } =
+    usePanchang(selectedDate);
   const { city } = useSelector((state) => state.location);
 
   const handleRefresh = () => {
     refreshData && refreshData();
   };
 
+  const isToday = (date) => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+  };
+
   const renderHeader = () => (
     <View style={styles.header}>
-      <View style={styles.headerLeft}>
+      <TouchableOpacity
+        style={styles.headerLeft}
+        onPress={() => setIsCalendarVisible(true)}
+      >
         <Ionicons
           name="moon-outline"
           size={dw * 0.05}
           color={colors.foreground}
         />
-        <ThemedText
-          type="defaultSemiBold"
-          style={[styles.headerTitle, { color: colors.foreground }]}
-        >
-          Today's Panchang
-        </ThemedText>
-      </View>
-      <TouchableOpacity onPress={handleRefresh}>
+        <View style={{ marginLeft: dw * 0.015 }}>
+          <ThemedText
+            type="defaultSemiBold"
+            style={[styles.headerTitle, { color: colors.foreground }]}
+          >
+            {isToday(selectedDate)
+              ? "Today's Panchang"
+              : `Panchang: ${moment(selectedDate).format("DD MMM YYYY")}`}
+          </ThemedText>
+          {!isToday(selectedDate) && (
+            <ThemedText
+              style={{ fontSize: 10, color: colors.primary, marginTop: 2 }}
+            >
+              Tap to change
+            </ThemedText>
+          )}
+        </View>
         <Ionicons
-          name="refresh-outline"
-          size={dw * 0.05}
-          color={colors.foreground}
+          name="chevron-down"
+          size={16}
+          color={colors.mutedForeground}
+          style={{ marginLeft: 4, marginTop: 2 }}
         />
       </TouchableOpacity>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        {!isToday(selectedDate) && (
+          <TouchableOpacity
+            onPress={() => setSelectedDate(new Date())}
+            style={styles.todayButton}
+          >
+            <ThemedText style={styles.todayButtonText}>Today</ThemedText>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={handleRefresh}>
+          <Ionicons
+            name="refresh-outline"
+            size={dw * 0.05}
+            color={colors.foreground}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -72,14 +120,17 @@ const PanchangCard = () => {
     );
   };
 
+  // Helper to safely get nested properties
+  const safeGet = (obj, path, fallback = "N/A") => {
+    return path.split(".").reduce((acc, part) => acc && acc[part], obj) || fallback;
+  };
+
   const getLocation = () => {
     if (!panchangData) return "N/A";
     return (
       panchangData.location ||
       (panchangData.latitude && panchangData.longitude
-        ? `${panchangData.latitude.toFixed(
-          2
-        )}°, ${panchangData.longitude.toFixed(2)}°`
+        ? `${panchangData.latitude.toFixed(2)}°, ${panchangData.longitude.toFixed(2)}°`
         : "N/A")
     );
   };
@@ -140,30 +191,6 @@ const PanchangCard = () => {
       "N/A"
     );
   };
-
-  if (loading) {
-    return (
-      <View style={[styles.card, { backgroundColor: colors.card }]}>
-        {renderHeader()}
-        <View style={{ padding: 40, alignItems: "center" }}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      </View>
-    );
-  }
-
-  if (error || !panchangData) {
-    return (
-      <View style={[styles.card, { backgroundColor: colors.card }]}>
-        {renderHeader()}
-        <View style={{ padding: 20, alignItems: "center" }}>
-          <ThemedText style={{ color: colors.destructive, fontSize: 14 }}>
-            {error || "Failed to load Panchang data"}
-          </ThemedText>
-        </View>
-      </View>
-    );
-  }
 
   const renderInfoCard = (label, value, bgColor, align = "flex-start") => (
     <View
@@ -271,6 +298,42 @@ const PanchangCard = () => {
     </View>
   );
 
+  if (loading) {
+    return (
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        {renderHeader()}
+        <View style={{ padding: 40, alignItems: "center" }}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+        <CalendarModal
+          visible={isCalendarVisible}
+          onClose={() => setIsCalendarVisible(false)}
+          onDateSelect={handleDateSelect}
+          selectedDate={selectedDate}
+        />
+      </View>
+    );
+  }
+
+  if (error || !panchangData) {
+    return (
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        {renderHeader()}
+        <View style={{ padding: 20, alignItems: "center" }}>
+          <ThemedText style={{ color: colors.destructive, fontSize: 14 }}>
+            {error || "Failed to load Panchang data"}
+          </ThemedText>
+        </View>
+        <CalendarModal
+          visible={isCalendarVisible}
+          onClose={() => setIsCalendarVisible(false)}
+          onDateSelect={handleDateSelect}
+          selectedDate={selectedDate}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.card, { backgroundColor: colors.card }]}>
       {renderHeader()}
@@ -335,6 +398,22 @@ const PanchangCard = () => {
         {renderBottomCard("Yoga", getYoga(), "#EDE7F6")}
         {renderBottomCard("Karana", getKarana(), "#E7EFFA")}
       </View>
+
+      {/* New Fields: Samvatsara, Masa, Ritu */}
+      {(panchangData.samvatsara || panchangData.masa || panchangData.ritu) && (
+        <View style={[styles.row, { marginTop: 8 }]}>
+          {panchangData.samvatsara && renderBottomCard("Samvatsara", panchangData.samvatsara, "#F1F6FE")}
+          {panchangData.masa && renderBottomCard("Masa", panchangData.masa, "#FFF7E5")}
+          {panchangData.ritu && renderBottomCard("Ritu", panchangData.ritu, "#E9F0E6")}
+        </View>
+      )}
+
+      <CalendarModal
+        visible={isCalendarVisible}
+        onClose={() => setIsCalendarVisible(false)}
+        onDateSelect={handleDateSelect}
+        selectedDate={selectedDate}
+      />
     </View>
   );
 };
@@ -365,19 +444,29 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: dw * 0.045,
-    marginLeft: dw * 0.015,
+  },
+  todayButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 12,
+  },
+  todayButtonText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#334155'
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: dh * 0.007,
+    gap: 8,
   },
   smallCard: {
     flex: 1,
     borderRadius: dw * 0.025,
     paddingVertical: dh * 0.01,
     paddingHorizontal: dw * 0.03,
-    marginHorizontal: dh * 0.007,
   },
   fullCard: {
     flexDirection: "row",
@@ -392,7 +481,6 @@ const styles = StyleSheet.create({
     borderRadius: dw * 0.025,
     paddingVertical: dh * 0.012,
     alignItems: "center",
-    marginHorizontal: dw * 0.01,
   },
   label: {
     fontSize: dw * 0.032,

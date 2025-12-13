@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { supabase } from "../utils/supabase";
 
-export const usePanchang = () => {
+export const usePanchang = (selectedDate) => {
   const [panchangData, setPanchangData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +14,6 @@ export const usePanchang = () => {
     setError(null);
 
     try {
-      // Get location - match web code exactly
       let latitude = 19.076; // Default: Mumbai
       let longitude = 72.8777;
 
@@ -23,11 +22,15 @@ export const usePanchang = () => {
         longitude = location.longitude;
       }
 
+      const targetDate = selectedDate || new Date();
+
+      const dateString = targetDate.toISOString().split('T')[0];
+
       // Use Supabase client to call edge function with authentication - EXACTLY like web code
       const { data, error: functionError } = await supabase.functions.invoke(
         "get-panchang",
         {
-          body: { latitude, longitude },
+          body: { latitude, longitude, date: dateString },
         }
       );
 
@@ -46,7 +49,7 @@ export const usePanchang = () => {
     } finally {
       setLoading(false);
     }
-  }, [location?.latitude, location?.longitude]);
+  }, [location?.latitude, location?.longitude, selectedDate]);
 
   useEffect(() => {
     fetchPanchangData();
