@@ -12,6 +12,7 @@ const SplitCard = ({
   subTitle,
   onPress,
   style,
+  subTitle2
 }) => {
   const { colors } = useTheme();
 
@@ -37,18 +38,30 @@ const SplitCard = ({
           <Ionicons name={icon} size={24} color={iconColor} />
         </View>
       )}
-      <ThemedText
-        type="defaultSemiBold"
-        style={[styles.title, { color: colors.foreground }]}
-      >
-        {title}
-      </ThemedText>
-      <ThemedText
-        type="small"
-        style={[styles.subtitle, { color: colors.mutedForeground }]}
-      >
-        {subTitle}
-      </ThemedText>
+      <View style={subTitle2 ? {} : { alignItems: "center" }}>
+        <ThemedText
+          type="defaultSemiBold"
+          style={[styles.title, { color: colors.foreground }]}
+        >
+          {title}
+        </ThemedText>
+        {subTitle ? (
+          <ThemedText
+            type="small"
+            style={[styles.subtitle, { color: colors.mutedForeground }]}
+          >
+            {subTitle}
+          </ThemedText>
+        ) : null}
+        {subTitle2 ? (
+          <ThemedText
+            type="small"
+            style={[styles.subtitle, { color: colors.mutedForeground }]}
+          >
+            {subTitle2}
+          </ThemedText>
+        ) : null}
+      </View>
     </TouchableOpacity>
   );
 };

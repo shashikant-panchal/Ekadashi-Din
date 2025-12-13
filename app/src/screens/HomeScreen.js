@@ -130,8 +130,10 @@ const HomeScreen = () => {
           iconBackground={colors.lightBlueBg}
           iconColor={colors.primary}
           title={"All Ekadashi"}
-          subTitle={"Complete list"}
+          subTitle2={"Complete list"}
           onPress={() => navigation.navigate("Ekadashis")}
+          style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: 'center', padding: 15 }}
+
         />
 
         {/* Today's Panchang Card */}
